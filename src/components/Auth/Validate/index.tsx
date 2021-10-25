@@ -1,44 +1,58 @@
-import {useNavigation} from '@react-navigation/core';
+import {useLazyQuery, useQuery} from '@apollo/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React from 'react';
-import {Text} from 'react-native';
-import {
-  Button,
-  Container,
-  Input,
-  TouchableTextBox,
-} from '../../../common/SharedStyles';
-import {useInputState} from '../../../hooks/useInput';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Text, View} from 'react-native';
+import {Container} from '../../../common/SharedStyles';
+import {logUserIn} from '../../../graphql/client';
+import {GET_ME} from '../../../graphql/query/sharedQuery';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
-import {Text as ImportedText} from '@ui-kitten/components';
-import {VerificationBox} from './styles';
+import {getMe, getMeVariables} from '../../../types/graphql';
+import LoadingIndicator from '../../LoadingIndicator';
 
-type ValidationScreenProps = NativeStackNavigationProp<
+type ValidateScreenProps = NativeStackNavigationProp<
   AuthStackParamList,
-  'Validation'
+  'Validate'
 >;
 
-const ValidationScreen = () => {
-  const {navigate} = useNavigation<ValidationScreenProps>();
-  const codeInput = useInputState('');
+const ValidateScreen: React.VFC = () => {
+  const [getMe, {data, loading, refetch}] = useLazyQuery<getMe, getMeVariables>(
+    GET_ME,
+  );
+  const [token, setToken] = useState<string>();
+
+  const loadToken = useCallback(async () => {
+    const storageToken = await AsyncStorage.getItem('validation');
+    if (storageToken) {
+      setToken(storageToken);
+      getMe({
+        variables: {
+          token: storageToken,
+        },
+      });
+    }
+  }, [getMe]);
+
+  useEffect(() => {
+    loadToken();
+  }, [loadToken]);
+
+  useEffect(() => {
+    if (data && data.getMe.data?.verified) {
+      if (token) {
+        logUserIn(token);
+      }
+    }
+  }, [data, token]);
+
+  console.log(data);
+
   return (
     <Container>
-      <Text>validation</Text>
-      <VerificationBox>
-        <Input
-          keyboardType="numeric"
-          label="인증번호를 입력해 주세요"
-          {...codeInput}
-        />
-        <TouchableTextBox position="center">
-          <ImportedText status="error">
-            인증 코드를 받지 못하셨나요?
-          </ImportedText>
-        </TouchableTextBox>
-        <Button status="primary">인증</Button>
-      </VerificationBox>
+      <Text>validate</Text>
+      {loading ? <LoadingIndicator size="small" /> : <Text>data</Text>}
     </Container>
   );
 };
 
-export default ValidationScreen;
+export default ValidateScreen;

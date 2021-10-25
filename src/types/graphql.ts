@@ -7,17 +7,10 @@
 // GraphQL mutation operation: login
 // ====================================================
 
-export interface login_login_data {
-  __typename: 'User';
-  verified: boolean;
-  verifiedCode: string | null;
-}
-
 export interface login_login {
   __typename: 'TokenReturn';
   success: boolean;
   error: string | null;
-  data: login_login_data | null;
   token: string | null;
 }
 
@@ -116,6 +109,37 @@ export interface getUser {
 
 export interface getUserVariables {
   id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getMe
+// ====================================================
+
+export interface getMe_getMe_data {
+  __typename: 'User';
+  id: number;
+  verified: boolean;
+  verifiedCode: string | null;
+}
+
+export interface getMe_getMe {
+  __typename: 'UserReturn';
+  success: boolean;
+  error: string | null;
+  data: getMe_getMe_data | null;
+}
+
+export interface getMe {
+  getMe: getMe_getMe;
+}
+
+export interface getMeVariables {
+  token: string;
 }
 
 /* tslint:disable */

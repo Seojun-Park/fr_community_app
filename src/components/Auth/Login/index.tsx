@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useState} from 'react';
 import {TouchableWithoutFeedback} from 'react-native';
-import {logUserIn} from '../../../graphql/client';
+import {logUserIn, userValidate} from '../../../graphql/client';
 import {LOGIN} from '../../../graphql/mutation/sharedMutation';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
 import {login as typeLogin, loginVariables} from '../../../types/graphql';
@@ -60,10 +60,9 @@ const LoginScreen: React.VFC = () => {
     LOGIN,
     {
       onCompleted: ({login}) => {
-        const {success, error, token} = login;
-        console.log(token);
+        const {error, success, token} = login;
         if (success && token) {
-          logUserIn(token);
+          userValidate(token);
         } else {
           return Toast.show({
             type: 'error',
@@ -112,7 +111,10 @@ const LoginScreen: React.VFC = () => {
             loading ? <LoadingIndicator size="small" /> : undefined
           }
           appearance={loading ? 'outline' : 'filled'}
-          onPress={() => handleLogin()}>
+          onPress={() => {
+            handleLogin();
+            navigate('Validate');
+          }}>
           로그인
         </Button>
         <TouchableTextBox position="flex-end">

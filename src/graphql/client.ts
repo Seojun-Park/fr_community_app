@@ -12,6 +12,14 @@ export const logUserIn = async (token: string) => {
   }
 };
 
+export const userValidate = async (token: string) => {
+  try {
+    await AsyncStorage.setItem('validation', token);
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
 export const logUserOut = async () => {
   try {
     await AsyncStorage.removeItem('token');

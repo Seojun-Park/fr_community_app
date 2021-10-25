@@ -28,3 +28,17 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export const GET_ME = gql`
+  query getMe($token: String!) {
+    getMe(token: $token) {
+      success
+      error
+      data {
+        id
+        verified
+        verifiedCode
+      }
+    }
+  }
+`;
