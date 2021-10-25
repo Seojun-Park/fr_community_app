@@ -25,8 +25,3 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
   uri: 'http://localhost:4000/graphql',
 });
-
-// await AsyncStorage.multiSet([
-//   ['token', JSON.stringify(token)],
-//   ['loggedIn', JSON.stringify('loggedin')],
-// ]);

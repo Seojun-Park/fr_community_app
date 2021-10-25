@@ -7,11 +7,18 @@
 // GraphQL mutation operation: login
 // ====================================================
 
+export interface login_login_data {
+  __typename: 'User';
+  verified: boolean;
+  verifiedCode: string | null;
+}
+
 export interface login_login {
   __typename: 'TokenReturn';
   success: boolean;
   error: string | null;
-  data: string | null;
+  data: login_login_data | null;
+  token: string | null;
 }
 
 export interface login {
@@ -21,6 +28,35 @@ export interface login {
 export interface loginVariables {
   email: string;
   password: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: createUser
+// ====================================================
+
+export interface createUser_createUser_data {
+  __typename: 'User';
+  id: number;
+}
+
+export interface createUser_createUser {
+  __typename: 'UserReturn';
+  success: boolean;
+  error: string | null;
+  data: createUser_createUser_data | null;
+}
+
+export interface createUser {
+  createUser: createUser_createUser;
+}
+
+export interface createUserVariables {
+  args: CreateUserInput;
 }
 
 /* tslint:disable */
@@ -90,6 +126,14 @@ export interface getUserVariables {
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export interface CreateUserInput {
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  email: string;
+  password: string;
+}
 
 //==============================================================
 // END Enums and Input Objects

@@ -1,16 +1,54 @@
 import styled from 'styled-components/native';
+import {
+  Layout,
+  Input as ImportedInput,
+  Button as ImportedButton,
+} from '@ui-kitten/components';
 
-export const TouchableText = styled.Text`
-  font-size: 16px;
-  text-align: center;
-  color: #3498db;
+interface CaptionProps {
+  captionSize?: string;
+  captionColor?: string;
+}
+
+interface PositionProps {
+  position: string;
+}
+
+export const Container = styled(Layout)`
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
-export const AuthButton = styled.Button`
-  width: 50%;
-  padding: 8px;
-  height: 40px;
-  color: #3c40c6;
+export const Input = styled(ImportedInput)`
+  margin: 5px 0;
 `;
 
-export const ButtonText = styled.Text``;
+export const Button = styled(ImportedButton)`
+  margin: 8px 0;
+`;
+
+export const LoadingIndicatorBox = styled.View`
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Caption = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin: 5px 0;
+`;
+
+export const CaptionText = styled.Text<CaptionProps>`
+  font-size: ${props => (props.captionSize ? props.captionSize : '12px')};
+  font-weight: 400;
+  color: ${props => (props.captionColor ? props.captionColor : '#8f9bb3')};
+`;
+
+export const TouchableTextBox = styled.TouchableOpacity<PositionProps>`
+  height: 30px;
+  width: 100%;
+  justify-content: center;
+  align-items: ${props => props.position};
+`;

@@ -1,13 +1,10 @@
 import styled from 'styled-components/native';
 import {Layout} from '@ui-kitten/components';
 
-interface PositionProps {
-  position: string;
-}
-
-export const LoginForm = styled(Layout)`
+export const SignUpForm = styled(Layout)`
   width: 80%;
-  height: 20%;
+  height: 50%;
+  margin-bottom: 25px;
 `;
 
 export const TouchableText = styled.TouchableOpacity<PositionProps>`

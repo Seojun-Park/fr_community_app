@@ -5,7 +5,19 @@ export const LOGIN = gql`
     login(email: $email, password: $password) {
       success
       error
-      data
+      token
+    }
+  }
+`;
+
+export const SIGN_UP = gql`
+  mutation createUser($args: CreateUserInput!) {
+    createUser(args: $args) {
+      success
+      error
+      data {
+        id
+      }
     }
   }
 `;
