@@ -1,13 +1,17 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatScreen from '../components/Chat/ChatScreen';
+import ChatListScreen from '../Screen/Chat/ChatList';
 
-const ChatStack = createNativeStackNavigator();
+export type ChatStackParamList = {
+  ChatList: undefined;
+};
 
-const ChatStackNavigator: React.VFC = () => {
+const ChatStack = createNativeStackNavigator<ChatStackParamList>();
+
+const ChatStackNavigator = () => {
   return (
     <ChatStack.Navigator screenOptions={{headerShown: false}}>
-      <ChatStack.Screen name="Chat Main" component={ChatScreen} />
+      <ChatStack.Screen name="ChatList" component={ChatListScreen} />
     </ChatStack.Navigator>
   );
 };

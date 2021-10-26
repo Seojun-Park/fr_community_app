@@ -9,7 +9,7 @@ import {
   TouchableTextBox,
 } from '../../../common/SharedStyles';
 import {Text} from '@ui-kitten/components';
-import {logUserIn} from '../../../graphql/client';
+import {logUserIn, myIdVar} from '../../../graphql/client';
 import {GET_ME} from '../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
@@ -19,7 +19,7 @@ import {
   verifyEmail as verifyEmailType,
   verifyEmailVariables,
 } from '../../../types/graphql';
-import LoadingIndicator from '../../LoadingIndicator';
+import LoadingIndicator from '../../../components/LoadingIndicator';
 import {CodeInputForm} from './styles';
 import {StyleSheet, View, Text as NativeText} from 'react-native';
 import {VERIFY_EMAIL} from '../../../graphql/mutation/sharedMutation';
@@ -31,10 +31,10 @@ type ValidateScreenProps = NativeStackNavigationProp<
 >;
 
 const ValidateScreen: React.VFC = () => {
-  const [getMe, {data, loading, refetch}] = useLazyQuery<
-    getMeType,
-    getMeVariables
-  >(GET_ME);
+  const [getMe, {data, refetch}] = useLazyQuery<getMeType, getMeVariables>(
+    GET_ME,
+  );
+  const [load, setLoad] = useState(true);
   const [token, setToken] = useState<string>();
   const [code, setCode] = useState<string>();
   const [email, setEmail] = useState<string>();
@@ -45,13 +45,13 @@ const ValidateScreen: React.VFC = () => {
     verifyEmailVariables
   >(VERIFY_EMAIL, {
     onCompleted: ({verifyEmail}) => {
-      const {success, error} = verifyEmail;
-      if (success) {
+      const {success, error, data: verifiedData} = verifyEmail;
+      if (success && verifiedData) {
         if (refetch) {
           refetch();
         }
         AsyncStorage.removeItem('validation');
-        logUserIn(token as string);
+        logUserIn(token as string, verifiedData.id);
         return (
           <>
             {Toast.show({
@@ -89,6 +89,7 @@ const ValidateScreen: React.VFC = () => {
 
   useEffect(() => {
     loadToken();
+    setLoad(false);
   }, [loadToken]);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ const ValidateScreen: React.VFC = () => {
     }
     if (data && data.getMe.data?.verified) {
       if (token) {
-        logUserIn(token);
+        logUserIn(token, data.getMe.data.id);
       }
     }
   }, [data, token]);
@@ -126,7 +127,7 @@ const ValidateScreen: React.VFC = () => {
     }
   }, [codeInput.value, code, email, verifyEmailMutation]);
 
-  if (loading) {
+  if (load) {
     return (
       <View style={styles.centerbox}>
         <NativeText>

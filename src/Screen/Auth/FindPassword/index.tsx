@@ -13,7 +13,7 @@ import {
   sendNewPasswordVariables,
 } from '../../../types/graphql';
 import Toast from 'react-native-toast-message';
-import LoadingIndicator from '../../LoadingIndicator';
+import LoadingIndicator from '../../../components/LoadingIndicator';
 
 type FindPasswordScreenProps = NativeStackNavigationProp<
   AuthStackParamList,
