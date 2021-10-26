@@ -21,6 +21,7 @@
     "@types/styled-components": "^5.1.15",
     "@ui-kitten/components": "^5.1.1",
     "@ui-kitten/eva-icons": "^5.1.1",
+    "apollo-link-ws": "^1.0.20",
     "graphql": "^15.6.1",
     "react": "17.0.2",
     "react-native": "0.66.1",
@@ -28,7 +29,8 @@
     "react-native-screens": "^3.8.0",
     "react-native-svg": "^12.1.1",
     "react-native-toast-message": "^1.6.0",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "subscriptions-transport-ws": "^0.9.19"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

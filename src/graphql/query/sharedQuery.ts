@@ -43,3 +43,23 @@ export const GET_ME = gql`
     }
   }
 `;
+
+export const GET_CHATS = gql`
+  query getChats($userId: Int!) {
+    getChats(userId: $userId) {
+      success
+      error
+      data {
+        id
+        messages {
+          id
+          content
+        }
+        Members {
+          id
+          nickname
+        }
+      }
+    }
+  }
+`;

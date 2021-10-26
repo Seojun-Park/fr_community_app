@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface login_login {
-  __typename: "TokenReturn";
+  __typename: 'TokenReturn';
   success: boolean;
   error: string | null;
   token: string | null;
@@ -33,12 +33,12 @@ export interface loginVariables {
 // ====================================================
 
 export interface createUser_createUser_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
 }
 
 export interface createUser_createUser {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: createUser_createUser_data | null;
@@ -62,12 +62,12 @@ export interface createUserVariables {
 // ====================================================
 
 export interface verifyEmail_verifyEmail_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
 }
 
 export interface verifyEmail_verifyEmail {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: verifyEmail_verifyEmail_data | null;
@@ -92,12 +92,12 @@ export interface verifyEmailVariables {
 // ====================================================
 
 export interface sendNewCode_sendNewCode_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
 }
 
 export interface sendNewCode_sendNewCode {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: sendNewCode_sendNewCode_data | null;
@@ -121,12 +121,12 @@ export interface sendNewCodeVariables {
 // ====================================================
 
 export interface sendNewPassword_sendNewPassword_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
 }
 
 export interface sendNewPassword_sendNewPassword {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: sendNewPassword_sendNewPassword_data | null;
@@ -152,14 +152,14 @@ export interface sendNewPasswordVariables {
 // ====================================================
 
 export interface getUsers_getUsers_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
   firstName: string;
   lastName: string;
 }
 
 export interface getUsers_getUsers {
-  __typename: "UsersReturn";
+  __typename: 'UsersReturn';
   success: boolean;
   error: string | null;
   data: getUsers_getUsers_data[] | null;
@@ -179,7 +179,7 @@ export interface getUsers {
 // ====================================================
 
 export interface getUser_getUser_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
   firstName: string;
   lastName: string;
@@ -187,7 +187,7 @@ export interface getUser_getUser_data {
 }
 
 export interface getUser_getUser {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: getUser_getUser_data | null;
@@ -211,7 +211,7 @@ export interface getUserVariables {
 // ====================================================
 
 export interface getMe_getMe_data {
-  __typename: "User";
+  __typename: 'User';
   id: number;
   verified: boolean;
   verifiedCode: string | null;
@@ -219,7 +219,7 @@ export interface getMe_getMe_data {
 }
 
 export interface getMe_getMe {
-  __typename: "UserReturn";
+  __typename: 'UserReturn';
   success: boolean;
   error: string | null;
   data: getMe_getMe_data | null;
@@ -231,6 +231,49 @@ export interface getMe {
 
 export interface getMeVariables {
   token: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getChats
+// ====================================================
+
+export interface getChats_getChats_data_messages {
+  __typename: 'Dm';
+  id: number;
+  content: string;
+}
+
+export interface getChats_getChats_data_Members {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getChats_getChats_data {
+  __typename: 'Chat';
+  id: number;
+  messages: getChats_getChats_data_messages[];
+  Members: getChats_getChats_data_Members[];
+}
+
+export interface getChats_getChats {
+  __typename: 'ChatsReturn';
+  success: boolean;
+  error: string | null;
+  data: getChats_getChats_data[] | null;
+}
+
+export interface getChats {
+  getChats: getChats_getChats;
+}
+
+export interface getChatsVariables {
+  userId: number;
 }
 
 /* tslint:disable */

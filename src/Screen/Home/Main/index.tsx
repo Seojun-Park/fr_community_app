@@ -1,9 +1,9 @@
 import {useReactiveVar} from '@apollo/client';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Button, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import TopMenu from '../../components/TopMenu';
-import {logUserOut, myIdVar} from '../../graphql/client';
+import TopMenu from '../../../components/TopMenu';
+import {logUserOut, myIdVar} from '../../../graphql/client';
 
 const HomeScreen: React.VFC = () => {
   const myId = useReactiveVar(myIdVar);
