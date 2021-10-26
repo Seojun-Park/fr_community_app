@@ -1,14 +1,29 @@
-import {useLazyQuery, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
-import {Container} from '../../../common/SharedStyles';
+import {
+  Button,
+  Container,
+  Input,
+  TouchableTextBox,
+} from '../../../common/SharedStyles';
+import {Text} from '@ui-kitten/components';
 import {logUserIn} from '../../../graphql/client';
 import {GET_ME} from '../../../graphql/query/sharedQuery';
+import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
-import {getMe, getMeVariables} from '../../../types/graphql';
+import {
+  getMeVariables,
+  getMe as getMeType,
+  verifyEmail as verifyEmailType,
+  verifyEmailVariables,
+} from '../../../types/graphql';
 import LoadingIndicator from '../../LoadingIndicator';
+import {CodeInputForm} from './styles';
+import {StyleSheet, View, Text as NativeText} from 'react-native';
+import {VERIFY_EMAIL} from '../../../graphql/mutation/sharedMutation';
+import Toast from 'react-native-toast-message';
 
 type ValidateScreenProps = NativeStackNavigationProp<
   AuthStackParamList,
@@ -16,10 +31,49 @@ type ValidateScreenProps = NativeStackNavigationProp<
 >;
 
 const ValidateScreen: React.VFC = () => {
-  const [getMe, {data, loading, refetch}] = useLazyQuery<getMe, getMeVariables>(
-    GET_ME,
-  );
+  const [getMe, {data, loading, refetch}] = useLazyQuery<
+    getMeType,
+    getMeVariables
+  >(GET_ME);
   const [token, setToken] = useState<string>();
+  const [code, setCode] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const codeInput = useInputState();
+
+  const [verifyEmailMutation, {loading: mutationLoading}] = useMutation<
+    verifyEmailType,
+    verifyEmailVariables
+  >(VERIFY_EMAIL, {
+    onCompleted: ({verifyEmail}) => {
+      const {success, error} = verifyEmail;
+      if (success) {
+        if (refetch) {
+          refetch();
+        }
+        AsyncStorage.removeItem('validation');
+        logUserIn(token as string);
+        return (
+          <>
+            {Toast.show({
+              type: 'success',
+              text1: '이메일이 인증 되었습니다',
+              position: 'bottom',
+            })}
+          </>
+        );
+      } else {
+        return (
+          <>
+            {Toast.show({
+              type: 'error',
+              text1: `${error as string}`,
+              position: 'bottom',
+            })}
+          </>
+        );
+      }
+    },
+  });
 
   const loadToken = useCallback(async () => {
     const storageToken = await AsyncStorage.getItem('validation');
@@ -38,6 +92,12 @@ const ValidateScreen: React.VFC = () => {
   }, [loadToken]);
 
   useEffect(() => {
+    if (data && data.getMe.data?.verifiedCode) {
+      setCode(data.getMe.data.verifiedCode);
+    }
+    if (data && data.getMe.data?.email) {
+      setEmail(data.getMe.data.email);
+    }
     if (data && data.getMe.data?.verified) {
       if (token) {
         logUserIn(token);
@@ -45,14 +105,71 @@ const ValidateScreen: React.VFC = () => {
     }
   }, [data, token]);
 
-  console.log(data);
+  const handleVerifying = useCallback(async () => {
+    if (code !== codeInput.value) {
+      return (
+        <>
+          {Toast.show({
+            type: 'error',
+            text1: '코드가 일치 하지 않습니다',
+            position: 'bottom',
+          })}
+        </>
+      );
+    } else {
+      await verifyEmailMutation({
+        variables: {
+          email: email as string,
+          code: codeInput.value.toString(),
+        },
+      });
+    }
+  }, [codeInput.value, code, email, verifyEmailMutation]);
+
+  if (loading) {
+    return (
+      <View style={styles.centerbox}>
+        <NativeText>
+          <LoadingIndicator size="large" />;
+        </NativeText>
+      </View>
+    );
+  }
 
   return (
     <Container>
-      <Text>validate</Text>
-      {loading ? <LoadingIndicator size="small" /> : <Text>data</Text>}
+      <CodeInputForm>
+        <Input
+          keyboardType="numeric"
+          status="primary"
+          {...codeInput}
+          label="이메일 인증코드"
+        />
+        <Button
+          onPress={() => handleVerifying()}
+          accessoryLeft={
+            mutationLoading ? <LoadingIndicator size="small" /> : undefined
+          }
+          appearance={mutationLoading ? 'outline' : 'filled'}>
+          인증
+        </Button>
+        <TouchableTextBox position="flex-end" style={styles.touchablebox}>
+          <Text status="primary">인증번호 재전송</Text>
+        </TouchableTextBox>
+      </CodeInputForm>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  centerbox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  touchablebox: {
+    marginTop: 40,
+  },
+});
 
 export default ValidateScreen;

@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useState} from 'react';
 import {TouchableWithoutFeedback} from 'react-native';
-import {logUserIn, userValidate} from '../../../graphql/client';
+import {userValidate} from '../../../graphql/client';
 import {LOGIN} from '../../../graphql/mutation/sharedMutation';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
 import {login as typeLogin, loginVariables} from '../../../types/graphql';
@@ -63,29 +63,68 @@ const LoginScreen: React.VFC = () => {
         const {error, success, token} = login;
         if (success && token) {
           userValidate(token);
+          navigate('Validate');
         } else {
-          return Toast.show({
-            type: 'error',
-            text1:
-              error === 'Wrong password'
-                ? '비밀번호가 틀립니다'
-                : '유저를 찾을 수 없습니다',
-            position: 'bottom',
-          });
+          return (
+            <>
+              {Toast.show({
+                type: 'error',
+                text1: `${
+                  error === 'Wrong password'
+                    ? '비밀번호가 틀립니다'
+                    : '유저를 찾을 수 없습니다'
+                }`,
+                position: 'bottom',
+              })}
+            </>
+          );
         }
       },
     },
   );
 
-  const handleLogin = useCallback(async () => {
-    await loginMutation({
+  const handleLogin = useCallback(() => {
+    const regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+    if (emailInput.value.trim() === '') {
+      return (
+        <>
+          {Toast.show({
+            type: 'error',
+            text1: '올바른 이메일을 입력해 주세요',
+            position: 'bottom',
+          })}
+        </>
+      );
+    }
+    if (!regex.test(emailInput.value)) {
+      return (
+        <>
+          {Toast.show({
+            type: 'error',
+            text1: '올바른 이메일을 입력해 주세요',
+            position: 'bottom',
+          })}
+        </>
+      );
+    }
+    if (pwd.trim() === '') {
+      return (
+        <>
+          {Toast.show({
+            type: 'error',
+            text1: '비밀번호를 입력해 주세요',
+            position: 'bottom',
+          })}
+        </>
+      );
+    }
+    loginMutation({
       variables: {
         email: emailInput.value,
         password: pwd,
       },
     });
   }, [emailInput.value, loginMutation, pwd]);
-
   return (
     <Container>
       <Text>login</Text>
@@ -113,11 +152,12 @@ const LoginScreen: React.VFC = () => {
           appearance={loading ? 'outline' : 'filled'}
           onPress={() => {
             handleLogin();
-            navigate('Validate');
           }}>
           로그인
         </Button>
-        <TouchableTextBox position="flex-end">
+        <TouchableTextBox
+          position="flex-end"
+          onPress={() => navigate('FindPassword')}>
           <Text status="warning">비밀번호찾기</Text>
         </TouchableTextBox>
         <TouchableTextBox position="center" onPress={() => navigate('SignUp')}>

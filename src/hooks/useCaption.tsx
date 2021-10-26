@@ -4,8 +4,8 @@ import {Caption, CaptionText} from '../common/SharedStyles';
 
 interface CaptionProps {
   caption: string;
-  size?: string | null | undefined;
-  color?: string | null | undefined;
+  size?: string | undefined;
+  color?: string | undefined;
 }
 
 export const renderCaption: React.FC<CaptionProps> = ({

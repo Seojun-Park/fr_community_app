@@ -118,7 +118,20 @@ const SignUpScreen: React.VFC = () => {
           nickname: nicknameInput.value,
         },
       },
-    });
+    })
+      .then(() => {
+        return (
+          <>
+            {Toast.show({
+              type: 'info',
+              text1: '회원가입 완료! 이메일 인증번호가 전송되었습니다',
+              text2: ' 로그인 후 인증 해 주세요',
+              position: 'bottom',
+            })}
+          </>
+        );
+      })
+      .finally(() => navigate('Login'));
   }, [
     signUpMutation,
     emailInput.value,
@@ -127,6 +140,7 @@ const SignUpScreen: React.VFC = () => {
     pwd,
     nicknameInput.value,
     pwdMatch,
+    navigate,
   ]);
 
   useEffect(() => {
@@ -163,7 +177,6 @@ const SignUpScreen: React.VFC = () => {
           accessoryRight={renderCheckIcon}
           secureTextEntry={checkSecureTextEntry}
           onChangeText={val => setPwdCheck(val)}
-          d
           caption={
             pwdMatch
               ? undefined

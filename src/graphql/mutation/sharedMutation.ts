@@ -21,3 +21,43 @@ export const SIGN_UP = gql`
     }
   }
 `;
+
+export const VERIFY_EMAIL = gql`
+  mutation verifyEmail($email: String!, $code: String!) {
+    verifyEmail(email: $email, code: $code) {
+      success
+      error
+      data {
+        id
+      }
+    }
+  }
+`;
+
+export const SEND_NEW_CODE = gql`
+  mutation sendNewCode($email: String!) {
+    sendNewCode(email: $email) {
+      success
+      error
+      data {
+        id
+      }
+    }
+  }
+`;
+
+export const SEND_NEW_PASSWORD = gql`
+  mutation sendNewPassword(
+    $email: String!
+    $firstName: String!
+    $lastName: String!
+  ) {
+    sendNewPassword(email: $email, firstName: $firstName, lastName: $lastName) {
+      success
+      error
+      data {
+        id
+      }
+    }
+  }
+`;

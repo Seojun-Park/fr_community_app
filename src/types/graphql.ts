@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface login_login {
-  __typename: 'TokenReturn';
+  __typename: "TokenReturn";
   success: boolean;
   error: string | null;
   token: string | null;
@@ -33,12 +33,12 @@ export interface loginVariables {
 // ====================================================
 
 export interface createUser_createUser_data {
-  __typename: 'User';
+  __typename: "User";
   id: number;
 }
 
 export interface createUser_createUser {
-  __typename: 'UserReturn';
+  __typename: "UserReturn";
   success: boolean;
   error: string | null;
   data: createUser_createUser_data | null;
@@ -58,18 +58,108 @@ export interface createUserVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: verifyEmail
+// ====================================================
+
+export interface verifyEmail_verifyEmail_data {
+  __typename: "User";
+  id: number;
+}
+
+export interface verifyEmail_verifyEmail {
+  __typename: "UserReturn";
+  success: boolean;
+  error: string | null;
+  data: verifyEmail_verifyEmail_data | null;
+}
+
+export interface verifyEmail {
+  verifyEmail: verifyEmail_verifyEmail;
+}
+
+export interface verifyEmailVariables {
+  email: string;
+  code: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: sendNewCode
+// ====================================================
+
+export interface sendNewCode_sendNewCode_data {
+  __typename: "User";
+  id: number;
+}
+
+export interface sendNewCode_sendNewCode {
+  __typename: "UserReturn";
+  success: boolean;
+  error: string | null;
+  data: sendNewCode_sendNewCode_data | null;
+}
+
+export interface sendNewCode {
+  sendNewCode: sendNewCode_sendNewCode;
+}
+
+export interface sendNewCodeVariables {
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: sendNewPassword
+// ====================================================
+
+export interface sendNewPassword_sendNewPassword_data {
+  __typename: "User";
+  id: number;
+}
+
+export interface sendNewPassword_sendNewPassword {
+  __typename: "UserReturn";
+  success: boolean;
+  error: string | null;
+  data: sendNewPassword_sendNewPassword_data | null;
+}
+
+export interface sendNewPassword {
+  sendNewPassword: sendNewPassword_sendNewPassword;
+}
+
+export interface sendNewPasswordVariables {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
 export interface getUsers_getUsers_data {
-  __typename: 'User';
+  __typename: "User";
   id: number;
   firstName: string;
   lastName: string;
 }
 
 export interface getUsers_getUsers {
-  __typename: 'UsersReturn';
+  __typename: "UsersReturn";
   success: boolean;
   error: string | null;
   data: getUsers_getUsers_data[] | null;
@@ -89,7 +179,7 @@ export interface getUsers {
 // ====================================================
 
 export interface getUser_getUser_data {
-  __typename: 'User';
+  __typename: "User";
   id: number;
   firstName: string;
   lastName: string;
@@ -97,7 +187,7 @@ export interface getUser_getUser_data {
 }
 
 export interface getUser_getUser {
-  __typename: 'UserReturn';
+  __typename: "UserReturn";
   success: boolean;
   error: string | null;
   data: getUser_getUser_data | null;
@@ -121,14 +211,15 @@ export interface getUserVariables {
 // ====================================================
 
 export interface getMe_getMe_data {
-  __typename: 'User';
+  __typename: "User";
   id: number;
   verified: boolean;
   verifiedCode: string | null;
+  email: string;
 }
 
 export interface getMe_getMe {
-  __typename: 'UserReturn';
+  __typename: "UserReturn";
   success: boolean;
   error: string | null;
   data: getMe_getMe_data | null;

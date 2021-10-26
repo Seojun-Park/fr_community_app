@@ -38,6 +38,7 @@ export const GET_ME = gql`
         id
         verified
         verifiedCode
+        email
       }
     }
   }
