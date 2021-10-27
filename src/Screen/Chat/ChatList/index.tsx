@@ -1,39 +1,75 @@
 import {useQuery, useReactiveVar} from '@apollo/client';
+import {useNavigation} from '@react-navigation/core';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ListItem, Icon, Text} from '@ui-kitten/components';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
-import {Button, Input} from '../../../common/SharedStyles';
+import {getDate} from '../../../common/getDate';
+import {Button, Container, Input} from '../../../common/SharedStyles';
+import LoadingIndicator from '../../../components/LoadingIndicator';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
 import {GET_CHATS} from '../../../graphql/query/sharedQuery';
+import {ChatStackParamList} from '../../../navigators/ChatStackNavigator';
 import {
   getChats as getChatsTypes,
   getChatsVariables,
+  getChats_getChats_data,
+  getChats_getChats_data_Members,
+  getChats_getChats_data_messages,
 } from '../../../types/graphql';
 import {ChatListBox, ListScrollView} from './styles';
 
-const ChatListScreen = () => {
-  const myId = useReactiveVar(myIdVar);
-  const {data} = useQuery<getChatsTypes, getChatsVariables>(GET_CHATS, {
-    variables: {userId: myId},
-  });
+type ChatListScreenProps = NativeStackNavigationProp<
+  ChatStackParamList,
+  'ChatList'
+>;
 
-  const renderItemAccessory = () => <Button size="tiny">FOLLOW</Button>;
+const ChatListScreen = () => {
+  const {navigate} = useNavigation<ChatListScreenProps>();
+  const myId = useReactiveVar(myIdVar);
+  const {data, loading} = useQuery<getChatsTypes, getChatsVariables>(
+    GET_CHATS,
+    {
+      variables: {userId: myId},
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+
+  const renderDate = useCallback(date => {
+    return <Text category="c1">{getDate(date)}</Text>;
+  }, []);
 
   const renderItemIcon = () => (
     <Icon {...{width: 25, height: 25}} name="person" />
   );
 
-  const renderItem = ({item, index}) => {
+  const renderItem = ({item}) => {
+    const {Members, messages} = item;
+    let partner = '알수 없음';
+    if (Members) {
+      partner = Members.filter(
+        (member: getChats_getChats_data_Members) => member.id !== myId
+      );
+    }
     return (
       <ListItem
-        title={`${item.title} ${index + 1}`}
-        description={`${item.description} ${index + 1}`}
+        onPress={() => navigate('ChatDetail', {id: item.id})}
+        title={partner[0].nickname}
+        description={messages[0].content}
         accessoryLeft={renderItemIcon}
-        accessoryRight={renderItemAccessory}
+        accessoryRight={() => renderDate(messages[0].createdAt)}
       />
     );
   };
+
+  if (loading) {
+    return (
+      <Container>
+        <LoadingIndicator size="large" />
+      </Container>
+    );
+  }
 
   return (
     <SafeAreaView>
@@ -43,7 +79,7 @@ const ChatListScreen = () => {
           <Input placeholder="사용자 검색" />
         </View>
         {data?.getChats.data && data.getChats.data.length !== 0 ? (
-          <ListScrollView data={data} renderItem={renderItem} />
+          <ListScrollView data={data.getChats.data} renderItem={renderItem} />
         ) : (
           <View style={styles.listBox}>
             <Text>채팅 목록이 없습니다</Text>

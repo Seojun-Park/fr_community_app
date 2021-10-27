@@ -148,6 +148,39 @@ export interface sendNewPasswordVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: sendDm
+// ====================================================
+
+export interface sendDm_sendDm_data {
+  __typename: 'Dm';
+  id: number;
+  content: string;
+  ChatId: number;
+  SenderId: number | null;
+  ReceiverId: number | null;
+}
+
+export interface sendDm_sendDm {
+  __typename: 'DmReturn';
+  success: boolean;
+  error: string | null;
+  data: sendDm_sendDm_data | null;
+}
+
+export interface sendDm {
+  sendDm: sendDm_sendDm;
+}
+
+export interface sendDmVariables {
+  args: CreateDmInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -281,9 +314,81 @@ export interface getChatsVariables {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL query operation: getChat
+// ====================================================
+
+export interface getChat_getChat_data_messages {
+  __typename: 'Dm';
+  createdAt: string;
+  content: string;
+  SenderId: number | null;
+  ReceiverId: number | null;
+}
+
+export interface getChat_getChat_data_Members {
+  __typename: 'User';
+  id: number;
+}
+
+export interface getChat_getChat_data {
+  __typename: 'Chat';
+  messages: getChat_getChat_data_messages[];
+  Members: getChat_getChat_data_Members[];
+}
+
+export interface getChat_getChat {
+  __typename: 'ChatReturn';
+  success: boolean;
+  error: string | null;
+  data: getChat_getChat_data | null;
+}
+
+export interface getChat {
+  getChat: getChat_getChat;
+}
+
+export interface getChatVariables {
+  chatId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL subscription operation: dmSubscription
+// ====================================================
+
+export interface dmSubscription_dmSubscription {
+  __typename: 'Dm';
+  id: number;
+  content: string;
+  SenderId: number | null;
+  ReceiverId: number | null;
+  ChatId: number;
+}
+
+export interface dmSubscription {
+  dmSubscription: dmSubscription_dmSubscription;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export interface CreateDmInput {
+  content: string;
+  ChatId?: number | null;
+  SenderId: number;
+  ReceiverId: number;
+}
 
 export interface CreateUserInput {
   firstName: string;

@@ -1,6 +1,6 @@
 import {gql} from '@apollo/client';
 
-export const DB_SUBSCRIPTION = gql`
+export const DM_SUBSCRIPTION = gql`
   subscription dmSubscription {
     dmSubscription {
       id

@@ -65,16 +65,14 @@ export const SEND_NEW_PASSWORD = gql`
 export const SEND_DM = gql`
   mutation sendDm($args: CreateDmInput!) {
     sendDm(args: $args) {
-      id
-      content
-      chatId
-      Sender {
+      success
+      error
+      data {
         id
-        nickname
-      }
-      Receiver {
-        id
-        nickname
+        content
+        ChatId
+        SenderId
+        ReceiverId
       }
     }
   }

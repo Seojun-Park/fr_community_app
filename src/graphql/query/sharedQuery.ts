@@ -54,10 +54,33 @@ export const GET_CHATS = gql`
         messages {
           id
           content
+          SenderId
+          ReceiverId
+          createdAt
         }
         Members {
           id
           nickname
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CHAT = gql`
+  query getChat($chatId: Int!) {
+    getChat(chatId: $chatId) {
+      success
+      error
+      data {
+        messages {
+          createdAt
+          content
+          SenderId
+          ReceiverId
+        }
+        Members {
+          id
         }
       }
     }
