@@ -97,8 +97,8 @@ export const GET_CHAT = gql`
 `;
 
 export const GET_CHAT_MESSAGE = gql`
-  query getChatMessages($ChatId: Int!) {
-    getChatMessages(ChatId: $ChatId) {
+  query getChatMessages($ChatId: Int!, $load: Int!) {
+    getChatMessages(ChatId: $ChatId, load: $load) {
       success
       error
       data {
@@ -106,6 +106,7 @@ export const GET_CHAT_MESSAGE = gql`
         content
         SenderId
         ReceiverId
+        ChatId
         Sender {
           id
           nickname

@@ -397,6 +397,7 @@ export interface getChatMessages_getChatMessages_data {
   content: string;
   SenderId: number | null;
   ReceiverId: number | null;
+  ChatId: number;
   Sender: getChatMessages_getChatMessages_data_Sender | null;
   Receiver: getChatMessages_getChatMessages_data_Receiver | null;
 }
@@ -414,6 +415,7 @@ export interface getChatMessages {
 
 export interface getChatMessagesVariables {
   ChatId: number;
+  load: number;
 }
 
 /* tslint:disable */
@@ -436,6 +438,10 @@ export interface dmSubscription_dmSubscription {
 
 export interface dmSubscription {
   dmSubscription: dmSubscription_dmSubscription;
+}
+
+export interface dmSubscriptionVariables {
+  ChatId: number;
 }
 
 /* tslint:disable */

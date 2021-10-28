@@ -1,8 +1,14 @@
-import React, {useCallback, useEffect, useRef} from 'react';
-import {useMutation, useQuery, useReactiveVar} from '@apollo/client';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  useMutation,
+  useQuery,
+  useReactiveVar,
+  useSubscription,
+} from '@apollo/client';
 import {
   FlatList,
   KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -11,10 +17,12 @@ import {
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
 import {
+  dmSubscription as dmSubscriptionType,
   getChatMessages as getChatMessagesType,
   getChatMessagesVariables,
   sendDm as sendDmType,
   sendDmVariables,
+  dmSubscriptionVariables,
 } from '../../../types/graphql';
 import {GET_CHAT_MESSAGE} from '../../../graphql/query/sharedQuery';
 import {Container, Input} from '../../../common/SharedStyles';
@@ -60,13 +68,14 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   // const {navigate} = useNavigation<ChatDetailScreenProps>();
   const myId = useReactiveVar(myIdVar);
   const msgInput = useInputState('');
-  // const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
+  const [load, setLoad] = useState<number>(1);
 
-  const {data, loading, subscribeToMore, refetch} = useQuery<
+  const {data, loading, refetch, fetchMore} = useQuery<
     getChatMessagesType,
     getChatMessagesVariables
   >(GET_CHAT_MESSAGE, {
-    variables: {ChatId: chatId},
+    variables: {ChatId: chatId, load},
     onCompleted: ({getChatMessages}) => {
       const {success, error} = getChatMessages;
       if (success) {
@@ -85,9 +94,16 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     },
   });
 
-  // const {data: subscriptionData} = useSubscription(DM_SUBSCRIPTION);
-
-  // console.log(subscriptionData);
+  const {data: subscriptionData, loading: subscriptionLoading} =
+    useSubscription<dmSubscriptionType, dmSubscriptionVariables>(
+      DM_SUBSCRIPTION,
+      {
+        skip: !chatId,
+        variables: {
+          ChatId: chatId,
+        },
+      }
+    );
 
   const [sendDm, {loading: mutationLoading}] = useMutation<
     sendDmType,
@@ -120,19 +136,19 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }, [chatId, myId, partnerId, sendDm, msgInput.value]);
 
   useEffect(() => {
-    subscribeToMore({
-      document: DM_SUBSCRIPTION,
-      updateQuery: (prev, {subscriptionData}): any => {
-        console.log(subscriptionData);
-      },
-    });
-  }, [subscribeToMore]);
-
-  useEffect(() => {
-    if (data?.getChatMessages.data && data?.getChatMessages.data.length === 1) {
+    if (data?.getChatMessages.data && data?.getChatMessages.data.length > 1) {
       scrollRef.current?.scrollToEnd();
     }
   }, [data?.getChatMessages.data]);
+
+  useEffect(() => {
+    fetchMore({
+      variables: {
+        ChatId: chatId,
+        load: 1,
+      },
+    });
+  }, [subscriptionData, fetchMore, chatId]);
 
   const renderDate = useCallback(date => {
     return <Text category="c1">{getDate(date)}</Text>;
@@ -152,7 +168,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }, [msgInput.value, mutationLoading, onSubmit]);
 
   const renderItem = ({item}) => {
-    const {Receiver, Sender, content, ReceiverId, SenderId, createdAt} = item;
+    const {Receiver, content, ReceiverId, createdAt} = item;
     return (
       <MessageRow me={ReceiverId === myId}>
         {ReceiverId === myId ? (
@@ -181,9 +197,19 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     );
   }
 
+  if (subscriptionLoading && !chatId) {
+    return (
+      <Container>
+        <LoadingIndicator size="large" />
+      </Container>
+    );
+  }
+
   return (
     <SafeAreaView>
-      <KeyboardAvoidingView behavior="position">
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={keyboardVerticalOffset}>
         <TopMenuWithGoback id={0} />
         <Divider />
         <MessageBox>
