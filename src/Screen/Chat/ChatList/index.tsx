@@ -53,7 +53,9 @@ const ChatListScreen = () => {
     return (
       <React.Fragment>
         <ListItem
-          onPress={() => navigate('ChatDetail', {id: item.id})}
+          onPress={() =>
+            navigate('ChatDetail', {chatId: item.id, partnerId: partner[0].id})
+          }
           title={partner[0].nickname}
           description={messages[0].content}
           accessoryLeft={renderItemIcon}

@@ -1,19 +1,25 @@
-import React, {useCallback, useEffect} from 'react';
-import {useQuery, useReactiveVar} from '@apollo/client';
+import React, {useCallback, useEffect, useRef} from 'react';
+import {useMutation, useQuery, useReactiveVar} from '@apollo/client';
 import {
+  FlatList,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
-import {getChat as getChatType, getChatVariables} from '../../../types/graphql';
-import {GET_CHAT} from '../../../graphql/query/sharedQuery';
+import {
+  getChatMessages as getChatMessagesType,
+  getChatMessagesVariables,
+  sendDm as sendDmType,
+  sendDmVariables,
+} from '../../../types/graphql';
+import {GET_CHAT_MESSAGE} from '../../../graphql/query/sharedQuery';
 import {Container, Input} from '../../../common/SharedStyles';
 import LoadingIndicator from '../../../components/LoadingIndicator';
 import {DM_SUBSCRIPTION} from '../../../graphql/subscription/subscription';
-import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ChatStackParamList} from '../../../navigators/ChatStackNavigator';
 import {
@@ -28,6 +34,8 @@ import {Divider, Icon, Text} from '@ui-kitten/components';
 import {useInputState} from '../../../hooks/useInput';
 import {getDate} from '../../../common/getDate';
 import Avatar from '../../../components/Avatar';
+import Toast from 'react-native-toast-message';
+import {SEND_DM} from '../../../graphql/mutation/sharedMutation';
 
 type ChatDetailScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
@@ -36,27 +44,80 @@ type ChatDetailScreenProps = NativeStackNavigationProp<
 interface IProps {
   route: {
     params: {
-      id: number;
+      chatId: number;
+      partnerId: number;
     };
   };
 }
 
-const SendIcon = props => <Icon {...props} name="paper-plane-outline" />;
+const SendIcon = (props: any) => <Icon {...props} name="paper-plane-outline" />;
 
 const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   const {
-    params: {id},
+    params: {chatId, partnerId},
   } = route;
-  const {navigate} = useNavigation<ChatDetailScreenProps>();
+  const scrollRef = useRef<FlatList<any>>(null);
+  // const {navigate} = useNavigation<ChatDetailScreenProps>();
   const myId = useReactiveVar(myIdVar);
   const msgInput = useInputState('');
+  // const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
 
-  const {data, loading, subscribeToMore} = useQuery<
-    getChatType,
-    getChatVariables
-  >(GET_CHAT, {
-    variables: {chatId: id},
+  const {data, loading, subscribeToMore, refetch} = useQuery<
+    getChatMessagesType,
+    getChatMessagesVariables
+  >(GET_CHAT_MESSAGE, {
+    variables: {ChatId: chatId},
+    onCompleted: ({getChatMessages}) => {
+      const {success, error} = getChatMessages;
+      if (success) {
+        scrollRef.current?.scrollToEnd();
+      } else {
+        return (
+          <>
+            {Toast.show({
+              type: 'error',
+              text1: `${error}`,
+              position: 'bottom',
+            })}
+          </>
+        );
+      }
+    },
   });
+
+  // const {data: subscriptionData} = useSubscription(DM_SUBSCRIPTION);
+
+  // console.log(subscriptionData);
+
+  const [sendDm, {loading: mutationLoading}] = useMutation<
+    sendDmType,
+    sendDmVariables
+  >(SEND_DM, {
+    onCompleted: ({sendDm: completeSendDm}) => {
+      const {success, error, data: sendDmData} = completeSendDm;
+      if (success && sendDmData) {
+        if (refetch) {
+          refetch();
+        }
+        msgInput.onChangeText('');
+      } else {
+        console.log(error);
+      }
+    },
+  });
+
+  const onSubmit = useCallback(async () => {
+    await sendDm({
+      variables: {
+        args: {
+          SenderId: myId,
+          ReceiverId: partnerId,
+          content: msgInput.value,
+          ChatId: chatId,
+        },
+      },
+    });
+  }, [chatId, myId, partnerId, sendDm, msgInput.value]);
 
   useEffect(() => {
     subscribeToMore({
@@ -67,6 +128,12 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     });
   }, [subscribeToMore]);
 
+  useEffect(() => {
+    if (data?.getChatMessages.data && data?.getChatMessages.data.length === 1) {
+      scrollRef.current?.scrollToEnd();
+    }
+  }, [data?.getChatMessages.data]);
+
   const renderDate = useCallback(date => {
     return <Text category="c1">{getDate(date)}</Text>;
   }, []);
@@ -74,31 +141,33 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   const renderInputRight = useCallback(() => {
     return (
       <SendButton
+        onPress={() => onSubmit()}
         appearance="primary"
         accessoryLeft={SendIcon}
-        disabled={msgInput.value.trim() ? false : true}
+        disabled={
+          msgInput.value.trim() ? false : mutationLoading ? false : true
+        }
       />
     );
-  }, [msgInput.value]);
+  }, [msgInput.value, mutationLoading, onSubmit]);
 
   const renderItem = ({item}) => {
-    const {SenderId, ReceiverId, content, createdAt, Sender, Receiver} = item;
-    const senderNickname = Sender.nickname;
-    const receiverNickname = Receiver.nickname;
-    console.log(ReceiverId, myId);
+    const {Receiver, Sender, content, ReceiverId, SenderId, createdAt} = item;
     return (
       <MessageRow me={ReceiverId === myId}>
         {ReceiverId === myId ? (
           <React.Fragment>
             <TouchableOpacity>
-              <Avatar nickname={senderNickname} />
+              <Avatar nickname={Receiver.nickname} />
             </TouchableOpacity>
             <MessageItem title={`${content}`} me={ReceiverId === myId} />
+            <View style={styles.dateRight}>{renderDate(createdAt)}</View>
           </React.Fragment>
         ) : (
-          <>
+          <React.Fragment>
+            <View style={styles.dateLeft}>{renderDate(createdAt)}</View>
             <MessageItem title={`${content}`} me={ReceiverId === myId} />
-          </>
+          </React.Fragment>
         )}
       </MessageRow>
     );
@@ -113,17 +182,15 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }
 
   return (
-    <SafeAreaView style={styles.flex}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior="padding"
-        contentContainerStyle={styles.keyboardView}>
+    <SafeAreaView>
+      <KeyboardAvoidingView behavior="position">
         <TopMenuWithGoback id={0} />
         <Divider />
-        <MessageBox style={styles.flex}>
-          {data?.getChat.data && data?.getChat.data.messages && (
+        <MessageBox>
+          {data?.getChatMessages.data && (
             <MessageList
-              data={data.getChat.data.messages}
+              ref={scrollRef}
+              data={data.getChatMessages.data}
               ItemSeparatorComponent={Divider}
               renderItem={renderItem}
             />
@@ -133,6 +200,9 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
             <Input
               style={styles.inputStyle}
               {...msgInput}
+              returnKeyType="send"
+              autoCorrect={false}
+              autoCapitalize="none"
               placeholder={'메시지를 입력해 주세요'}
               accessoryRight={renderInputRight}
             />
@@ -144,19 +214,21 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   inputStyle: {
     width: '95%',
-    justifyContent: 'center',
   },
   divider: {
     paddingTop: 2,
     paddingBottom: 2,
   },
-  keyboardView: {
-    marginBottom: 40,
+  messageFont: {
+    color: 'white',
+  },
+  dateLeft: {
+    marginRight: 15,
+  },
+  dateRight: {
+    marginLeft: 15,
   },
 });
 

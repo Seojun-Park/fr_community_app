@@ -95,3 +95,26 @@ export const GET_CHAT = gql`
     }
   }
 `;
+
+export const GET_CHAT_MESSAGE = gql`
+  query getChatMessages($ChatId: Int!) {
+    getChatMessages(ChatId: $ChatId) {
+      success
+      error
+      data {
+        createdAt
+        content
+        SenderId
+        ReceiverId
+        Sender {
+          id
+          nickname
+        }
+        Receiver {
+          id
+          nickname
+        }
+      }
+    }
+  }
+`;

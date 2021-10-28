@@ -376,6 +376,52 @@ export interface getChatVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: getChatMessages
+// ====================================================
+
+export interface getChatMessages_getChatMessages_data_Sender {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getChatMessages_getChatMessages_data_Receiver {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getChatMessages_getChatMessages_data {
+  __typename: 'Dm';
+  createdAt: string;
+  content: string;
+  SenderId: number | null;
+  ReceiverId: number | null;
+  Sender: getChatMessages_getChatMessages_data_Sender | null;
+  Receiver: getChatMessages_getChatMessages_data_Receiver | null;
+}
+
+export interface getChatMessages_getChatMessages {
+  __typename: 'DmsReturn';
+  success: boolean;
+  error: string | null;
+  data: getChatMessages_getChatMessages_data[] | null;
+}
+
+export interface getChatMessages {
+  getChatMessages: getChatMessages_getChatMessages;
+}
+
+export interface getChatMessagesVariables {
+  ChatId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL subscription operation: dmSubscription
 // ====================================================
 

@@ -13,5 +13,5 @@ export const AvatarContainer = styled(TouchableOpacity)<StyleProps>`
   flex: 1;
   justify-content: center;
   align-items: center;
-  margin-right: 15;
+  margin-right: 15px;
 `;
