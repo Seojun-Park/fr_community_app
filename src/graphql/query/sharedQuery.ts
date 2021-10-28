@@ -78,9 +78,18 @@ export const GET_CHAT = gql`
           content
           SenderId
           ReceiverId
+          Sender {
+            id
+            nickname
+          }
+          Receiver {
+            id
+            nickname
+          }
         }
         Members {
           id
+          nickname
         }
       }
     }

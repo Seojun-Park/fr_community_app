@@ -279,6 +279,9 @@ export interface getChats_getChats_data_messages {
   __typename: 'Dm';
   id: number;
   content: string;
+  SenderId: number | null;
+  ReceiverId: number | null;
+  createdAt: string;
 }
 
 export interface getChats_getChats_data_Members {
@@ -290,7 +293,7 @@ export interface getChats_getChats_data_Members {
 export interface getChats_getChats_data {
   __typename: 'Chat';
   id: number;
-  messages: getChats_getChats_data_messages[];
+  messages: getChats_getChats_data_messages[] | null;
   Members: getChats_getChats_data_Members[];
 }
 
@@ -318,22 +321,37 @@ export interface getChatsVariables {
 // GraphQL query operation: getChat
 // ====================================================
 
+export interface getChat_getChat_data_messages_Sender {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getChat_getChat_data_messages_Receiver {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
 export interface getChat_getChat_data_messages {
   __typename: 'Dm';
   createdAt: string;
   content: string;
   SenderId: number | null;
   ReceiverId: number | null;
+  Sender: getChat_getChat_data_messages_Sender | null;
+  Receiver: getChat_getChat_data_messages_Receiver | null;
 }
 
 export interface getChat_getChat_data_Members {
   __typename: 'User';
   id: number;
+  nickname: string;
 }
 
 export interface getChat_getChat_data {
   __typename: 'Chat';
-  messages: getChat_getChat_data_messages[];
+  messages: getChat_getChat_data_messages[] | null;
   Members: getChat_getChat_data_Members[];
 }
 
