@@ -77,3 +77,15 @@ export const SEND_DM = gql`
     }
   }
 `;
+
+export const OUT_CHAT = gql`
+  mutation outChat($userId: Int!, $chatId: Int!) {
+    outChat(userId: $userId, chatId: $chatId) {
+      success
+      error
+      data {
+        id
+      }
+    }
+  }
+`;

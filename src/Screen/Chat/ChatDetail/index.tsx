@@ -14,6 +14,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Keyboard,
 } from 'react-native';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
@@ -24,11 +25,16 @@ import {
   sendDm as sendDmType,
   sendDmVariables,
   dmSubscriptionVariables,
+  memberOut as memberOutType,
+  memberOutVariables,
 } from '../../../types/graphql';
 import {GET_CHAT_MESSAGE} from '../../../graphql/query/sharedQuery';
 import {Container, Input} from '../../../common/SharedStyles';
 import LoadingIndicator from '../../../components/LoadingIndicator';
-import {DM_SUBSCRIPTION} from '../../../graphql/subscription/subscription';
+import {
+  DM_SUBSCRIPTION,
+  MEMBER_OUT,
+} from '../../../graphql/subscription/subscription';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ChatStackParamList} from '../../../navigators/ChatStackNavigator';
 import {
@@ -113,6 +119,16 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
       }
     );
 
+  const {data: memberOutData} = useSubscription<
+    memberOutType,
+    memberOutVariables
+  >(MEMBER_OUT, {
+    skip: !chatId,
+    variables: {
+      chatId,
+    },
+  });
+
   const [sendDm, {loading: mutationLoading}] = useMutation<
     sendDmType,
     sendDmVariables
@@ -142,6 +158,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         },
       },
     });
+    Keyboard.dismiss();
   }, [chatId, myId, partnerId, sendDm, msgInput.value]);
 
   const onFetch = useCallback(

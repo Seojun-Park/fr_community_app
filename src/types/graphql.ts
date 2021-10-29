@@ -154,10 +154,10 @@ export interface sendNewPasswordVariables {
 export interface sendDm_sendDm_data {
   __typename: 'Dm';
   id: number;
+  createdAt: string;
   content: string;
-  ChatId: number;
-  SenderId: number | null;
   ReceiverId: number | null;
+  SenderId: number | null;
 }
 
 export interface sendDm_sendDm {
@@ -173,6 +173,36 @@ export interface sendDm {
 
 export interface sendDmVariables {
   args: CreateDmInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: outChat
+// ====================================================
+
+export interface outChat_outChat_data {
+  __typename: 'Chat';
+  id: number;
+}
+
+export interface outChat_outChat {
+  __typename: 'ChatReturn';
+  success: boolean;
+  error: string | null;
+  data: outChat_outChat_data | null;
+}
+
+export interface outChat {
+  outChat: outChat_outChat;
+}
+
+export interface outChatVariables {
+  userId: number;
+  chatId: number;
 }
 
 /* tslint:disable */
@@ -442,6 +472,23 @@ export interface dmSubscription {
 
 export interface dmSubscriptionVariables {
   ChatId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL subscription operation: memberOut
+// ====================================================
+
+export interface memberOut {
+  memberOut: number;
+}
+
+export interface memberOutVariables {
+  chatId: number;
 }
 
 /* tslint:disable */
