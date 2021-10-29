@@ -69,10 +69,10 @@ export const SEND_DM = gql`
       error
       data {
         id
+        createdAt
         content
-        ChatId
-        SenderId
         ReceiverId
+        SenderId
       }
     }
   }

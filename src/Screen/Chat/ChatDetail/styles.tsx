@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import {View} from 'react-native';
-import {Layout, Button, List, ListItem} from '@ui-kitten/components';
+import {Layout, Button, List, ListItem, Text} from '@ui-kitten/components';
 
 interface MessageProps {
   me: boolean;
@@ -27,7 +27,10 @@ export const SendButton = styled(Button)`
 
 export const MessageItem = styled(ListItem)<MessageProps>`
   width: 50%;
-  height: 40px;
+  /* height: 40px; */
+  min-height: 40px;
+  word-break: break-all;
+  word-wrap: break-word;
   background-color: ${props => (props.me ? '#dfe2ea' : '#3f64f6')};
   border-radius: 15px;
   border-bottom-left-radius: ${props => (props.me ? '0px' : '15px')};
@@ -40,4 +43,9 @@ export const MessageRow = styled(View)<MessageProps>`
   align-items: center;
   margin-bottom: 15px;
   justify-content: ${props => (props.me ? 'flex-start' : 'flex-end')};
+`;
+
+export const MessageText = styled(Text)`
+  color: white;
+  margin: 0 8px;
 `;

@@ -35,7 +35,11 @@ const ChatListScreen = () => {
   );
 
   const renderDate = useCallback(date => {
-    return <Text category="c1">{getDate(date)}</Text>;
+    return (
+      <Text style={styles.date} category="c1">
+        {getDate(date)}
+      </Text>
+    );
   }, []);
 
   const renderItemIcon = () => (
@@ -53,8 +57,12 @@ const ChatListScreen = () => {
     return (
       <React.Fragment>
         <ListItem
+          style={styles.listRow}
           onPress={() =>
-            navigate('ChatDetail', {chatId: item.id, partnerId: partner[0].id})
+            navigate('ChatDetail', {
+              chatId: item.id,
+              partnerId: partner[0].id,
+            })
           }
           title={partner[0].nickname}
           description={messages[0].content}
@@ -104,6 +112,12 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  listRow: {
+    height: 70,
+  },
+  date: {
+    marginRight: 20,
   },
 });
 

@@ -9,6 +9,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -36,6 +37,7 @@ import {
   MessageItem,
   MessageList,
   MessageRow,
+  MessageText,
   SendButton,
 } from './styles';
 import {Divider, Icon, Text} from '@ui-kitten/components';
@@ -70,6 +72,8 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   const msgInput = useInputState('');
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
   const [load, setLoad] = useState<number>(1);
+  const [executing, setExecuting] = useState<boolean>(false);
+  // const [msgState, setMsgState] = useState<any>();
 
   const {data, loading, refetch, fetchMore} = useQuery<
     getChatMessagesType,
@@ -77,9 +81,13 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   >(GET_CHAT_MESSAGE, {
     variables: {ChatId: chatId, load},
     onCompleted: ({getChatMessages}) => {
-      const {success, error} = getChatMessages;
-      if (success) {
+      const {success, error, data: getChatMessageData} = getChatMessages;
+      if (success && getChatMessageData) {
+        // setMsgState(getChatMessageData);
         scrollRef.current?.scrollToEnd();
+        if (!executing) {
+          scrollRef.current?.scrollToEnd();
+        }
       } else {
         return (
           <>
@@ -116,6 +124,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
           refetch();
         }
         msgInput.onChangeText('');
+        scrollRef.current?.scrollToEnd();
       } else {
         console.log(error);
       }
@@ -135,20 +144,37 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     });
   }, [chatId, myId, partnerId, sendDm, msgInput.value]);
 
-  useEffect(() => {
-    if (data?.getChatMessages.data && data?.getChatMessages.data.length > 1) {
-      scrollRef.current?.scrollToEnd();
-    }
-  }, [data?.getChatMessages.data]);
+  const onFetch = useCallback(
+    loadProp => {
+      setLoad(loadProp + 1);
+      fetchMore({
+        variables: {
+          ChatId: chatId,
+          load: loadProp,
+        },
+      });
+    },
+    [chatId, fetchMore]
+  );
 
   useEffect(() => {
-    fetchMore({
-      variables: {
-        ChatId: chatId,
-        load: 1,
-      },
-    });
-  }, [subscriptionData, fetchMore, chatId]);
+    if (!executing) {
+      if (data?.getChatMessages.data && data?.getChatMessages.data.length > 1) {
+        scrollRef.current?.scrollToEnd();
+      }
+    }
+  }, [data?.getChatMessages.data, executing]);
+
+  useEffect(() => {
+    if (fetchMore) {
+      fetchMore({
+        variables: {
+          ChatId: chatId,
+          load: load,
+        },
+      });
+    }
+  }, [subscriptionData, fetchMore, chatId, load]);
 
   const renderDate = useCallback(date => {
     return <Text category="c1">{getDate(date)}</Text>;
@@ -176,26 +202,23 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
             <TouchableOpacity>
               <Avatar nickname={Receiver.nickname} />
             </TouchableOpacity>
-            <MessageItem title={`${content}`} me={ReceiverId === myId} />
+            <MessageItem title={content} me={ReceiverId === myId} />
             <View style={styles.dateRight}>{renderDate(createdAt)}</View>
           </React.Fragment>
         ) : (
           <React.Fragment>
             <View style={styles.dateLeft}>{renderDate(createdAt)}</View>
-            <MessageItem title={`${content}`} me={ReceiverId === myId} />
+            <MessageItem
+              title={() => {
+                return <MessageText>{content}</MessageText>;
+              }}
+              me={ReceiverId === myId}
+            />
           </React.Fragment>
         )}
       </MessageRow>
     );
   };
-
-  if (loading) {
-    return (
-      <Container>
-        <LoadingIndicator size="large" />
-      </Container>
-    );
-  }
 
   if (subscriptionLoading && !chatId) {
     return (
@@ -212,9 +235,38 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         keyboardVerticalOffset={keyboardVerticalOffset}>
         <TopMenuWithGoback id={0} />
         <Divider />
+        {loading && <LoadingIndicator size="large" />}
         <MessageBox>
+          {/* {msgState && (
+            <MessageList
+              bounces={true}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    setExecuting(true);
+                    onFetch(load);
+                  }}
+                />
+              }
+              ref={scrollRef}
+              data={msgState}
+              ItemSeparatorComponent={Divider}
+              renderItem={renderItem}
+            />
+          )} */}
           {data?.getChatMessages.data && (
             <MessageList
+              bounces={true}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    setExecuting(true);
+                    onFetch(load);
+                  }}
+                />
+              }
               ref={scrollRef}
               data={data.getChatMessages.data}
               ItemSeparatorComponent={Divider}
@@ -244,7 +296,7 @@ const styles = StyleSheet.create({
     width: '95%',
   },
   divider: {
-    paddingTop: 2,
+    paddingTop: 5,
     paddingBottom: 2,
   },
   messageFont: {
