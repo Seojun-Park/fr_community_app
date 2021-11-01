@@ -53,7 +53,7 @@ import {
 } from './styles';
 import {Divider, Icon, Text} from '@ui-kitten/components';
 import {useInputState} from '../../../hooks/useInput';
-import {getDate} from '../../../common/getDate';
+import {getTime} from '../../../common/getDate';
 import Avatar from '../../../components/Avatar';
 import Toast from 'react-native-toast-message';
 import {SEND_DM} from '../../../graphql/mutation/sharedMutation';
@@ -85,6 +85,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   const [load, setLoad] = useState<number>(1);
   const [executing, setExecuting] = useState<boolean>(false);
   const [memberStatus, setMemberStatus] = useState<boolean>(false);
+  // memberstatus = true(one of chat member out the chat) : false(chat members in the chat room)
 
   const {data, loading, refetch, fetchMore} = useQuery<
     getChatMessagesType,
@@ -94,7 +95,6 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     onCompleted: ({getChatMessages}) => {
       const {success, error, data: getChatMessageData} = getChatMessages;
       if (success && getChatMessageData) {
-        // setMsgState(getChatMessageData);
         scrollRef.current?.scrollToEnd();
         if (!executing) {
           scrollRef.current?.scrollToEnd();
@@ -120,7 +120,6 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     },
     onCompleted: ({checkChatMember}) => {
       const {success, error, data} = checkChatMember;
-      console.log(data);
       if (success && data) {
         if (data.Member1 === null || data.Member2 === null) {
           setMemberStatus(true);
@@ -226,7 +225,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }, [subscriptionData, fetchMore, chatId, load]);
 
   const renderDate = useCallback(date => {
-    return <Text category="c1">{getDate(date)}</Text>;
+    return <Text category="c1">{getTime(date)}</Text>;
   }, []);
 
   const renderInputRight = useCallback(() => {
@@ -242,37 +241,48 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     );
   }, [msgInput.value, mutationLoading, onSubmit]);
 
-  const renderItem = ({item}) => {
-    const {Receiver, content, ReceiverId, createdAt, SenderId, Sender} = item;
-    console.log('myId', myId);
-    console.log('id', ReceiverId, 'Receiver', Receiver);
-    console.log('id', SenderId, 'Sender', Sender);
-    console.log(ReceiverId === myId);
-
-    return (
-      <MessageRow me={ReceiverId === myId}>
-        {ReceiverId === myId ? (
-          <React.Fragment>
-            <TouchableOpacity>
-              <Avatar nickname={Receiver.nickname} />
-            </TouchableOpacity>
-            <MessageItem title={content} me={ReceiverId === myId} />
-            <View style={styles.dateRight}>{renderDate(createdAt)}</View>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <View style={styles.dateLeft}>{renderDate(createdAt)}</View>
-            <MessageItem
-              title={() => {
-                return <MessageText>{content}</MessageText>;
-              }}
-              me={ReceiverId === myId}
-            />
-          </React.Fragment>
-        )}
-      </MessageRow>
-    );
-  };
+  const renderItem = useCallback(
+    ({item}) => {
+      const {Receiver, content, SenderId, createdAt} = item;
+      let me;
+      if (SenderId === myId) {
+        me = 'sender';
+      } else {
+        me = 'receiver';
+      }
+      return (
+        <>
+          {me === 'sender' ? (
+            <MessageRow me={true} style={styles.noneBorder}>
+              <View style={styles.dateLeft}>{renderDate(createdAt)}</View>
+              <MessageItem
+                style={styles.noneBorder}
+                title={() => {
+                  return <MessageText>{content}</MessageText>;
+                }}
+                me={true}
+              />
+            </MessageRow>
+          ) : (
+            <MessageRow me={false}>
+              <React.Fragment>
+                <TouchableOpacity>
+                  <Avatar nickname={Receiver.nickname} />
+                </TouchableOpacity>
+                <MessageItem
+                  title={content}
+                  me={false}
+                  style={styles.noneBorder}
+                />
+                <View style={styles.dateRight}>{renderDate(createdAt)}</View>
+              </React.Fragment>
+            </MessageRow>
+          )}
+        </>
+      );
+    },
+    [myId, renderDate, memberStatus]
+  );
 
   if (subscriptionLoading && !chatId && memberOutLoading) {
     return (
@@ -290,32 +300,15 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         <TopMenuWithGoback id={0} />
         <Divider />
         {loading && <LoadingIndicator size="large" />}
-        <MessageBox>
+        <MessageBox style={styles.noneBorder}>
           {memberStatus && (
             <View style={styles.memberOutNotice}>
-              <Text>user out</Text>
+              <Text>상대방이 채팅방을 나갔습니다.</Text>
             </View>
           )}
-          {/* {msgState && (
-            <MessageList
-              bounces={true}
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={() => {
-                    setExecuting(true);
-                    onFetch(load);
-                  }}
-                />
-              }
-              ref={scrollRef}
-              data={msgState}
-              ItemSeparatorComponent={Divider}
-              renderItem={renderItem}
-            />
-          )} */}
           {data?.getChatMessages.data && (
             <MessageList
+              style={styles.noneBorder}
               bounces={true}
               refreshControl={
                 <RefreshControl
@@ -369,6 +362,12 @@ const styles = StyleSheet.create({
   },
   memberOutNotice: {
     backgroundColor: '#f6f8fb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+  },
+  noneBorder: {
+    borderWidth: 0,
   },
 });
 

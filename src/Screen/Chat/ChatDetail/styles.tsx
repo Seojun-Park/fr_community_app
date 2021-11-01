@@ -31,10 +31,10 @@ export const MessageItem = styled(ListItem)<MessageProps>`
   min-height: 40px;
   word-break: break-all;
   word-wrap: break-word;
-  background-color: ${props => (props.me ? '#dfe2ea' : '#3f64f6')};
+  background-color: ${props => (props.me ? '#3f64f6' : '#dfe2ea')};
   border-radius: 15px;
-  border-bottom-left-radius: ${props => (props.me ? '0px' : '15px')};
-  border-bottom-right-radius: ${props => (props.me ? '15px' : '0px')};
+  border-bottom-left-radius: ${props => (props.me ? '15px' : '0px')};
+  border-bottom-right-radius: ${props => (props.me ? '0px' : '15px')};
 `;
 
 export const MessageRow = styled(View)<MessageProps>`
@@ -48,4 +48,10 @@ export const MessageRow = styled(View)<MessageProps>`
 export const MessageText = styled(Text)`
   color: white;
   margin: 0 8px;
+`;
+
+export const Section = styled(View)`
+  margin-top: 20px;
+  border-top-width: 1px;
+  border-top-color: '#eee';
 `;
