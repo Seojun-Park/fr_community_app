@@ -42,7 +42,7 @@ export const MessageRow = styled(View)<MessageProps>`
   flex-direction: row;
   align-items: center;
   margin-bottom: 15px;
-  justify-content: ${props => (props.me ? 'flex-start' : 'flex-end')};
+  justify-content: ${props => (props.me ? 'flex-end' : 'flex-start')};
 `;
 
 export const MessageText = styled(Text)`

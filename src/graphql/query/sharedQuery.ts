@@ -119,3 +119,17 @@ export const GET_CHAT_MESSAGE = gql`
     }
   }
 `;
+
+export const CHECK_CHAT_MEMBER = gql`
+  query checkChatMember($chatId: Int!) {
+    checkChatMember(chatId: $chatId) {
+      success
+      error
+      data {
+        id
+        Member1
+        Member2
+      }
+    }
+  }
+`;

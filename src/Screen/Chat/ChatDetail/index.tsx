@@ -27,8 +27,13 @@ import {
   dmSubscriptionVariables,
   memberOut as memberOutType,
   memberOutVariables,
+  checkChatMember as checkChatMemberType,
+  checkChatMemberVariables,
 } from '../../../types/graphql';
-import {GET_CHAT_MESSAGE} from '../../../graphql/query/sharedQuery';
+import {
+  GET_CHAT_MESSAGE,
+  CHECK_CHAT_MEMBER,
+} from '../../../graphql/query/sharedQuery';
 import {Container, Input} from '../../../common/SharedStyles';
 import LoadingIndicator from '../../../components/LoadingIndicator';
 import {
@@ -79,7 +84,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
   const [load, setLoad] = useState<number>(1);
   const [executing, setExecuting] = useState<boolean>(false);
-  // const [msgState, setMsgState] = useState<any>();
+  const [memberStatus, setMemberStatus] = useState<boolean>(false);
 
   const {data, loading, refetch, fetchMore} = useQuery<
     getChatMessagesType,
@@ -108,6 +113,24 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     },
   });
 
+  useQuery<checkChatMemberType, checkChatMemberVariables>(CHECK_CHAT_MEMBER, {
+    skip: !chatId,
+    variables: {
+      chatId,
+    },
+    onCompleted: ({checkChatMember}) => {
+      const {success, error, data} = checkChatMember;
+      console.log(data);
+      if (success && data) {
+        if (data.Member1 === null || data.Member2 === null) {
+          setMemberStatus(true);
+        }
+      } else {
+        console.log(error);
+      }
+    },
+  });
+
   const {data: subscriptionData, loading: subscriptionLoading} =
     useSubscription<dmSubscriptionType, dmSubscriptionVariables>(
       DM_SUBSCRIPTION,
@@ -119,7 +142,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
       }
     );
 
-  const {data: memberOutData} = useSubscription<
+  const {data: memberOutData, loading: memberOutLoading} = useSubscription<
     memberOutType,
     memberOutVariables
   >(MEMBER_OUT, {
@@ -128,6 +151,15 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
       chatId,
     },
   });
+
+  useEffect(() => {
+    if (memberOutData) {
+      if (refetch) {
+        refetch();
+      }
+      setMemberStatus(true);
+    }
+  }, [memberOutData, refetch]);
 
   const [sendDm, {loading: mutationLoading}] = useMutation<
     sendDmType,
@@ -211,7 +243,12 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }, [msgInput.value, mutationLoading, onSubmit]);
 
   const renderItem = ({item}) => {
-    const {Receiver, content, ReceiverId, createdAt} = item;
+    const {Receiver, content, ReceiverId, createdAt, SenderId, Sender} = item;
+    console.log('myId', myId);
+    console.log('id', ReceiverId, 'Receiver', Receiver);
+    console.log('id', SenderId, 'Sender', Sender);
+    console.log(ReceiverId === myId);
+
     return (
       <MessageRow me={ReceiverId === myId}>
         {ReceiverId === myId ? (
@@ -237,7 +274,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     );
   };
 
-  if (subscriptionLoading && !chatId) {
+  if (subscriptionLoading && !chatId && memberOutLoading) {
     return (
       <Container>
         <LoadingIndicator size="large" />
@@ -254,6 +291,11 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         <Divider />
         {loading && <LoadingIndicator size="large" />}
         <MessageBox>
+          {memberStatus && (
+            <View style={styles.memberOutNotice}>
+              <Text>user out</Text>
+            </View>
+          )}
           {/* {msgState && (
             <MessageList
               bounces={true}
@@ -324,6 +366,9 @@ const styles = StyleSheet.create({
   },
   dateRight: {
     marginLeft: 15,
+  },
+  memberOutNotice: {
+    backgroundColor: '#f6f8fb',
   },
 });
 

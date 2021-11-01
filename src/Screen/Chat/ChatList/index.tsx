@@ -151,6 +151,16 @@ const ChatListScreen = () => {
                     chatId: item.id,
                     partnerId: partner[0].id,
                   });
+                } else {
+                  return (
+                    <>
+                      {Toast.show({
+                        type: 'info',
+                        text1: '상대방이 채팅방을 나갔습니다',
+                        position: 'bottom',
+                      })}
+                    </>
+                  );
                 }
               }}
               title={partner[0] ? partner[0].nickname : '알수없음'}
@@ -177,10 +187,10 @@ const ChatListScreen = () => {
     <SafeAreaView>
       <TopMenuWithGoback id={myId} />
       <ChatListBox>
-        <View style={styles.inputBox}>
+        {/* <View style={styles.inputBox}>
           <Input placeholder="사용자 검색" />
-        </View>
-        <Divider />
+        </View> */}
+        {/* <Divider /> */}
         {data?.getChats.data && data.getChats.data.length !== 0 ? (
           <ListScrollView data={data.getChats.data} renderItem={renderItem} />
         ) : (

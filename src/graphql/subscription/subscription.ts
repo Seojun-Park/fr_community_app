@@ -14,6 +14,9 @@ export const DM_SUBSCRIPTION = gql`
 
 export const MEMBER_OUT = gql`
   subscription memberOut($chatId: Int!) {
-    memberOut(chatId: $chatId)
+    memberOut(chatId: $chatId) {
+      chatId
+      userId
+    }
   }
 `;

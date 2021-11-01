@@ -454,6 +454,37 @@ export interface getChatMessagesVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: checkChatMember
+// ====================================================
+
+export interface checkChatMember_checkChatMember_data {
+  __typename: 'Chat';
+  id: number;
+  Member1: number | null;
+  Member2: number | null;
+}
+
+export interface checkChatMember_checkChatMember {
+  __typename: 'ChatReturn';
+  success: boolean;
+  error: string | null;
+  data: checkChatMember_checkChatMember_data | null;
+}
+
+export interface checkChatMember {
+  checkChatMember: checkChatMember_checkChatMember;
+}
+
+export interface checkChatMemberVariables {
+  chatId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL subscription operation: dmSubscription
 // ====================================================
 
@@ -483,8 +514,14 @@ export interface dmSubscriptionVariables {
 // GraphQL subscription operation: memberOut
 // ====================================================
 
+export interface memberOut_memberOut {
+  __typename: 'ChatOutReturn';
+  chatId: number;
+  userId: number;
+}
+
 export interface memberOut {
-  memberOut: number;
+  memberOut: memberOut_memberOut;
 }
 
 export interface memberOutVariables {
