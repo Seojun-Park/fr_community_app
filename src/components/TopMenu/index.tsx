@@ -14,9 +14,6 @@ interface IProps {
 
 const TopMenu: React.FC<IProps> = ({title, subtitle, id}) => {
   const {navigate} = useNavigation<MainTabParamList>();
-  const {loading, data} = useQuery<getUserType, getUserVariables>(GET_USER, {
-    variables: {id},
-  });
 
   const renderRightActions = useCallback(() => {
     return (

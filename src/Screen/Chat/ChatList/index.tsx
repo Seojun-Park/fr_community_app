@@ -1,17 +1,23 @@
-import {useMutation, useQuery, useReactiveVar} from '@apollo/client';
+import {
+  useMutation,
+  useQuery,
+  useReactiveVar,
+  useSubscription,
+} from '@apollo/client';
 import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ListItem, Icon, Text, Divider} from '@ui-kitten/components';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Animated,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getDate} from '../../../common/getDate';
-import {Container, Input} from '../../../common/SharedStyles';
+import {getDateWithoutYear, getTime} from '../../../common/getDate';
+import {Container} from '../../../common/SharedStyles';
 import LoadingIndicator from '../../../components/LoadingIndicator';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
@@ -23,11 +29,15 @@ import {
   getChats_getChats_data_Members,
   outChat as outChatTypes,
   outChatVariables,
+  getDm as getDmTypes,
+  getDmVariables,
 } from '../../../types/graphql';
 import {ChatListBox, ListScrollView} from './styles';
 import {Swipeable} from 'react-native-gesture-handler';
 import {OUT_CHAT} from '../../../graphql/mutation/sharedMutation';
 import Toast from 'react-native-toast-message';
+import {GET_DM} from '../../../graphql/subscription/subscription';
+import Badge from '../../../components/Badge';
 
 type ChatListScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
@@ -36,14 +46,15 @@ type ChatListScreenProps = NativeStackNavigationProp<
 
 const ChatListScreen = () => {
   const {navigate} = useNavigation<ChatListScreenProps>();
+  const [newMsg, setNewMsg] = useState<Array<number>>([]);
   const myId = useReactiveVar(myIdVar);
-  const {data, loading, refetch} = useQuery<getChatsTypes, getChatsVariables>(
-    GET_CHATS,
-    {
-      variables: {userId: myId},
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const {data, loading, refetch, fetchMore} = useQuery<
+    getChatsTypes,
+    getChatsVariables
+  >(GET_CHATS, {
+    variables: {userId: myId},
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [outChat, {loading: mutationLoading}] = useMutation<
     outChatTypes,
@@ -79,13 +90,47 @@ const ChatListScreen = () => {
     },
   });
 
-  const renderDate = useCallback(date => {
-    return (
-      <Text style={styles.date} category="c1">
-        {getDate(date)}
-      </Text>
-    );
-  }, []);
+  const {data: subscriptionData, loading: subscriptionLoading} =
+    useSubscription<getDmTypes, getDmVariables>(GET_DM, {
+      skip: !myId,
+      variables: {
+        userId: myId,
+      },
+      onSubscriptionData: ({subscriptionData: {data: completeData}}) => {
+        if (completeData?.getDm.ChatId) {
+          if (newMsg.indexOf(completeData.getDm.ChatId) === -1) {
+            setNewMsg(prev => [...prev, completeData.getDm.ChatId]);
+          }
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (subscriptionData) {
+      fetchMore({
+        variables: {
+          userId: myId,
+        },
+      });
+    }
+  }, [subscriptionData, fetchMore, myId]);
+
+  const renderDate = useCallback(
+    (date, id) => {
+      const currentDate = new Date().getTime() / 1000;
+      return (
+        <View style={styles.badgeContaier}>
+          <Text style={styles.date} category="c1">
+            {currentDate - date / 1000 < 8640
+              ? `${getDateWithoutYear(date)} ${getTime(date)}`
+              : `${getTime(date)}`}
+          </Text>
+          {newMsg.indexOf(id) === 0 && <Badge />}
+        </View>
+      );
+    },
+    [newMsg]
+  );
 
   const renderItemIcon = () => (
     <Icon {...{width: 25, height: 25}} name="person" />
@@ -122,7 +167,7 @@ const ChatListScreen = () => {
         </View>
       );
     },
-    []
+    [myId, outChat]
   );
 
   const renderItem = ({item}) => {
@@ -147,6 +192,7 @@ const ChatListScreen = () => {
               style={styles.listRow}
               onPress={() => {
                 if (partner[0]) {
+                  setNewMsg([]);
                   navigate('ChatDetail', {
                     chatId: item.id,
                     partnerId: partner[0].id,
@@ -166,7 +212,9 @@ const ChatListScreen = () => {
               title={partner[0] ? partner[0].nickname : '알수없음'}
               description={messages[messages.length - 1].content}
               accessoryLeft={renderItemIcon}
-              accessoryRight={() => renderDate(messages[0].createdAt)}
+              accessoryRight={() =>
+                renderDate(messages[0].createdAt, messages[0].ChatId)
+              }
             />
           </Swipeable>
         )}
@@ -175,7 +223,7 @@ const ChatListScreen = () => {
     );
   };
 
-  if (loading) {
+  if (loading && subscriptionLoading) {
     return (
       <Container>
         <LoadingIndicator size="large" />
@@ -192,7 +240,13 @@ const ChatListScreen = () => {
         </View> */}
         {/* <Divider /> */}
         {data?.getChats.data && data.getChats.data.length !== 0 ? (
-          <ListScrollView data={data.getChats.data} renderItem={renderItem} />
+          <ListScrollView
+            data={data.getChats.data}
+            renderItem={renderItem}
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={() => refetch()} />
+            }
+          />
         ) : (
           <View style={styles.listBox}>
             <Text>채팅 목록이 없습니다</Text>
@@ -232,6 +286,9 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  badgeContaier: {
+    flexDirection: 'row',
   },
 });
 

@@ -533,6 +533,32 @@ export interface memberOutVariables {
 // @generated
 // This file was automatically generated and should not be edited.
 
+// ====================================================
+// GraphQL subscription operation: getDm
+// ====================================================
+
+export interface getDm_getDm {
+  __typename: 'Dm';
+  id: number;
+  ReceiverId: number | null;
+  SenderId: number | null;
+  content: string;
+  ChatId: number;
+}
+
+export interface getDm {
+  getDm: getDm_getDm;
+}
+
+export interface getDmVariables {
+  userId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
 //==============================================================
 // START Enums and Input Objects
 //==============================================================

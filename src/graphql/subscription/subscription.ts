@@ -20,3 +20,15 @@ export const MEMBER_OUT = gql`
     }
   }
 `;
+
+export const GET_DM = gql`
+  subscription getDm($userId: Int!) {
+    getDm(userId: $userId) {
+      id
+      ReceiverId
+      SenderId
+      content
+      ChatId
+    }
+  }
+`;

@@ -281,7 +281,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         </>
       );
     },
-    [myId, renderDate, memberStatus]
+    [myId, renderDate]
   );
 
   if (subscriptionLoading && !chatId && memberOutLoading) {

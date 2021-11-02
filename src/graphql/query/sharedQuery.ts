@@ -54,6 +54,7 @@ export const GET_CHATS = gql`
         messages {
           id
           content
+          ChatId
           SenderId
           ReceiverId
           createdAt
