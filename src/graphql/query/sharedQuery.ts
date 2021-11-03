@@ -44,6 +44,89 @@ export const GET_ME = gql`
   }
 `;
 
+export const GET_MY_PROFILE = gql`
+  query getMyProfile($token: String!) {
+    getMyProfile(token: $token) {
+      success
+      error
+      data {
+        id
+        firstName
+        lastName
+        email
+        nickname
+        Meets {
+          id
+          title
+          createdAt
+          Likes {
+            id
+          }
+        }
+        Rent {
+          id
+          title
+          createdAt
+          Likes {
+            id
+          }
+        }
+        Board {
+          id
+          title
+          createdAt
+          Likes {
+            id
+          }
+        }
+        Market {
+          id
+          title
+          createdAt
+          Likes {
+            id
+          }
+        }
+        Recruits {
+          id
+          title
+          createdAt
+          Likes {
+            id
+          }
+        }
+        Like {
+          Boards {
+            id
+            title
+            createdAt
+          }
+          Rents {
+            id
+            title
+            createdAt
+          }
+          Markets {
+            id
+            title
+            createdAt
+          }
+          Recruits {
+            id
+            title
+            createdAt
+          }
+          Meets {
+            id
+            title
+            createdAt
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const GET_CHATS = gql`
   query getChats($userId: Int!) {
     getChats(userId: $userId) {

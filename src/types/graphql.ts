@@ -302,6 +302,154 @@ export interface getMeVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: getMyProfile
+// ====================================================
+
+export interface getMyProfile_getMyProfile_data_Meets_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMyProfile_getMyProfile_data_Meets {
+  __typename: 'Meet';
+  id: number;
+  title: string;
+  createdAt: string;
+  Likes: getMyProfile_getMyProfile_data_Meets_Likes[] | null;
+}
+
+export interface getMyProfile_getMyProfile_data_Rent_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMyProfile_getMyProfile_data_Rent {
+  __typename: 'Rent';
+  id: number;
+  title: string;
+  createdAt: string;
+  Likes: getMyProfile_getMyProfile_data_Rent_Likes | null;
+}
+
+export interface getMyProfile_getMyProfile_data_Board_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMyProfile_getMyProfile_data_Board {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  createdAt: string;
+  Likes: getMyProfile_getMyProfile_data_Board_Likes[] | null;
+}
+
+export interface getMyProfile_getMyProfile_data_Market_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMyProfile_getMyProfile_data_Market {
+  __typename: 'Market';
+  id: number;
+  title: string;
+  createdAt: string;
+  Likes: getMyProfile_getMyProfile_data_Market_Likes[] | null;
+}
+
+export interface getMyProfile_getMyProfile_data_Recruits_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMyProfile_getMyProfile_data_Recruits {
+  __typename: 'Recruit';
+  id: number;
+  title: string;
+  createdAt: string;
+  Likes: getMyProfile_getMyProfile_data_Recruits_Likes[] | null;
+}
+
+export interface getMyProfile_getMyProfile_data_Like_Boards {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getMyProfile_getMyProfile_data_Like_Rents {
+  __typename: 'Rent';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getMyProfile_getMyProfile_data_Like_Markets {
+  __typename: 'Market';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getMyProfile_getMyProfile_data_Like_Recruits {
+  __typename: 'Recruit';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getMyProfile_getMyProfile_data_Like_Meets {
+  __typename: 'Meet';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getMyProfile_getMyProfile_data_Like {
+  __typename: 'Like';
+  Boards: getMyProfile_getMyProfile_data_Like_Boards[] | null;
+  Rents: getMyProfile_getMyProfile_data_Like_Rents[] | null;
+  Markets: getMyProfile_getMyProfile_data_Like_Markets[] | null;
+  Recruits: getMyProfile_getMyProfile_data_Like_Recruits[] | null;
+  Meets: getMyProfile_getMyProfile_data_Like_Meets[] | null;
+}
+
+export interface getMyProfile_getMyProfile_data {
+  __typename: 'User';
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  nickname: string;
+  Meets: getMyProfile_getMyProfile_data_Meets[] | null;
+  Rent: getMyProfile_getMyProfile_data_Rent[] | null;
+  Board: getMyProfile_getMyProfile_data_Board[] | null;
+  Market: getMyProfile_getMyProfile_data_Market[] | null;
+  Recruits: getMyProfile_getMyProfile_data_Recruits[] | null;
+  Like: getMyProfile_getMyProfile_data_Like;
+}
+
+export interface getMyProfile_getMyProfile {
+  __typename: 'UserReturn';
+  success: boolean;
+  error: string | null;
+  data: getMyProfile_getMyProfile_data | null;
+}
+
+export interface getMyProfile {
+  getMyProfile: getMyProfile_getMyProfile;
+}
+
+export interface getMyProfileVariables {
+  token: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getChats
 // ====================================================
 
@@ -309,6 +457,7 @@ export interface getChats_getChats_data_messages {
   __typename: 'Dm';
   id: number;
   content: string;
+  ChatId: number;
   SenderId: number | null;
   ReceiverId: number | null;
   createdAt: string;

@@ -14,12 +14,7 @@ interface PositionProps {
   position: string;
 }
 
-export const Container = styled(Layout)`
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
+export const Container = styled(Layout)``;
 
 export const Input = styled(ImportedInput)`
   margin: 5px 0;

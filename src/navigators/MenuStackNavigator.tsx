@@ -3,7 +3,7 @@ import React from 'react';
 import MenuMain from '../Screen/Menu/Main';
 
 export type MenuStackParamList = {
-  Main: undefined;
+  MenuMain: undefined;
 };
 
 const MenuStack = createNativeStackNavigator<MenuStackParamList>();
@@ -11,7 +11,7 @@ const MenuStack = createNativeStackNavigator<MenuStackParamList>();
 const MenuStackNavigator = () => {
   return (
     <MenuStack.Navigator screenOptions={{headerShown: false}}>
-      <MenuStack.Screen name="Main" component={MenuMain} />
+      <MenuStack.Screen name="MenuMain" component={MenuMain} />
     </MenuStack.Navigator>
   );
 };

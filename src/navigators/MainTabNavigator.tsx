@@ -9,7 +9,7 @@ import {
 import {StyleSheet} from 'react-native';
 import MenuStackNavigator from './MenuStackNavigator';
 import SearchStackNavigator from './SearchStackNavigator';
-import ProfileScreen from '../Screen/Profile/Profile';
+import ProfileStackNavigtor from './ProfileStackNavigator';
 
 export type MainTabParamList = {
   Home: undefined;
@@ -56,7 +56,7 @@ const MainTabNavigator = () => {
       <MainTab.Screen name="Home" component={HomeStackNavigator} />
       <MainTab.Screen name="Search" component={SearchStackNavigator} />
       <MainTab.Screen name="Menu" component={MenuStackNavigator} />
-      <MainTab.Screen name="Profile" component={ProfileScreen} />
+      <MainTab.Screen name="Profile" component={ProfileStackNavigtor} />
     </MainTab.Navigator>
   );
 };
