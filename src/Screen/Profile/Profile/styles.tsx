@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {View, ScrollView} from 'react-native';
+import {View} from 'react-native';
 import {Text} from '@ui-kitten/components';
 
 export const Head = styled(View)`
@@ -15,11 +15,11 @@ export const Intro = styled(View)`
   padding-bottom: 20px;
 `;
 
-export const Content = styled(ScrollView)`
+export const Content = styled(View)`
   min-height: 100%;
 `;
 
-export const ContentSection = styled(ScrollView)`
+export const ContentSection = styled(View)`
   /* min-height: 200px; */
 `;
 
