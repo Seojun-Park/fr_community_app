@@ -32,7 +32,7 @@ type ValidateScreenProps = NativeStackNavigationProp<
 
 const ValidateScreen: React.VFC = () => {
   const [getMe, {data, refetch}] = useLazyQuery<getMeType, getMeVariables>(
-    GET_ME,
+    GET_ME
   );
   const [load, setLoad] = useState(true);
   const [token, setToken] = useState<string>();
@@ -138,7 +138,7 @@ const ValidateScreen: React.VFC = () => {
   }
 
   return (
-    <Container>
+    <Container style={styles.container}>
       <CodeInputForm>
         <Input
           keyboardType="numeric"
@@ -163,8 +163,13 @@ const ValidateScreen: React.VFC = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   centerbox: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

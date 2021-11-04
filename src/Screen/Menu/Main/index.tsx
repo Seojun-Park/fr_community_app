@@ -9,7 +9,7 @@ const MenuMain = () => {
 
   return (
     <SafeAreaView>
-      <TopMenu title="Menu" subtitle="menu sub" id={myId} />
+      {/* <TopMenu title="Menu" subtitle="menu sub" id={myId} /> */}
       <Text>main view</Text>
     </SafeAreaView>
   );

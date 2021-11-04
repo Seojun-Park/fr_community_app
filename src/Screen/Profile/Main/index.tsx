@@ -2,13 +2,15 @@ import {useLazyQuery, useReactiveVar} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Divider,
-  Drawer,
-  DrawerGroup,
-  DrawerItem,
+  Icon,
+  Layout,
+  MenuGroup,
+  MenuItem,
   Text,
 } from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {getDate} from '../../../common/getDate';
 import {Container} from '../../../common/SharedStyles';
 import LoadingIndicator from '../../../components/LoadingIndicator';
@@ -29,10 +31,27 @@ import {
   getMyProfile_getMyProfile_data_Rent,
   getMyProfile_getMyProfile_data_Like_Recruits,
 } from '../../../types/graphql';
-import {Content, ContentSection, Head, Intro, SectionTitle} from './styles';
+import {
+  Content,
+  ContentSection,
+  CustomMenu,
+  Head,
+  Intro,
+  SectionTitle,
+  SectionTitleRow,
+} from './styles';
+
+const ArrowDownIcon = props => (
+  <Icon
+    {...(props, {width: 100, height: 100, fill: 'red'})}
+    name="chevron-down-outline"
+  />
+);
 
 const ProfileScreen: React.VFC = () => {
   const myId = useReactiveVar(myIdVar);
+  const [showSection, setShowSection] = useState(false);
+  const [showSection2, setShowSection2] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [secondSelectedIndex, setSecondSelectedIndex] = useState(null);
   const [getMyProfile, {data, loading, refetch}] = useLazyQuery<
@@ -62,7 +81,7 @@ const ProfileScreen: React.VFC = () => {
   }
 
   return (
-    <SafeAreaView>
+    <Layout>
       <TopMenu
         title={`${data?.getMyProfile.data?.nickname}님의 프로필`}
         id={myId}
@@ -86,18 +105,40 @@ const ProfileScreen: React.VFC = () => {
           </Intro>
           <Divider />
           <Content>
-            <ContentSection>
-              <SectionTitle category={'h6'}>내가 저장한 글</SectionTitle>
-              <Drawer
+            <ContentSection show={showSection}>
+              <SectionTitleRow>
+                <SectionTitle category={'h6'}>내가 저장한 글</SectionTitle>
+                <TouchableWithoutFeedback
+                  style={styles.touchableRow}
+                  onPress={() => {
+                    setShowSection(!showSection);
+                    if (showSection2) {
+                      setShowSection2(false);
+                    }
+                  }}>
+                  <Icon
+                    {...{width: 24, height: 24, fill: 'rgb(162,170,189)'}}
+                    name={
+                      showSection
+                        ? 'chevron-up-outline'
+                        : 'chevron-down-outline'
+                    }
+                  />
+                </TouchableWithoutFeedback>
+              </SectionTitleRow>
+              <CustomMenu
                 selectedIndex={selectedIndex}
-                onSelect={index => setSelectedIndex(index)}>
-                <DrawerGroup title="자유게시판">
+                onSelect={index => {
+                  setSelectedIndex(index);
+                }}
+                show={showSection}>
+                <MenuGroup title="자유게시판">
                   {data?.getMyProfile.data?.Like.Boards &&
                   data.getMyProfile.data.Like.Boards.length !== 0 ? (
                     data.getMyProfile.data.Like.Boards.map(
                       (item: getMyProfile_getMyProfile_data_Like_Boards) => {
                         return (
-                          <DrawerItem
+                          <MenuItem
                             title={item.title}
                             accessoryRight={() => (
                               <View>
@@ -111,162 +152,183 @@ const ProfileScreen: React.VFC = () => {
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       style={styles.disabledSectionRow}
                       title="저장한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="중고거래">
+                </MenuGroup>
+                <MenuGroup title="중고거래">
                   {data?.getMyProfile.data?.Like.Markets &&
                   data.getMyProfile.data.Like.Markets.length !== 0 ? (
                     data.getMyProfile.data.Like.Markets.map(
                       (item: getMyProfile_getMyProfile_data_Like_Markets) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="저장한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="내집찾기">
+                </MenuGroup>
+                <MenuGroup title="내집찾기">
                   {data?.getMyProfile.data?.Like.Rents &&
                   data.getMyProfile.data.Like.Rents.length !== 0 ? (
                     data.getMyProfile.data.Like.Rents.map(
                       (item: getMyProfile_getMyProfile_data_Like_Rents) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="저장한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="모임">
+                </MenuGroup>
+                <MenuGroup title="모임">
                   {data?.getMyProfile.data?.Like.Meets &&
                   data.getMyProfile.data.Like.Meets.length !== 0 ? (
                     data.getMyProfile.data.Like.Meets.map(
                       (item: getMyProfile_getMyProfile_data_Like_Meets) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="저장한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="구인구직">
+                </MenuGroup>
+                <MenuGroup title="구인구직">
                   {data?.getMyProfile.data?.Like.Recruits &&
                   data.getMyProfile.data.Like.Recruits.length !== 0 ? (
                     data.getMyProfile.data.Like.Recruits.map(
                       (item: getMyProfile_getMyProfile_data_Like_Recruits) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="저장한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-              </Drawer>
+                </MenuGroup>
+              </CustomMenu>
             </ContentSection>
-            <ContentSection>
-              <SectionTitle category={'h6'}>내가 올린 글</SectionTitle>
-              <Drawer
+            <ContentSection show={showSection2}>
+              <SectionTitleRow>
+                <SectionTitle category={'h6'}>내가 올린 글</SectionTitle>
+                <TouchableWithoutFeedback
+                  style={styles.touchableRow}
+                  onPress={() => {
+                    setShowSection2(!showSection2);
+                    if (showSection) {
+                      setShowSection(false);
+                    }
+                  }}>
+                  <Icon
+                    {...{width: 24, height: 24, fill: 'rgb(162,170,189)'}}
+                    name={
+                      showSection2
+                        ? 'chevron-up-outline'
+                        : 'chevron-down-outline'
+                    }
+                  />
+                </TouchableWithoutFeedback>
+              </SectionTitleRow>
+              <CustomMenu
                 selectedIndex={secondSelectedIndex}
-                onSelect={index => setSecondSelectedIndex(index)}>
-                <DrawerGroup title="자유게시판">
+                onSelect={index => {
+                  setSecondSelectedIndex(index);
+                }}
+                show={showSection2}>
+                <MenuGroup title="자유게시판">
                   {data?.getMyProfile.data?.Board &&
                   data.getMyProfile.data.Board.length !== 0 ? (
                     data.getMyProfile.data.Board.map(
                       (item: getMyProfile_getMyProfile_data_Board) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
-                      style={styles.disabledSectionRow}
+                    <MenuItem
                       title="업로드한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="중고거래">
+                </MenuGroup>
+                <MenuGroup title="중고거래">
                   {data?.getMyProfile.data?.Market &&
                   data.getMyProfile.data.Market.length !== 0 ? (
                     data.getMyProfile.data.Market.map(
                       (item: getMyProfile_getMyProfile_data_Market) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="업로드한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="내집찾기">
+                </MenuGroup>
+                <MenuGroup title="내집찾기">
                   {data?.getMyProfile.data?.Rent &&
                   data.getMyProfile.data.Rent.length !== 0 ? (
                     data.getMyProfile.data.Rent.map(
                       (item: getMyProfile_getMyProfile_data_Rent) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="업로드한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="모임">
+                </MenuGroup>
+                <MenuGroup title="모임">
                   {data?.getMyProfile.data?.Meets &&
                   data.getMyProfile.data.Meets.length !== 0 ? (
                     data.getMyProfile.data.Meets.map(
                       (item: getMyProfile_getMyProfile_data_Meets) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="업로드한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-                <DrawerGroup title="구인구직">
+                </MenuGroup>
+                <MenuGroup title="구인구직">
                   {data?.getMyProfile.data?.Recruits &&
                   data.getMyProfile.data.Recruits.length !== 0 ? (
                     data.getMyProfile.data.Recruits.map(
                       (item: getMyProfile_getMyProfile_data_Recruits) => {
-                        return <DrawerItem title={item.title} />;
+                        return <MenuItem title={item.title} />;
                       }
                     )
                   ) : (
-                    <DrawerItem
+                    <MenuItem
                       title="업로드한 게시물이 없습니다"
                       disabled={true}
                     />
                   )}
-                </DrawerGroup>
-              </Drawer>
+                </MenuGroup>
+              </CustomMenu>
             </ContentSection>
           </Content>
         </Container>
       </View>
-    </SafeAreaView>
+    </Layout>
   );
 };
 
@@ -282,7 +344,14 @@ const styles = StyleSheet.create({
   introText: {
     paddingTop: 15,
   },
-  disabledSectionRow: {},
+  icon: {
+    width: 24,
+    height: 24,
+  },
+  touchableRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default ProfileScreen;

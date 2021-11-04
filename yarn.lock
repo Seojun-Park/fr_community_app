@@ -5796,7 +5796,7 @@ prompts@^2.0.1, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.7.2:
+prop-types@>=15.6.1, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -5892,6 +5892,13 @@ react-native-screens@^3.8.0:
   integrity sha512-lHrnB/elAoMJKv8O12U6BLgeup4lB6ZKJHEOVuG/D72nv/OE9wUusbou6YCB5tp3YbaSpHflPnkFmHA/vCejpw==
   dependencies:
     warn-once "^0.1.0"
+
+react-native-scroll-into-view@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-scroll-into-view/-/react-native-scroll-into-view-2.0.2.tgz#6c57b8a35e3a60e4cf57a075e2b2c9aa35722334"
+  integrity sha512-oTS2d0AjR8/ppH6YsD3MCj9vlf9+v+JUuLQcMx20IWu3NEMWheNNV13D6HmcJVdmM8WXpAXrTTDwymkD2I2EZg==
+  dependencies:
+    prop-types ">=15.6.1"
 
 react-native-svg@^12.1.1:
   version "12.1.1"

@@ -2,7 +2,7 @@ import {useMutation} from '@apollo/client';
 import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useState} from 'react';
-import {TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {userValidate} from '../../../graphql/client';
 import {LOGIN} from '../../../graphql/mutation/sharedMutation';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
@@ -41,7 +41,7 @@ const LoginScreen: React.VFC = () => {
         </TouchableWithoutFeedback>
       );
     },
-    [secureTextEntry, toggelSecureEntry],
+    [secureTextEntry, toggelSecureEntry]
   );
 
   const renderCaption = useCallback(() => {
@@ -80,7 +80,7 @@ const LoginScreen: React.VFC = () => {
           );
         }
       },
-    },
+    }
   );
 
   const handleLogin = useCallback(() => {
@@ -126,7 +126,7 @@ const LoginScreen: React.VFC = () => {
     });
   }, [emailInput.value, loginMutation, pwd]);
   return (
-    <Container>
+    <Container style={styles.container}>
       <Text>login</Text>
       <LoginForm>
         <Input
@@ -167,5 +167,13 @@ const LoginScreen: React.VFC = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default LoginScreen;

@@ -7,7 +7,7 @@ interface PositionProps {
 
 export const LoginForm = styled(Layout)`
   width: 80%;
-  height: 20%;
+  height: 40%;
 `;
 
 export const TouchableText = styled.TouchableOpacity<PositionProps>`

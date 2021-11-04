@@ -1,6 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import ProfileScreen from '../Screen/Profile/Profile';
+import {wrapScrollView} from 'react-native-scroll-into-view';
+import ProfileScreen from '../Screen/Profile/Main';
 
 export type SearchStackParamList = {
   Profile: undefined;
