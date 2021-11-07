@@ -5,12 +5,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import TopMenu from '../../../components/TopMenu';
 import {logUserOut, myIdVar} from '../../../graphql/client';
 
-const HomeScreen: React.VFC = () => {
+const HomeScreen: React.VFC = ({route}) => {
   const myId = useReactiveVar(myIdVar);
+  console.log(route);
 
   return (
     <SafeAreaView>
-      <TopMenu title="home" subtitle="sub home" id={myId} />
+      {/* <TopMenu title="home" subtitle="sub home" id={myId} /> */}
       <Text>test</Text>
       <Button onPress={() => logUserOut()} title="logout" />
     </SafeAreaView>

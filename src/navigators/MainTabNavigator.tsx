@@ -7,20 +7,39 @@ import {
   Icon,
 } from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
-import MenuStackNavigator from './MenuStackNavigator';
 import SearchStackNavigator from './SearchStackNavigator';
 import ProfileStackNavigtor from './ProfileStackNavigator';
+import ChatStackNavigator from './ChatStackNavigator';
 
 export type MainTabParamList = {
-  Home: undefined;
+  Home: {
+    id: number;
+  };
   Search: undefined;
-  Menu: undefined;
-  Profile: undefined;
+  Chat: {
+    id: number;
+  };
+  Profile: {
+    id: number;
+  };
 };
+
+interface IProps {
+  route: {
+    params: {
+      id: number;
+    };
+  };
+}
+
+interface TabProps {
+  navigation: any;
+  state: any;
+}
 
 const MainTab = createBottomTabNavigator<MainTabParamList>();
 
-const BottomTabBar = ({navigation, state}) => {
+const BottomTabBar: React.FC<TabProps> = ({navigation, state}) => {
   return (
     <React.Fragment>
       <BottomNavigation
@@ -36,7 +55,7 @@ const BottomTabBar = ({navigation, state}) => {
           icon={<Icon {...{width: 25, height: 25}} name="search-outline" />}
         />
         <BottomNavigationTab
-          title="MENU"
+          title="Chat"
           icon={<Icon {...{width: 25, height: 25}} name="menu-outline" />}
         />
         <BottomNavigationTab
@@ -48,15 +67,26 @@ const BottomTabBar = ({navigation, state}) => {
   );
 };
 
-const MainTabNavigator = () => {
+const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
+  const {id} = params;
   return (
-    <MainTab.Navigator
-      screenOptions={{headerShown: false}}
-      tabBar={props => <BottomTabBar {...props} />}>
-      <MainTab.Screen name="Home" component={HomeStackNavigator} />
+    <MainTab.Navigator tabBar={props => <BottomTabBar {...props} />}>
+      <MainTab.Screen
+        name="Home"
+        component={HomeStackNavigator}
+        initialParams={{id: id}}
+      />
       <MainTab.Screen name="Search" component={SearchStackNavigator} />
-      <MainTab.Screen name="Menu" component={MenuStackNavigator} />
-      <MainTab.Screen name="Profile" component={ProfileStackNavigtor} />
+      <MainTab.Screen
+        name="Chat"
+        component={ChatStackNavigator}
+        initialParams={{id}}
+      />
+      <MainTab.Screen
+        name="Profile"
+        component={ProfileStackNavigtor}
+        initialParams={{id}}
+      />
     </MainTab.Navigator>
   );
 };

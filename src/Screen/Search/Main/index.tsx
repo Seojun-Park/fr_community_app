@@ -8,7 +8,7 @@ const SearchScreen: React.VFC = () => {
   const myId = useReactiveVar(myIdVar);
   return (
     <SafeAreaView>
-      <TopMenu title="Search" subtitle="subtitle" id={myId} />
+      {/* <TopMenu title="Search" subtitle="subtitle" id={myId} /> */}
       <ScrollView style={styles.scroll}>
         <Text>search</Text>
       </ScrollView>

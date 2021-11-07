@@ -233,7 +233,7 @@ const ChatListScreen = () => {
 
   return (
     <SafeAreaView>
-      <TopMenuWithGoback id={myId} />
+      {/* <TopMenuWithGoback id={myId} /> */}
       <ChatListBox>
         {/* <View style={styles.inputBox}>
           <Input placeholder="사용자 검색" />
