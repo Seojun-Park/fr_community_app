@@ -1,57 +1,32 @@
 import styled from 'styled-components';
-import {View} from 'react-native';
-import {Text, Menu, MenuGroup} from '@ui-kitten/components';
+import {ScrollView, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-interface ShowProps {
-  show: boolean;
-}
-
-export const Head = styled(View)`
+export const Container = styled(ScrollView)`
+  height: 100%;
   width: 100%;
-  height: 60px;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
 `;
 
 export const Intro = styled(View)`
-  width: 100%;
-  padding-bottom: 20px;
-`;
-
-export const Content = styled(View)`
-  flex: 1;
-`;
-
-export const ContentSection = styled(View)<ShowProps>`
-  flex: 1;
-  min-height: ${props => (props.show ? '500px' : '50px')};
-  max-height: 500px;
-`;
-
-export const SectionTitleRow = styled(View)`
-  width: 100%;
-  padding-right: 15px;
+  height: 150px;
+  border-width: 1px;
+  padding: 0 50px;
+  padding-right: 60px;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
 `;
 
-export const SectionTitle = styled(Text)`
-  padding: 10px 0;
+export const AvatarBox = styled(TouchableOpacity)`
+  height: 70px;
+  width: 70px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  border-width: 1px;
+  border-color: #95a5a6;
 `;
 
-export const SectionSubTitle = styled(Text)`
-  padding: 15px 5px;
-`;
+export const IntroBox = styled(View)``;
 
-export const SectionContent = styled(View)``;
-
-export const ContentText = styled(Text)``;
-
-export const CustomMenu = styled(Menu)<ShowProps>`
-  height: ${props => (props.show ? '200px' : 0)};
-  opacity: ${props => (props.show ? 1 : 0)};
-`;
-
-export const CustomMenuGroup = styled(MenuGroup)<ShowProps>``;
+export const Content = styled(View)``;
