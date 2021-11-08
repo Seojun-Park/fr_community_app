@@ -1,4 +1,4 @@
-import {useLazyQuery, useMutation} from '@apollo/client';
+import {useMutation, useQuery} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -9,7 +9,7 @@ import {
   TouchableTextBox,
 } from '../../../common/SharedStyles';
 import {Text} from '@ui-kitten/components';
-import {logUserIn, myIdVar} from '../../../graphql/client';
+import {logUserIn} from '../../../graphql/client';
 import {GET_ME} from '../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
@@ -30,12 +30,19 @@ type ValidateScreenProps = NativeStackNavigationProp<
   'Validate'
 >;
 
-const ValidateScreen: React.VFC = () => {
-  const [getMe, {data, refetch}] = useLazyQuery<getMeType, getMeVariables>(
-    GET_ME
-  );
-  const [load, setLoad] = useState(true);
-  const [token, setToken] = useState<string>();
+interface IProps {
+  route: {
+    params: {
+      token: string;
+    };
+  };
+}
+
+const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {token} = params;
+  const {loading, data, refetch} = useQuery<getMeType, getMeVariables>(GET_ME, {
+    variables: {token},
+  });
   const [code, setCode] = useState<string>();
   const [email, setEmail] = useState<string>();
   const codeInput = useInputState();
@@ -51,7 +58,7 @@ const ValidateScreen: React.VFC = () => {
           refetch();
         }
         AsyncStorage.removeItem('validation');
-        logUserIn(token as string, verifiedData.id);
+        logUserIn(token, verifiedData.id);
         return (
           <>
             {Toast.show({
@@ -74,23 +81,6 @@ const ValidateScreen: React.VFC = () => {
       }
     },
   });
-
-  const loadToken = useCallback(async () => {
-    const storageToken = await AsyncStorage.getItem('validation');
-    if (storageToken) {
-      setToken(storageToken);
-      getMe({
-        variables: {
-          token: storageToken,
-        },
-      });
-    }
-  }, [getMe]);
-
-  useEffect(() => {
-    loadToken();
-    setLoad(false);
-  }, [loadToken]);
 
   useEffect(() => {
     if (data && data.getMe.data?.verifiedCode) {
@@ -127,7 +117,7 @@ const ValidateScreen: React.VFC = () => {
     }
   }, [codeInput.value, code, email, verifyEmailMutation]);
 
-  if (load) {
+  if (loading) {
     return (
       <View style={styles.centerbox}>
         <NativeText>

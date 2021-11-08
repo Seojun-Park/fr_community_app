@@ -69,7 +69,7 @@ const SignUpScreen: React.VFC = () => {
         </TouchableWithoutFeedback>
       );
     },
-    [secureTextEntry, toggleSecureEntry],
+    [secureTextEntry, toggleSecureEntry]
   );
 
   const renderCheckIcon = useCallback(
@@ -80,7 +80,7 @@ const SignUpScreen: React.VFC = () => {
         </TouchableWithoutFeedback>
       );
     },
-    [checkSecureTextEntry, toggleCheckSecureEntry],
+    [checkSecureTextEntry, toggleCheckSecureEntry]
   );
 
   const handleSignUp = useCallback(() => {

@@ -63,7 +63,7 @@ const LoginScreen: React.VFC = () => {
         const {error, success, token} = login;
         if (success && token) {
           userValidate(token);
-          navigate('Validate');
+          navigate('Validate', {token: token});
         } else {
           return (
             <>

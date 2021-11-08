@@ -11,9 +11,20 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/client/link/error';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {setContext} from '@apollo/client/link/context';
+import {persistCache, AsyncStorageWrapper} from 'apollo3-cache-persist';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const myIdVar = makeVar<number>(0);
+
+const cache = new InMemoryCache();
+
+const persCache = async () =>
+  await persistCache({
+    cache,
+    storage: new AsyncStorageWrapper(AsyncStorage),
+  });
+
+persCache();
 
 export const logUserIn = async (token: string, id: number) => {
   try {
@@ -40,6 +51,7 @@ export const userValidate = async (token: string) => {
 export const logUserOut = async () => {
   try {
     await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('id');
     isLoggedInVar(false);
     myIdVar(0);
   } catch (err) {
@@ -93,6 +105,6 @@ const splitLink = split(
 );
 
 export const client = new ApolloClient<NormalizedCacheObject>({
-  cache: new InMemoryCache(),
+  cache,
   link: splitLink,
 });

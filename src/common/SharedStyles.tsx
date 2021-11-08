@@ -14,7 +14,10 @@ interface PositionProps {
   position: string;
 }
 
-export const Container = styled(Layout)``;
+export const Container = styled(Layout)`
+  justify-content: center;
+  align-items: center;
+`;
 
 export const Input = styled(ImportedInput)`
   margin: 5px 0;

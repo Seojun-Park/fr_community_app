@@ -9,7 +9,9 @@ export type AuthStackParamList = {
   Login: undefined;
   SignUp: undefined;
   FindPassword: undefined;
-  Validate: undefined;
+  Validate: {
+    token: string;
+  };
 };
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 

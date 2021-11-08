@@ -14,13 +14,16 @@ import ChatStackNavigator from './ChatStackNavigator';
 export type MainTabParamList = {
   Home: {
     id: number;
+    token: string;
   };
   Search: undefined;
   Chat: {
     id: number;
+    token: string;
   };
   Profile: {
     id: number;
+    token: string;
   };
 };
 
@@ -28,6 +31,7 @@ interface IProps {
   route: {
     params: {
       id: number;
+      token: string;
     };
   };
 }
@@ -68,13 +72,15 @@ const BottomTabBar: React.FC<TabProps> = ({navigation, state}) => {
 };
 
 const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
-  const {id} = params;
+  const {id, token} = params;
   return (
-    <MainTab.Navigator tabBar={props => <BottomTabBar {...props} />}>
+    <MainTab.Navigator
+      tabBar={props => <BottomTabBar {...props} />}
+      screenOptions={{headerShown: false}}>
       <MainTab.Screen
         name="Home"
         component={HomeStackNavigator}
-        initialParams={{id: id}}
+        initialParams={{id}}
       />
       <MainTab.Screen name="Search" component={SearchStackNavigator} />
       <MainTab.Screen
@@ -85,7 +91,7 @@ const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
       <MainTab.Screen
         name="Profile"
         component={ProfileStackNavigtor}
-        initialParams={{id}}
+        initialParams={{id, token}}
       />
     </MainTab.Navigator>
   );

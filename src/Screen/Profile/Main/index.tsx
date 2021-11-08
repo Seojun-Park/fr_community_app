@@ -1,7 +1,7 @@
-import {useLazyQuery, useReactiveVar} from '@apollo/client';
+import {useLazyQuery, useQuery, useReactiveVar} from '@apollo/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Layout, Text} from '@ui-kitten/components';
-import React, {useCallback, useEffect, useState} from 'react';
+import {Divider, Layout, Text} from '@ui-kitten/components';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Avatar from '../../../components/Avatar';
 import LoadingIndicator from '../../../components/LoadingIndicator';
@@ -21,30 +21,46 @@ import {
   getMyProfile_getMyProfile_data_Rent,
   getMyProfile_getMyProfile_data_Like_Recruits,
 } from '../../../types/graphql';
-import {AvatarBox, Container, Content, Intro, IntroBox} from './styles';
+import {
+  AvatarBox,
+  Container,
+  Content,
+  ContentSection,
+  Intro,
+  IntroBox,
+  IntroBoxHead,
+  SectionBody,
+  SectionHead,
+} from './styles';
+import {Transition, Transitioning} from 'react-native-reanimated';
 
-const ProfileScreen: React.VFC = () => {
-  const myId = useReactiveVar(myIdVar);
-  const [showSection, setShowSection] = useState(false);
-  const [showSection2, setShowSection2] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [secondSelectedIndex, setSecondSelectedIndex] = useState(null);
+interface IProps {
+  route: {
+    params: {
+      id: number;
+      token: string;
+    };
+  };
+}
 
-  const [getMyProfile, {data, loading, refetch}] = useLazyQuery<
+const transition = (
+  <Transition.Together>
+    <Transition.In type="fade" durationMs={200} />
+    <Transition.Change />
+    <Transition.Out type="fade" durationMs={200} />
+  </Transition.Together>
+);
+
+const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
+  console.log(params);
+  const {token} = params;
+  const [currentIndex, setCurrentIndex] = useState(null);
+  const ref = useRef();
+
+  const {data, loading, refetch} = useQuery<
     getMyProfileType,
     getMyProfileVariables
-  >(GET_MY_PROFILE);
-
-  const loadToken = useCallback(async () => {
-    const token = await AsyncStorage.getItem('token');
-    if (token) {
-      getMyProfile({variables: {token}});
-    }
-  }, [getMyProfile]);
-
-  useEffect(() => {
-    loadToken();
-  }, [loadToken]);
+  >(GET_MY_PROFILE, {variables: {token}});
 
   console.log(data?.getMyProfile.data?.Like);
 
@@ -62,21 +78,28 @@ const ProfileScreen: React.VFC = () => {
         <Layout style={styles.layout} level={'3'}>
           <Intro>
             <AvatarBox>
-              <Avatar
-                ImageComponent={() => {
-                  return <Avatar size={40} />;
-                }}
-              />
+              <Avatar size={40} />
             </AvatarBox>
             <IntroBox>
-              <Text category="h4">
-                {data?.getMyProfile?.data?.lastName}{' '}
-                {data?.getMyProfile?.data?.firstName}
-              </Text>
+              <IntroBoxHead>
+                <Text category="h4">
+                  {data?.getMyProfile?.data?.lastName}{' '}
+                  {data?.getMyProfile?.data?.firstName}
+                </Text>
+                <Text>action</Text>
+              </IntroBoxHead>
               <Text category="s1">{data?.getMyProfile?.data?.email}</Text>
             </IntroBox>
           </Intro>
-          <Content />
+          <Divider />
+          <Content>
+            <ContentSection>
+              <SectionHead>
+                <Text category="h6">내가 올린 글</Text>
+              </SectionHead>
+              <SectionBody />
+            </ContentSection>
+          </Content>
         </Layout>
       </Container>
     </SafeAreaView>

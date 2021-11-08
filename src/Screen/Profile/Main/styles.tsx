@@ -2,14 +2,13 @@ import styled from 'styled-components';
 import {ScrollView, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-export const Container = styled(ScrollView)`
+export const Container = styled(View)`
   height: 100%;
   width: 100%;
 `;
 
 export const Intro = styled(View)`
   height: 150px;
-  border-width: 1px;
   padding: 0 50px;
   padding-right: 60px;
   justify-content: space-between;
@@ -29,4 +28,21 @@ export const AvatarBox = styled(TouchableOpacity)`
 
 export const IntroBox = styled(View)``;
 
-export const Content = styled(View)``;
+export const IntroBoxHead = styled(View)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+export const Content = styled(ScrollView)`
+  margin: 20px;
+  margin-bottom: 0;
+  background-color: white;
+`;
+
+export const ContentSection = styled(View)``;
+
+export const SectionHead = styled(View)``;
+
+export const SectionBody = styled(View)``;
