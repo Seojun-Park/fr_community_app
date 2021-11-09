@@ -7,16 +7,14 @@ import {
   Icon,
 } from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
-import SearchStackNavigator from './SearchStackNavigator';
-import ProfileStackNavigtor from './ProfileStackNavigator';
 import ChatStackNavigator from './ChatStackNavigator';
+import ProfileStackNavigator from './ProfileStackNavigator';
 
 export type MainTabParamList = {
   Home: {
     id: number;
     token: string;
   };
-  Search: undefined;
   Chat: {
     id: number;
     token: string;
@@ -52,19 +50,33 @@ const BottomTabBar: React.FC<TabProps> = ({navigation, state}) => {
         onSelect={index => navigation.navigate(state.routeNames[index])}>
         <BottomNavigationTab
           title="HOME"
-          icon={<Icon {...{width: 25, height: 25}} name="home-outline" />}
-        />
-        <BottomNavigationTab
-          title="SEARCH"
-          icon={<Icon {...{width: 25, height: 25}} name="search-outline" />}
+          icon={
+            <Icon
+              {...{width: 25, height: 25}}
+              name={
+                state.routeNames[state.index] === 'Home'
+                  ? 'home'
+                  : 'home-outline'
+              }
+            />
+          }
         />
         <BottomNavigationTab
           title="Chat"
           icon={<Icon {...{width: 25, height: 25}} name="menu-outline" />}
         />
         <BottomNavigationTab
-          title="PROFILE"
-          icon={<Icon {...{width: 25, height: 25}} name="person-outline" />}
+          title="Profile"
+          icon={
+            <Icon
+              {...{width: 25, height: 25}}
+              name={
+                state.routeNames[state.index] === 'Profile'
+                  ? 'person'
+                  : 'person-outline'
+              }
+            />
+          }
         />
       </BottomNavigation>
     </React.Fragment>
@@ -82,7 +94,6 @@ const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
         component={HomeStackNavigator}
         initialParams={{id}}
       />
-      <MainTab.Screen name="Search" component={SearchStackNavigator} />
       <MainTab.Screen
         name="Chat"
         component={ChatStackNavigator}
@@ -90,7 +101,7 @@ const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
       />
       <MainTab.Screen
         name="Profile"
-        component={ProfileStackNavigtor}
+        component={ProfileStackNavigator}
         initialParams={{id, token}}
       />
     </MainTab.Navigator>

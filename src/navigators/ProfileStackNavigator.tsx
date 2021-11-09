@@ -1,13 +1,6 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ProfileScreen from '../Screen/Profile/Main';
-
-export type SearchStackParamList = {
-  Profile: {
-    id: number;
-    token: string;
-  };
-};
 
 interface IProps {
   route: {
@@ -18,14 +11,14 @@ interface IProps {
   };
 }
 
-const ProfileStack = createNativeStackNavigator<SearchStackParamList>();
+const ProfileStack = createNativeStackNavigator();
 
-const ProfileStackNavigtor: React.FC<IProps> = ({route: {params}}) => {
+const ProfileStackNavigator: React.FC<IProps> = ({route: {params}}) => {
   const {id, token} = params;
   return (
     <ProfileStack.Navigator screenOptions={{headerShown: false}}>
       <ProfileStack.Screen
-        name="Profile"
+        name="ProfileScreen"
         component={ProfileScreen}
         initialParams={{id, token}}
       />
@@ -33,4 +26,4 @@ const ProfileStackNavigtor: React.FC<IProps> = ({route: {params}}) => {
   );
 };
 
-export default ProfileStackNavigtor;
+export default ProfileStackNavigator;

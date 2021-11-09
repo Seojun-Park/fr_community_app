@@ -26,7 +26,6 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
   const {id} = params;
   const [currentIndex, setcurrentIndex] = useState<number | null>(null);
   const ref = useRef();
-  console.log('homescreen', id);
 
   return (
     <SafeAreaView>
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subCategoriesList: {
-    marginTop: 20,
+    marginTop: 30,
   },
 });
 

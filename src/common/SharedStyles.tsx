@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
 import {
-  Layout,
   Input as ImportedInput,
   Button as ImportedButton,
 } from '@ui-kitten/components';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface CaptionProps {
   captionSize?: string;
@@ -14,7 +14,8 @@ interface PositionProps {
   position: string;
 }
 
-export const Container = styled(Layout)`
+export const Screen = styled(SafeAreaView)`
+  background-color: white;
   justify-content: center;
   align-items: center;
 `;

@@ -305,22 +305,11 @@ export interface getMeVariables {
 // GraphQL query operation: getMyProfile
 // ====================================================
 
-export interface getMyProfile_getMyProfile_data_Meets_Likes {
-  __typename: 'Like';
-  id: number;
-}
-
 export interface getMyProfile_getMyProfile_data_Meets {
   __typename: 'Meet';
   id: number;
   title: string;
   createdAt: string;
-  Likes: getMyProfile_getMyProfile_data_Meets_Likes[] | null;
-}
-
-export interface getMyProfile_getMyProfile_data_Rent_Likes {
-  __typename: 'Like';
-  id: number;
 }
 
 export interface getMyProfile_getMyProfile_data_Rent {
@@ -328,12 +317,6 @@ export interface getMyProfile_getMyProfile_data_Rent {
   id: number;
   title: string;
   createdAt: string;
-  Likes: getMyProfile_getMyProfile_data_Rent_Likes | null;
-}
-
-export interface getMyProfile_getMyProfile_data_Board_Likes {
-  __typename: 'Like';
-  id: number;
 }
 
 export interface getMyProfile_getMyProfile_data_Board {
@@ -341,12 +324,6 @@ export interface getMyProfile_getMyProfile_data_Board {
   id: number;
   title: string;
   createdAt: string;
-  Likes: getMyProfile_getMyProfile_data_Board_Likes[] | null;
-}
-
-export interface getMyProfile_getMyProfile_data_Market_Likes {
-  __typename: 'Like';
-  id: number;
 }
 
 export interface getMyProfile_getMyProfile_data_Market {
@@ -354,12 +331,6 @@ export interface getMyProfile_getMyProfile_data_Market {
   id: number;
   title: string;
   createdAt: string;
-  Likes: getMyProfile_getMyProfile_data_Market_Likes[] | null;
-}
-
-export interface getMyProfile_getMyProfile_data_Recruits_Likes {
-  __typename: 'Like';
-  id: number;
 }
 
 export interface getMyProfile_getMyProfile_data_Recruits {
@@ -367,7 +338,6 @@ export interface getMyProfile_getMyProfile_data_Recruits {
   id: number;
   title: string;
   createdAt: string;
-  Likes: getMyProfile_getMyProfile_data_Recruits_Likes[] | null;
 }
 
 export interface getMyProfile_getMyProfile_data_Like_Boards {

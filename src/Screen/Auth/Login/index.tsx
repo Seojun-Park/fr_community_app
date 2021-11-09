@@ -14,7 +14,7 @@ import {
   Button,
   Caption,
   CaptionText,
-  Container,
+  Screen,
   Input,
   TouchableTextBox,
 } from '../../../common/SharedStyles';
@@ -126,7 +126,7 @@ const LoginScreen: React.VFC = () => {
     });
   }, [emailInput.value, loginMutation, pwd]);
   return (
-    <Container style={styles.container}>
+    <Screen style={styles.container}>
       <Text>login</Text>
       <LoginForm>
         <Input
@@ -164,7 +164,7 @@ const LoginScreen: React.VFC = () => {
           <Text status="primary">회원가입</Text>
         </TouchableTextBox>
       </LoginForm>
-    </Container>
+    </Screen>
   );
 };
 

@@ -1,38 +1,32 @@
-import {useLazyQuery, useQuery, useReactiveVar} from '@apollo/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Divider, Layout, Text} from '@ui-kitten/components';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
-import Avatar from '../../../components/Avatar';
-import LoadingIndicator from '../../../components/LoadingIndicator';
-import {myIdVar} from '../../../graphql/client';
+import React, {useCallback, useRef, useState} from 'react';
+import {useQuery} from '@apollo/client';
 import {GET_MY_PROFILE} from '../../../graphql/query/sharedQuery';
 import {
   getMyProfile as getMyProfileType,
   getMyProfileVariables,
   getMyProfile_getMyProfile_data_Board,
-  getMyProfile_getMyProfile_data_Like_Boards,
-  getMyProfile_getMyProfile_data_Like_Markets,
-  getMyProfile_getMyProfile_data_Like_Rents,
-  getMyProfile_getMyProfile_data_Like_Meets,
+  getMyProfile_getMyProfile_data_Like,
   getMyProfile_getMyProfile_data_Market,
   getMyProfile_getMyProfile_data_Meets,
   getMyProfile_getMyProfile_data_Recruits,
   getMyProfile_getMyProfile_data_Rent,
-  getMyProfile_getMyProfile_data_Like_Recruits,
 } from '../../../types/graphql';
+import {Screen} from '../../../common/SharedStyles';
+import LoadingIndicator from '../../../components/LoadingIndicator';
 import {
   AvatarBox,
   Container,
   Content,
-  ContentSection,
-  Intro,
-  IntroBox,
-  IntroBoxHead,
-  SectionBody,
-  SectionHead,
+  Head,
+  InfoText,
+  SectionRow,
+  UserInfo,
 } from './styles';
+import Avatar from '../../../components/Avatar';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Divider, Icon, Text} from '@ui-kitten/components';
 import {Transition, Transitioning} from 'react-native-reanimated';
+import {profileMenuList} from '../../../common/menuList';
 
 interface IProps {
   route: {
@@ -43,6 +37,8 @@ interface IProps {
   };
 }
 
+const menu: Array<string> = ['내가 올린 글', '저장한 글'];
+
 const transition = (
   <Transition.Together>
     <Transition.In type="fade" durationMs={200} />
@@ -52,67 +48,249 @@ const transition = (
 );
 
 const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
-  console.log(params);
-  const {token} = params;
-  const [currentIndex, setCurrentIndex] = useState(null);
+  const {id, token} = params;
   const ref = useRef();
+  const [currentIndex, setCurrentIndex] = useState<number | null>();
+  const [showIndex, setShowIndex] = useState<number | null>();
+  const [boards, setBoards] = useState<
+    getMyProfile_getMyProfile_data_Board[] | null
+  >(null);
+  const [rents, setRents] = useState<
+    getMyProfile_getMyProfile_data_Rent[] | null
+  >(null);
+  const [markets, setMarkets] = useState<
+    getMyProfile_getMyProfile_data_Market[] | null
+  >(null);
+  const [recruits, setRecruits] = useState<
+    getMyProfile_getMyProfile_data_Recruits[] | null
+  >(null);
+  const [meets, setMeets] = useState<
+    getMyProfile_getMyProfile_data_Meets[] | null
+  >(null);
+  const [likes, setLikes] =
+    useState<getMyProfile_getMyProfile_data_Like | null>(null);
+  const {data, loading} = useQuery<getMyProfileType, getMyProfileVariables>(
+    GET_MY_PROFILE,
+    {
+      // skip: !token,
+      variables: {token},
+      onCompleted: ({getMyProfile}) => {
+        const {success, error, data: completeData} = getMyProfile;
+        if (success && completeData) {
+          console.log(completeData, completeData.Board);
+          setBoards(completeData.Board);
+          setRents(completeData.Rent);
+          setMarkets(completeData.Market);
+          setRecruits(completeData.Recruits);
+          setMeets(completeData.Meets);
+          setLikes(completeData.Like);
+        } else {
+          console.error(error);
+        }
+      },
+    }
+  );
 
-  const {data, loading, refetch} = useQuery<
-    getMyProfileType,
-    getMyProfileVariables
-  >(GET_MY_PROFILE, {variables: {token}});
+  const renderList = useCallback(
+    (category: string) => {
+      switch (category) {
+        case 'market':
+          return (
+            <>
+              {markets ? (
+                markets.map((val, idx) => {
+                  return (
+                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text>게시물이 없습니다</Text>
+              )}
+            </>
+          );
+        case 'rent':
+          return (
+            <>
+              {rents ? (
+                rents?.map((val, idx) => {
+                  return (
+                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text>게시물이 없습니다</Text>
+              )}
+            </>
+          );
+        case 'recruit':
+          return (
+            <>
+              {recruits ? (
+                recruits?.map((val, idx) => {
+                  return (
+                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text>게시물이 없습니다</Text>
+              )}
+            </>
+          );
+        case 'board':
+          return (
+            <>
+              {boards ? (
+                boards?.map((val, idx) => {
+                  return (
+                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text>게시물이 없습니다</Text>
+              )}
+            </>
+          );
 
-  console.log(data?.getMyProfile.data?.Like);
+        case 'meet':
+          meets?.map((val, idx) => {
+            return <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>;
+          });
+          return <Text>게시물이 없습니다</Text>;
+        default:
+          return null;
+      }
+    },
+    [boards, meets, markets, rents, recruits]
+  );
 
-  if (loading && !data) {
+  if (loading) {
     return (
-      <SafeAreaView>
-        <LoadingIndicator size="large" />
-      </SafeAreaView>
+      <Container>
+        <LoadingIndicator size="lg" />
+      </Container>
     );
   }
-
   return (
-    <SafeAreaView>
+    <Screen>
       <Container>
-        <Layout style={styles.layout} level={'3'}>
-          <Intro>
-            <AvatarBox>
-              <Avatar size={40} />
-            </AvatarBox>
-            <IntroBox>
-              <IntroBoxHead>
-                <Text category="h4">
-                  {data?.getMyProfile?.data?.lastName}{' '}
-                  {data?.getMyProfile?.data?.firstName}
-                </Text>
-                <Text>action</Text>
-              </IntroBoxHead>
-              <Text category="s1">{data?.getMyProfile?.data?.email}</Text>
-            </IntroBox>
-          </Intro>
-          <Divider />
-          <Content>
-            <ContentSection>
-              <SectionHead>
-                <Text category="h6">내가 올린 글</Text>
-              </SectionHead>
-              <SectionBody />
-            </ContentSection>
-          </Content>
-        </Layout>
+        <Head>
+          <AvatarBox style={styles.avatar}>
+            <Avatar size={100} />
+          </AvatarBox>
+          <UserInfo>
+            <InfoText category={'h5'}>
+              {data?.getMyProfile.data?.nickname}
+            </InfoText>
+            <InfoText category={'s1'}>
+              {data?.getMyProfile.data?.lastName}&ensp;
+              {data?.getMyProfile.data?.firstName}
+            </InfoText>
+            <InfoText category={'s2'} appearance="hint">
+              {data?.getMyProfile.data?.email}
+            </InfoText>
+          </UserInfo>
+        </Head>
+        <Divider />
+        <Content>
+          <Transitioning.View ref={ref} transition={transition}>
+            {menu.map((item, idx) => {
+              return (
+                <TouchableOpacity
+                  key={idx}
+                  style={styles.cardContainer}
+                  onPress={() => {
+                    ref.current.animateNextTransition();
+                    setCurrentIndex(idx === currentIndex ? null : idx);
+                  }}
+                  activeOpacity={0.9}>
+                  <View style={styles.card}>
+                    <SectionRow>
+                      <Text
+                        category="h5"
+                        style={{
+                          color: `${currentIndex === idx ? '#3f64f6' : 'gray'}`,
+                        }}>
+                        {item}
+                      </Text>
+                      <Icon
+                        fill={currentIndex === idx ? '#3f64f6' : 'gray'}
+                        {...{width: 24, height: 24}}
+                        name={currentIndex === idx ? 'arrow-up' : 'arrow-down'}
+                      />
+                    </SectionRow>
+                    {idx === currentIndex && (
+                      <View style={styles.subCategoriesList}>
+                        {profileMenuList.map(({title, category}, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              style={styles.subCategoriesList}
+                              onPress={() => {
+                                ref.current.animateNextTransition();
+                                setShowIndex(
+                                  index === showIndex ? null : index
+                                );
+                              }}>
+                              <Text>{title}</Text>
+                              {index === showIndex && renderList(category)}
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    )}
+                  </View>
+                  <Divider />
+                </TouchableOpacity>
+              );
+            })}
+          </Transitioning.View>
+        </Content>
       </Container>
-    </SafeAreaView>
+    </Screen>
   );
 };
 
 const styles = StyleSheet.create({
-  layout: {
-    padding: 5,
+  avatar: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2.65,
   },
-  icon: {
-    width: 50,
-    height: 50,
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+  },
+  cardContainer: {
+    flexGrow: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontSize: 24,
+  },
+  card: {
+    flexGrow: 1,
+    minHeight: 50,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+  // heading: {
+  //   fontSize: 24,
+  //   fontWeight: '900',
+  //   textTransform: 'uppercase',
+  //   letterSpacing: -2,
+  // },
+  // body: {
+  //   fontSize: 20,
+  //   lineHeight: 20 * 1.5,
+  //   textAlign: 'center',
+  // },
+  subCategoriesList: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 

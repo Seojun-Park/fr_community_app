@@ -59,41 +59,26 @@ export const GET_MY_PROFILE = gql`
           id
           title
           createdAt
-          Likes {
-            id
-          }
         }
         Rent {
           id
           title
           createdAt
-          Likes {
-            id
-          }
         }
         Board {
           id
           title
           createdAt
-          Likes {
-            id
-          }
         }
         Market {
           id
           title
           createdAt
-          Likes {
-            id
-          }
         }
         Recruits {
           id
           title
           createdAt
-          Likes {
-            id
-          }
         }
         Like {
           Boards {

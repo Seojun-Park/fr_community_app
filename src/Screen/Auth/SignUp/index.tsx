@@ -4,7 +4,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Icon, Text as ImportedText} from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
-import {Button, Container, Input} from '../../../common/SharedStyles';
+import {Button, Screen, Input} from '../../../common/SharedStyles';
 import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
 import {SignUpForm} from './styles';
@@ -152,7 +152,7 @@ const SignUpScreen: React.VFC = () => {
   }, [pwd, pwdCheck, setPwdMatch]);
 
   return (
-    <Container>
+    <Screen>
       <Text>signup</Text>
       <SignUpForm>
         <Input
@@ -204,7 +204,7 @@ const SignUpScreen: React.VFC = () => {
           <ImportedText status="primary">로그인 창으로 돌아가기</ImportedText>
         </TouchableText>
       </SignUpForm>
-    </Container>
+    </Screen>
   );
 };
 

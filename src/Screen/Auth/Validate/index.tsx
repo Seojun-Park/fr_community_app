@@ -4,7 +4,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
-  Container,
+  Screen,
   Input,
   TouchableTextBox,
 } from '../../../common/SharedStyles';
@@ -128,7 +128,7 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
   }
 
   return (
-    <Container style={styles.container}>
+    <Screen style={styles.container}>
       <CodeInputForm>
         <Input
           keyboardType="numeric"
@@ -148,7 +148,7 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
           <Text status="primary">인증번호 재전송</Text>
         </TouchableTextBox>
       </CodeInputForm>
-    </Container>
+    </Screen>
   );
 };
 
