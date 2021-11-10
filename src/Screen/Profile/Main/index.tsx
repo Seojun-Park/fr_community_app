@@ -11,8 +11,7 @@ import {
   getMyProfile_getMyProfile_data_Recruits,
   getMyProfile_getMyProfile_data_Rent,
 } from '../../../types/graphql';
-import {Screen} from '../../../common/SharedStyles';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import {LoadingScreen, Screen} from '../../../common/SharedStyles';
 import {
   AvatarBox,
   Container,
@@ -27,6 +26,8 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Divider, Icon, Text} from '@ui-kitten/components';
 import {Transition, Transitioning} from 'react-native-reanimated';
 import {profileMenuList} from '../../../common/menuList';
+import {useNavigation} from '@react-navigation/core';
+import {getDate} from '../../../common/getDate';
 
 interface IProps {
   route: {
@@ -37,7 +38,10 @@ interface IProps {
   };
 }
 
-const menu: Array<string> = ['내가 올린 글', '저장한 글'];
+const menu: Array<{filter: string; title: string}> = [
+  {filter: 'mine', title: '내가 올린 글'},
+  {filter: 'like', title: '저장한 글'},
+];
 
 const transition = (
   <Transition.Together>
@@ -48,6 +52,7 @@ const transition = (
 );
 
 const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {navigate} = useNavigation();
   const {id, token} = params;
   const ref = useRef();
   const [currentIndex, setCurrentIndex] = useState<number | null>();
@@ -72,12 +77,12 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
   const {data, loading} = useQuery<getMyProfileType, getMyProfileVariables>(
     GET_MY_PROFILE,
     {
-      // skip: !token,
+      fetchPolicy: 'cache-and-network',
+      skip: !token,
       variables: {token},
       onCompleted: ({getMyProfile}) => {
         const {success, error, data: completeData} = getMyProfile;
         if (success && completeData) {
-          console.log(completeData, completeData.Board);
           setBoards(completeData.Board);
           setRents(completeData.Rent);
           setMarkets(completeData.Market);
@@ -92,84 +97,318 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
   );
 
   const renderList = useCallback(
-    (category: string) => {
+    (category: string, filter: string) => {
       switch (category) {
         case 'market':
           return (
             <>
-              {markets ? (
-                markets.map((val, idx) => {
+              {filter === 'mine' ? (
+                markets && markets.length !== 0 ? (
+                  markets.map((val, idx) => {
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        style={styles.listRow}
+                        onPress={() =>
+                          navigate('PostDetail', {
+                            userId: id,
+                            id: val.id,
+                            category: 'market',
+                          })
+                        }>
+                        <Divider style={styles.dividerMargin} />
+                        <View>
+                          <Text>{val.title}</Text>
+                          <Text category="s2" appearance="hint">
+                            {getDate(val.createdAt)}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Divider style={styles.dividerMargin} />
+                    <Text category="label" appearance="hint">
+                      게시물이 없습니다
+                    </Text>
+                  </View>
+                )
+              ) : likes && likes.Markets && likes.Markets.length !== 0 ? (
+                likes.Markets.map((val, idx) => {
                   return (
-                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() =>
+                        navigate('PostDetail', {
+                          userId: id,
+                          id: val.id,
+                          category: 'market',
+                        })
+                      }>
+                      <Divider style={styles.dividerMargin} />
+
+                      <Text>{val.title}</Text>
+                    </TouchableOpacity>
                   );
                 })
               ) : (
-                <Text>게시물이 없습니다</Text>
+                <View>
+                  <Divider style={styles.dividerMargin} />
+                  <Text category="label" appearance="hint">
+                    게시물이 없습니다
+                  </Text>
+                </View>
               )}
             </>
           );
         case 'rent':
           return (
             <>
-              {rents ? (
-                rents?.map((val, idx) => {
+              {filter === 'mine' ? (
+                rents && rents.length !== 0 ? (
+                  rents.map((val, idx) => {
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        onPress={() =>
+                          navigate('PostDetail', {
+                            userId: id,
+                            id: val.id,
+                            category: 'rent',
+                          })
+                        }>
+                        <Divider style={styles.dividerMargin} />
+                        <Text>{val.title}</Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Divider style={styles.dividerMargin} />
+                    <Text category="label" appearance="hint">
+                      게시물이 없습니다
+                    </Text>
+                  </View>
+                )
+              ) : likes && likes.Rents && likes.Rents.length !== 0 ? (
+                likes.Rents.map((val, idx) => {
                   return (
-                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() =>
+                        navigate('PostDetail', {
+                          userId: id,
+                          id: val.id,
+                          category: 'rent',
+                        })
+                      }>
+                      <Divider style={styles.dividerMargin} />
+                      <Text>{val.title}</Text>
+                    </TouchableOpacity>
                   );
                 })
               ) : (
-                <Text>게시물이 없습니다</Text>
+                <View>
+                  <Divider style={styles.dividerMargin} />
+                  <Text category="label" appearance="hint">
+                    게시물이 없습니다
+                  </Text>
+                </View>
               )}
             </>
           );
         case 'recruit':
           return (
             <>
-              {recruits ? (
-                recruits?.map((val, idx) => {
+              {filter === 'mine' ? (
+                recruits && recruits.length !== 0 ? (
+                  recruits.map((val, idx) => {
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        onPress={() =>
+                          navigate('PostDetail', {
+                            userId: id,
+                            id: val.id,
+                            category: 'recruit',
+                          })
+                        }>
+                        <Divider style={styles.dividerMargin} />
+                        <Text>{val.title}</Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Divider style={styles.dividerMargin} />
+                    <Text category="label" appearance="hint">
+                      게시물이 없습니다
+                    </Text>
+                  </View>
+                )
+              ) : likes && likes.Recruits && likes.Recruits.length !== 0 ? (
+                likes.Recruits.map((val, idx) => {
                   return (
-                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() =>
+                        navigate('PostDetail', {
+                          userId: id,
+                          id: val.id,
+                          category: 'recruit',
+                        })
+                      }>
+                      <Divider style={styles.dividerMargin} />
+                      <Text>{val.title}</Text>
+                    </TouchableOpacity>
                   );
                 })
               ) : (
-                <Text>게시물이 없습니다</Text>
+                <View>
+                  <Divider style={styles.dividerMargin} />
+                  <Text category="label" appearance="hint">
+                    게시물이 없습니다
+                  </Text>
+                </View>
               )}
             </>
           );
         case 'board':
           return (
             <>
-              {boards ? (
-                boards?.map((val, idx) => {
+              {filter === 'mine' ? (
+                boards && boards.length !== 0 ? (
+                  boards.map((val, idx) => {
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        onPress={() =>
+                          navigate('PostDetail', {
+                            userId: id,
+                            id: val.id,
+                            category: 'board',
+                          })
+                        }>
+                        <Divider style={styles.dividerMargin} />
+                        <View style={styles.listRow}>
+                          <Text style={styles.titleStyle} numberOfLines={1}>
+                            {val.title}
+                          </Text>
+                          <Text category="c2" appearance="hint">
+                            {getDate(val.createdAt)}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Divider style={styles.dividerMargin} />
+                    <Text category="label" appearance="hint">
+                      게시물이 없습니다
+                    </Text>
+                  </View>
+                )
+              ) : likes && likes.Boards && likes.Boards.length !== 0 ? (
+                likes.Boards.map((val, idx) => {
                   return (
-                    <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() =>
+                        navigate('PostDetail', {
+                          userId: id,
+                          id: val.id,
+                          category: 'board',
+                        })
+                      }>
+                      <Divider style={styles.dividerMargin} />
+                      <Text>{val.title}</Text>
+                    </TouchableOpacity>
                   );
                 })
               ) : (
-                <Text>게시물이 없습니다</Text>
+                <View>
+                  <Divider style={styles.dividerMargin} />
+                  <Text category="label" appearance="hint">
+                    게시물이 없습니다
+                  </Text>
+                </View>
               )}
             </>
           );
-
         case 'meet':
-          meets?.map((val, idx) => {
-            return <TouchableOpacity key={idx}>{val.title}</TouchableOpacity>;
-          });
-          return <Text>게시물이 없습니다</Text>;
+          return (
+            <>
+              {filter === 'mine' ? (
+                meets && meets.length !== 0 ? (
+                  meets.map((val, idx) => {
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        onPress={() =>
+                          navigate('PostDetail', {
+                            userId: id,
+                            id: val.id,
+                            category: 'meet',
+                          })
+                        }>
+                        <Divider style={styles.dividerMargin} />
+
+                        <Text>{val.title}</Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Divider style={styles.dividerMargin} />
+                    <Text category="label" appearance="hint">
+                      게시물이 없습니다
+                    </Text>
+                  </View>
+                )
+              ) : likes && likes.Meets && likes.Meets.length !== 0 ? (
+                likes.Meets.map((val, idx) => {
+                  return (
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() =>
+                        navigate('PostDetail', {
+                          userId: id,
+                          id: val.id,
+                          category: 'meet',
+                        })
+                      }>
+                      <Divider style={styles.dividerMargin} />
+                      <Text>{val.title}</Text>
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <View>
+                  <Divider style={styles.dividerMargin} />
+                  <Text category="label" appearance="hint">
+                    게시물이 없습니다
+                  </Text>
+                </View>
+              )}
+            </>
+          );
         default:
           return null;
       }
     },
-    [boards, meets, markets, rents, recruits]
+    [boards, meets, markets, rents, recruits, likes]
   );
 
   if (loading) {
     return (
-      <Container>
-        <LoadingIndicator size="lg" />
-      </Container>
+      <LoadingScreen>
+        <Text>loading...</Text>
+      </LoadingScreen>
     );
   }
+
   return (
     <Screen>
       <Container>
@@ -210,7 +449,7 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
                         style={{
                           color: `${currentIndex === idx ? '#3f64f6' : 'gray'}`,
                         }}>
-                        {item}
+                        {item.title}
                       </Text>
                       <Icon
                         fill={currentIndex === idx ? '#3f64f6' : 'gray'}
@@ -231,8 +470,17 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
                                   index === showIndex ? null : index
                                 );
                               }}>
-                              <Text>{title}</Text>
-                              {index === showIndex && renderList(category)}
+                              <Text
+                                category="h6"
+                                style={{
+                                  color: `${
+                                    showIndex === index ? '#3f64f6' : 'gray'
+                                  }`,
+                                }}>
+                                {title}
+                              </Text>
+                              {index === showIndex &&
+                                renderList(category, item.filter)}
                             </TouchableOpacity>
                           );
                         })}
@@ -277,20 +525,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
-  // heading: {
-  //   fontSize: 24,
-  //   fontWeight: '900',
-  //   textTransform: 'uppercase',
-  //   letterSpacing: -2,
-  // },
-  // body: {
-  //   fontSize: 20,
-  //   lineHeight: 20 * 1.5,
-  //   textAlign: 'center',
-  // },
   subCategoriesList: {
-    marginTop: 20,
-    marginBottom: 20,
+    width: '100%',
+    padding: 10,
+  },
+  dividerMargin: {
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  listRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  titleStyle: {
+    width: '70%',
   },
 });
 

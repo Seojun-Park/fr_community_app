@@ -1,6 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ProfileScreen from '../Screen/Profile/Main';
+import PostDetailScreen from '../Screen/Profile/PostDetail';
 
 interface IProps {
   route: {
@@ -22,6 +23,7 @@ const ProfileStackNavigator: React.FC<IProps> = ({route: {params}}) => {
         component={ProfileScreen}
         initialParams={{id, token}}
       />
+      <ProfileStack.Screen name="PostDetail" component={PostDetailScreen} />
     </ProfileStack.Navigator>
   );
 };

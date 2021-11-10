@@ -14,6 +14,14 @@ interface PositionProps {
   position: string;
 }
 
+export const LoadingScreen = styled(SafeAreaView)`
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
 export const Screen = styled(SafeAreaView)`
   background-color: white;
   justify-content: center;

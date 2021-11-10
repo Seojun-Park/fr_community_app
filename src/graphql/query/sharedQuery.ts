@@ -202,3 +202,82 @@ export const CHECK_CHAT_MEMBER = gql`
     }
   }
 `;
+
+export const GET_BOARD = gql`
+  query getBoard($id: Int!) {
+    getBoard(id: $id) {
+      success
+      error
+      data {
+        id
+        title
+        content
+        Writer {
+          id
+          nickname
+        }
+        Replies {
+          id
+          content
+          User {
+            id
+            nickname
+          }
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
+export const GET_MARKET = gql`
+  query getMarket($id: Int!) {
+    getMarket(id: $id) {
+      success
+      error
+      data {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const GET_RENT = gql`
+  query getRent($id: Int!) {
+    getRent(id: $id) {
+      success
+      error
+      data {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const GET_RECRUIT = gql`
+  query getRecruit($id: Int!) {
+    getRecruit(id: $id) {
+      success
+      error
+      data {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const GET_MEET = gql`
+  query getMeet($id: Int!) {
+    getMeet(id: $id) {
+      success
+      error
+      data {
+        id
+        title
+      }
+    }
+  }
+`;

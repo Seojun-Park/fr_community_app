@@ -211,6 +211,52 @@ export interface outChatVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: createReply
+// ====================================================
+
+export interface createReply_createReply_data {
+  __typename: 'Reply';
+  id: number;
+}
+
+export interface createReply_createReply {
+  __typename: 'ReplyReturn';
+  success: boolean;
+  error: string | null;
+  data: createReply_createReply_data | null;
+}
+
+export interface createReply {
+  createReply: createReply_createReply;
+}
+
+export interface createReplyVariables {
+  args: CreateReplyInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: deleteReply
+// ====================================================
+
+export interface deleteReply {
+  deleteReply: boolean;
+}
+
+export interface deleteReplyVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -604,6 +650,179 @@ export interface checkChatMemberVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: getBoard
+// ====================================================
+
+export interface getBoard_getBoard_data_Writer {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getBoard_getBoard_data_Replies_User {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getBoard_getBoard_data_Replies {
+  __typename: 'Reply';
+  id: number;
+  content: string;
+  User: getBoard_getBoard_data_Replies_User;
+}
+
+export interface getBoard_getBoard_data {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  content: string;
+  Writer: getBoard_getBoard_data_Writer;
+  Replies: getBoard_getBoard_data_Replies[] | null;
+  createdAt: string;
+}
+
+export interface getBoard_getBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+  data: getBoard_getBoard_data | null;
+}
+
+export interface getBoard {
+  getBoard: getBoard_getBoard;
+}
+
+export interface getBoardVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getMarket
+// ====================================================
+
+export interface getMarket_getMarket_data {
+  __typename: 'Market';
+  id: number;
+  title: string;
+}
+
+export interface getMarket_getMarket {
+  __typename: 'MarketReturn';
+  success: boolean;
+  error: string | null;
+  data: getMarket_getMarket_data | null;
+}
+
+export interface getMarket {
+  getMarket: getMarket_getMarket;
+}
+
+export interface getMarketVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getRent
+// ====================================================
+
+export interface getRent_getRent_data {
+  __typename: 'Rent';
+  id: number;
+  title: string;
+}
+
+export interface getRent_getRent {
+  __typename: 'RentReturn';
+  success: boolean;
+  error: string | null;
+  data: getRent_getRent_data | null;
+}
+
+export interface getRent {
+  getRent: getRent_getRent;
+}
+
+export interface getRentVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getRecruit
+// ====================================================
+
+export interface getRecruit_getRecruit_data {
+  __typename: 'Recruit';
+  id: number;
+  title: string;
+}
+
+export interface getRecruit_getRecruit {
+  __typename: 'RecruitReturn';
+  success: boolean;
+  error: string | null;
+  data: getRecruit_getRecruit_data | null;
+}
+
+export interface getRecruit {
+  getRecruit: getRecruit_getRecruit;
+}
+
+export interface getRecruitVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getMeet
+// ====================================================
+
+export interface getMeet_getMeet_data {
+  __typename: 'Meet';
+  id: number;
+  title: string;
+}
+
+export interface getMeet_getMeet {
+  __typename: 'MeetReturn';
+  success: boolean;
+  error: string | null;
+  data: getMeet_getMeet_data | null;
+}
+
+export interface getMeet {
+  getMeet: getMeet_getMeet;
+}
+
+export interface getMeetVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL subscription operation: dmSubscription
 // ====================================================
 
@@ -687,6 +906,12 @@ export interface CreateDmInput {
   ChatId?: number | null;
   SenderId: number;
   ReceiverId: number;
+}
+
+export interface CreateReplyInput {
+  BoardId: number;
+  UserId: number;
+  content: string;
 }
 
 export interface CreateUserInput {

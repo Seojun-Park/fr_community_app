@@ -89,3 +89,21 @@ export const OUT_CHAT = gql`
     }
   }
 `;
+
+export const CREATE_REPLY = gql`
+  mutation createReply($args: CreateReplyInput!) {
+    createReply(args: $args) {
+      success
+      error
+      data {
+        id
+      }
+    }
+  }
+`;
+
+export const DELETE_REPLY = gql`
+  mutation deleteReply($id: Int!) {
+    deleteReply(id: $id)
+  }
+`;
