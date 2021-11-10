@@ -107,3 +107,12 @@ export const DELETE_REPLY = gql`
     deleteReply(id: $id)
   }
 `;
+
+export const TOGGLE_LIKE = gql`
+  mutation toggleLike($Id: Int!, $type: String!, $UserId: Int!) {
+    toggleLike(Id: $Id, type: $type, UserId: $UserId) {
+      success
+      error
+    }
+  }
+`;

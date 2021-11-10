@@ -257,6 +257,31 @@ export interface deleteReplyVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: toggleLike
+// ====================================================
+
+export interface toggleLike_toggleLike {
+  __typename: 'LikeReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface toggleLike {
+  toggleLike: toggleLike_toggleLike;
+}
+
+export interface toggleLikeVariables {
+  Id: number;
+  type: string;
+  UserId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -672,6 +697,12 @@ export interface getBoard_getBoard_data_Replies {
   User: getBoard_getBoard_data_Replies_User;
 }
 
+export interface getBoard_getBoard_data_Likes {
+  __typename: 'Like';
+  id: number;
+  OwnerId: number;
+}
+
 export interface getBoard_getBoard_data {
   __typename: 'Board';
   id: number;
@@ -679,6 +710,7 @@ export interface getBoard_getBoard_data {
   content: string;
   Writer: getBoard_getBoard_data_Writer;
   Replies: getBoard_getBoard_data_Replies[] | null;
+  Likes: getBoard_getBoard_data_Likes[] | null;
   createdAt: string;
 }
 

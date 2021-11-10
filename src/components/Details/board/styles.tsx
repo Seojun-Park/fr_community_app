@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import {View, ScrollView} from 'react-native';
 import {Button} from '@ui-kitten/components';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export const Container = styled(ScrollView)`
   padding: 0 20px;
@@ -20,6 +21,21 @@ export const Content = styled(View)`
   min-height: 250px;
   width: 100%;
   background-color: #eee;
+`;
+
+export const Like = styled(View)`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+`;
+
+export const LikeButton = styled(TouchableOpacity)`
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 `;
 
 export const ReplySection = styled(View)``;

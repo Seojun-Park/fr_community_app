@@ -1,6 +1,6 @@
 import {ApolloQueryResult, useMutation} from '@apollo/client';
 import {Divider, Icon, Text} from '@ui-kitten/components';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,6 +14,7 @@ import {Input, LoadingScreen} from '../../../common/SharedStyles';
 import {
   CREATE_REPLY,
   DELETE_REPLY,
+  TOGGLE_LIKE,
 } from '../../../graphql/mutation/sharedMutation';
 import {useInputState} from '../../../hooks/useInput';
 import {
@@ -24,17 +25,22 @@ import {
   createReplyVariables,
   deleteReply,
   deleteReplyVariables,
+  toggleLike as toggleLikeType,
+  toggleLikeVariables,
 } from '../../../types/graphql';
 import {
   BoardInfo,
   Container,
   Content,
   Head,
+  Like,
+  LikeButton,
   ReplyContent,
   ReplyRow,
   ReplySection,
   SendButton,
 } from './styles';
+import LottieView from 'lottie-react-native';
 
 interface IProps {
   board: getBoard_getBoard_data;
@@ -55,6 +61,9 @@ const BoardDetailView: React.FC<IProps> = ({
 }) => {
   const replyInput = useInputState();
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
+  const animation = useRef(null);
+  const [showLottie, setShowLotti] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   const [createReplyMutation, {loading: mutationLoading}] = useMutation<
     createReply,
@@ -100,6 +109,58 @@ const BoardDetailView: React.FC<IProps> = ({
       },
     }
   );
+
+  const [toggleLikeMutation] = useMutation<toggleLikeType, toggleLikeVariables>(
+    TOGGLE_LIKE,
+    {
+      variables: {
+        type: 'board',
+        Id: id,
+        UserId: userId,
+      },
+      onCompleted: ({toggleLike}) => {
+        const {success, error} = toggleLike;
+        if (success) {
+          refetch();
+          setShowLotti(!showLottie);
+        } else {
+          console.error(error);
+          return (
+            <>
+              {Toast.show({
+                type: 'error',
+                text1: '게시물을 저장할 수 없습니다',
+              })}
+            </>
+          );
+        }
+      },
+    }
+  );
+
+  console.log(board);
+
+  useEffect(() => {
+    if (board.Likes) {
+      setLikesCount(board.Likes.length);
+    }
+  }, [board.Likes]);
+
+  useEffect(() => {
+    if (board.Likes?.findIndex(v => v.OwnerId === userId) === 0) {
+      setShowLotti(true);
+      animation.current.play(0, 29);
+    }
+  }, [board.Likes, userId]);
+
+  console.log(board.Likes?.findIndex(v => v.OwnerId === userId));
+
+  const onPress = useCallback(() => {
+    toggleLikeMutation();
+    if (!showLottie) {
+      animation.current.play(0, 29);
+    }
+  }, [toggleLikeMutation]);
 
   const handleReplySubmit = useCallback(async () => {
     await createReplyMutation({
@@ -148,6 +209,23 @@ const BoardDetailView: React.FC<IProps> = ({
         <Content>
           <Text category="p1">{board.content}</Text>
         </Content>
+        <Like>
+          <LikeButton onPress={onPress}>
+            {!showLottie && (
+              <Icon {...styles.icon} name="heart-outline" fill="black" />
+            )}
+            <LottieView
+              source={require('../../../asset/lotties/heart.json')}
+              ref={animation}
+              loop={false}
+              style={{width: 80, height: 80}}
+            />
+          </LikeButton>
+          <Text category="s2" appearance="hint">
+            {likesCount}
+          </Text>
+          {/* <Button onPress={onPress} title="like" /> */}
+        </Like>
         <Divider style={styles.dividerMargin} />
         <ReplySection>
           <ReplyContent>
@@ -217,6 +295,13 @@ const styles = StyleSheet.create({
   },
   repleAction: {
     marginLeft: 10,
+  },
+  icon: {
+    position: 'absolute',
+    width: 23,
+    height: 23,
+    top: 27.5,
+    left: -11.5,
   },
 });
 

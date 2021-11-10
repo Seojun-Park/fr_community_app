@@ -28,6 +28,7 @@ import {Transition, Transitioning} from 'react-native-reanimated';
 import {profileMenuList} from '../../../common/menuList';
 import {useNavigation} from '@react-navigation/core';
 import {getDate} from '../../../common/getDate';
+import LottieView from 'lottie-react-native';
 
 interface IProps {
   route: {
@@ -398,13 +399,24 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
           return null;
       }
     },
-    [boards, meets, markets, rents, recruits, likes]
+    [boards, meets, markets, rents, recruits, likes, id, navigate]
   );
 
   if (loading) {
     return (
       <LoadingScreen>
-        <Text>loading...</Text>
+        <LottieView
+          source={require('../../../asset/lotties/loading.json')}
+          autoPlay
+          loop
+          style={{width: 150, height: 150}}
+        />
+        <LottieView
+          source={require('../../../asset/lotties/loading-text.json')}
+          autoPlay
+          loop
+          style={{width: 40, height: 40}}
+        />
       </LoadingScreen>
     );
   }

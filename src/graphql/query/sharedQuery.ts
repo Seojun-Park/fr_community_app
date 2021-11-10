@@ -224,6 +224,10 @@ export const GET_BOARD = gql`
             nickname
           }
         }
+        Likes {
+          id
+          OwnerId
+        }
         createdAt
       }
     }
