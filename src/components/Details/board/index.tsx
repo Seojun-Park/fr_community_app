@@ -21,9 +21,9 @@ import {
   getBoard,
   getBoardVariables,
   getBoard_getBoard_data,
-  createReply,
+  createReply as createReplyType,
   createReplyVariables,
-  deleteReply,
+  deleteReply as deleteReplyType,
   deleteReplyVariables,
   toggleLike as toggleLikeType,
   toggleLikeVariables,
@@ -66,7 +66,7 @@ const BoardDetailView: React.FC<IProps> = ({
   const [likesCount, setLikesCount] = useState(0);
 
   const [createReplyMutation, {loading: mutationLoading}] = useMutation<
-    createReply,
+    createReplyType,
     createReplyVariables
   >(CREATE_REPLY, {
     onCompleted: ({createReply}) => {
@@ -90,25 +90,25 @@ const BoardDetailView: React.FC<IProps> = ({
     },
   });
 
-  const [deleteReplyMutation] = useMutation<deleteReply, deleteReplyVariables>(
-    DELETE_REPLY,
-    {
-      onCompleted: ({deleteReply}) => {
-        if (deleteReply) {
-          refetch();
-          return (
-            <>
-              {Toast.show({
-                position: 'bottom',
-                type: 'success',
-                text1: '댓글이 삭제 되었습니다',
-              })}
-            </>
-          );
-        }
-      },
-    }
-  );
+  const [deleteReplyMutation] = useMutation<
+    deleteReplyType,
+    deleteReplyVariables
+  >(DELETE_REPLY, {
+    onCompleted: ({deleteReply}) => {
+      if (deleteReply) {
+        refetch();
+        return (
+          <>
+            {Toast.show({
+              position: 'bottom',
+              type: 'success',
+              text1: '댓글이 삭제 되었습니다',
+            })}
+          </>
+        );
+      }
+    },
+  });
 
   const [toggleLikeMutation] = useMutation<toggleLikeType, toggleLikeVariables>(
     TOGGLE_LIKE,
@@ -153,14 +153,12 @@ const BoardDetailView: React.FC<IProps> = ({
     }
   }, [board.Likes, userId]);
 
-  console.log(board.Likes?.findIndex(v => v.OwnerId === userId));
-
   const onPress = useCallback(() => {
     toggleLikeMutation();
     if (!showLottie) {
       animation.current.play(0, 29);
     }
-  }, [toggleLikeMutation]);
+  }, [toggleLikeMutation, showLottie]);
 
   const handleReplySubmit = useCallback(async () => {
     await createReplyMutation({
