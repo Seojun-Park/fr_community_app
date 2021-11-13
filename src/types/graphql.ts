@@ -855,6 +855,37 @@ export interface getMeetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: getBoardsByCategory
+// ====================================================
+
+export interface getBoardsByCategory_getBoardsByCategory_data {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getBoardsByCategory_getBoardsByCategory {
+  __typename: 'BoardsReturn';
+  success: boolean;
+  error: string | null;
+  data: getBoardsByCategory_getBoardsByCategory_data[] | null;
+}
+
+export interface getBoardsByCategory {
+  getBoardsByCategory: getBoardsByCategory_getBoardsByCategory;
+}
+
+export interface getBoardsByCategoryVariables {
+  category: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL subscription operation: dmSubscription
 // ====================================================
 

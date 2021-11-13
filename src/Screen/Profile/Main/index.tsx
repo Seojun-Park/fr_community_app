@@ -11,9 +11,10 @@ import {
   getMyProfile_getMyProfile_data_Recruits,
   getMyProfile_getMyProfile_data_Rent,
 } from '../../../types/graphql';
-import {LoadingScreen, Screen} from '../../../common/SharedStyles';
+import {Button, LoadingScreen, Screen} from '../../../common/SharedStyles';
 import {
   AvatarBox,
+  Bottom,
   Container,
   Content,
   Head,
@@ -29,6 +30,7 @@ import {profileMenuList} from '../../../common/menuList';
 import {useNavigation} from '@react-navigation/core';
 import {getDate} from '../../../common/getDate';
 import LottieView from 'lottie-react-native';
+import {logUserOut} from '../../../graphql/client';
 
 interface IProps {
   route: {
@@ -504,6 +506,12 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
               );
             })}
           </Transitioning.View>
+          <Bottom>
+            <Divider style={styles.divider} />
+            <Button style={styles.buttonStyle} onPress={() => logUserOut()}>
+              로그아웃
+            </Button>
+          </Bottom>
         </Content>
       </Container>
     </Screen>
@@ -552,6 +560,13 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     width: '70%',
+  },
+  divider: {
+    width: '100%',
+    marginBottom: 10,
+  },
+  buttonStyle: {
+    width: '80%',
   },
 });
 

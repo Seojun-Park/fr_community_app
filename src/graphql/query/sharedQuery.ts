@@ -285,3 +285,17 @@ export const GET_MEET = gql`
     }
   }
 `;
+
+export const GET_BOARDS_BY_CATEGORY = gql`
+  query getBoardsByCategory($category: String!) {
+    getBoardsByCategory(category: $category) {
+      success
+      error
+      data {
+        id
+        title
+        createdAt
+      }
+    }
+  }
+`;

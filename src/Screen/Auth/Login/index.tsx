@@ -5,7 +5,7 @@ import React, {useCallback, useState} from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {userValidate} from '../../../graphql/client';
 import {LOGIN} from '../../../graphql/mutation/sharedMutation';
-import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
+import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {login as typeLogin, loginVariables} from '../../../types/graphql';
 import {LoginForm} from './styles';
 import {useInputState} from '../../../hooks/useInput';

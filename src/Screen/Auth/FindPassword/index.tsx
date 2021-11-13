@@ -6,7 +6,7 @@ import {StyleSheet, Text} from 'react-native';
 import {Button, Container, Input} from '../../../common/SharedStyles';
 import {SEND_NEW_PASSWORD} from '../../../graphql/mutation/sharedMutation';
 import {useInputState} from '../../../hooks/useInput';
-import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
+import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {FindPasswordBox} from './styles';
 import {
   sendNewPassword as sendNewPasswordType,

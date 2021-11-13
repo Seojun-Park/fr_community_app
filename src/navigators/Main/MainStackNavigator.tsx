@@ -3,21 +3,23 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import MainTabNavigator from './MainTabNavigator';
 import {useReactiveVar} from '@apollo/client';
-import {isLoggedInVar} from '../graphql/client';
-import AuthStackNavigator from './AuthStackNavigator';
+import {isLoggedInVar} from '../../graphql/client';
+import AuthStackNavigator from '../Auth/AuthStackNavigator';
 
 export type MainStackParamList = {
-  AppMain: undefined;
+  AppMain: {
+    id: number | null | undefined;
+    token: string | null;
+  };
   Auth: undefined;
-  Chat: undefined;
 };
 
 interface IProps {
-  id: string | null;
+  id: number | null;
   token: string | null;
 }
 
-const MainStack = createNativeStackNavigator();
+const MainStack = createNativeStackNavigator<MainStackParamList>();
 
 const MainStackNavigator: React.FC<IProps> = ({id, token}) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);

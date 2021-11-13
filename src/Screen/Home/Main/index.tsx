@@ -1,15 +1,20 @@
-import React, {useRef, useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {logUserOut} from '../../../graphql/client';
 import {Transitioning, Transition} from 'react-native-reanimated';
 import {homeData} from '../homeData';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {LoadingScreen} from '../../../common/SharedStyles';
+import LottieView from 'lottie-react-native';
+import {useNavigation} from '@react-navigation/core';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeStackParamList} from '../../../navigators/Home/HomeStackNavigator';
 
 interface IProps {
   route: {
     params: {
-      id: number;
+      userId: number;
+      token: string;
     };
   };
 }
@@ -22,43 +27,88 @@ const transition = (
   </Transition.Together>
 );
 
+type HomeScreenProps = NativeStackNavigationProp<
+  HomeStackParamList,
+  'HomeScreen'
+>;
+
 const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
-  const {id} = params;
+  const {userId, token} = params;
+  const {navigate} = useNavigation<HomeScreenProps>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [currentIndex, setcurrentIndex] = useState<number | null>(null);
   const ref = useRef();
 
+  useEffect(() => {
+    if (token?.trim()) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [token]);
+
+  if (loading) {
+    return (
+      <LoadingScreen>
+        <LottieView
+          source={require('../../../asset/lotties/loading.json')}
+          autoPlay
+          loop
+          style={{width: 150, height: 150}}
+        />
+        <LottieView
+          source={require('../../../asset/lotties/loading-text.json')}
+          autoPlay
+          loop
+          style={{width: 40, height: 40}}
+        />
+      </LoadingScreen>
+    );
+  }
+
   return (
-    <SafeAreaView>
-      <Transitioning.View ref={ref} transition={transition}>
-        {homeData.map(({bg, color, category, subCategories}, index) => {
-          return (
-            <TouchableOpacity
-              key={index}
-              style={styles.cardContainer}
-              onPress={() => {
-                ref.current.animateNextTransition();
-                setcurrentIndex(index === currentIndex ? null : index);
-              }}
-              activeOpacity={0.9}>
-              <View style={[styles.card, {backgroundColor: bg}]}>
-                <Text style={[styles.heading, {color}]}>{category}</Text>
-                {index === currentIndex && (
-                  <View style={styles.subCategoriesList}>
-                    {subCategories.map(subCategory => (
-                      <TouchableOpacity key={subCategory}>
-                        <Text style={[styles.body, {color}]}>
-                          {subCategory}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
+    <ScrollView>
+      <SafeAreaView>
+        <Transitioning.View ref={ref} transition={transition}>
+          {homeData.map(
+            ({bg, color, category, subCategories, filter}, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.cardContainer}
+                  onPress={() => {
+                    ref.current.animateNextTransition();
+                    setcurrentIndex(index === currentIndex ? null : index);
+                  }}
+                  activeOpacity={0.9}>
+                  <View style={[styles.card, {backgroundColor: bg}]}>
+                    <Text style={[styles.heading, {color}]}>{category}</Text>
+                    {index === currentIndex && (
+                      <View style={styles.subCategoriesList}>
+                        {subCategories.map((subCategory, idx) => (
+                          <TouchableOpacity
+                            key={subCategory}
+                            onPress={() =>
+                              navigate('ItemListScreen', {
+                                category: filter[idx],
+                                userId,
+                              })
+                            }>
+                            <Text style={[styles.body, {color}]}>
+                              {subCategory}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
                   </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </Transitioning.View>
-    </SafeAreaView>
+                </TouchableOpacity>
+              );
+            }
+          )}
+        </Transitioning.View>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -69,7 +119,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     flexGrow: 1,
-    // minHeight: 145,
+    minHeight: 145,
   },
   card: {
     flexGrow: 1,
@@ -91,7 +141,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subCategoriesList: {
-    marginTop: 30,
+    marginTop: 15,
   },
 });
 

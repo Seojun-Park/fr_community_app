@@ -12,7 +12,7 @@ import {Text} from '@ui-kitten/components';
 import {logUserIn} from '../../../graphql/client';
 import {GET_ME} from '../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../hooks/useInput';
-import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
+import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {
   getMeVariables,
   getMe as getMeType,

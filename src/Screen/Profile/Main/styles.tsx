@@ -1,5 +1,5 @@
 import {Text} from '@ui-kitten/components';
-import {ScrollView, View, TouchableOpacity} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import styled from 'styled-components';
 
 export const Container = styled(View)`
@@ -30,7 +30,6 @@ export const InfoText = styled(Text)`
 `;
 
 export const Content = styled(ScrollView)`
-  min-height: 150px;
   padding: 20px;
 `;
 
@@ -38,4 +37,11 @@ export const SectionRow = styled(View)`
   width: 100%;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const Bottom = styled(View)`
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
 `;

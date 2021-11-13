@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import MainStackNavigator from './src/navigators/MainStackNavigator';
+import MainStackNavigator from './src/navigators/Main/MainStackNavigator';
 import {ApolloProvider} from '@apollo/client';
 import {client} from './src/graphql/client';
 import * as eva from '@eva-design/eva';

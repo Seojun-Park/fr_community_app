@@ -22,7 +22,7 @@ import LoadingIndicator from '../../../components/LoadingIndicator';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
 import {myIdVar} from '../../../graphql/client';
 import {GET_CHATS} from '../../../graphql/query/sharedQuery';
-import {ChatStackParamList} from '../../../navigators/ChatStackNavigator';
+import {ChatStackParamList} from '../../../navigators/Auth/ChatStackNavigator';
 import {
   getChats as getChatsTypes,
   getChatsVariables,

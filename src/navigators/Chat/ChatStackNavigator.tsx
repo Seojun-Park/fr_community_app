@@ -1,7 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatListScreen from '../Screen/Chat/ChatList';
-import ChatDetailScreen from '../Screen/Chat/ChatDetail';
+import ChatListScreen from '../../Screen/Chat/ChatList';
+import ChatDetailScreen from '../../Screen/Chat/ChatDetail';
 
 export type ChatStackParamList = {
   ChatList: undefined;

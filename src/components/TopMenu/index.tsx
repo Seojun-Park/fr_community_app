@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/core';
 import {Icon, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import React, {useCallback} from 'react';
 import {GET_USER} from '../../graphql/query/sharedQuery';
-import {MainTabParamList} from '../../navigators/MainTabNavigator';
+import {MainTabParamList} from '../../navigators/Main/MainTabNavigator';
 import {getUser as getUserType, getUserVariables} from '../../types/graphql';
 
 interface IProps {

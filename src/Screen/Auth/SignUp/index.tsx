@@ -6,7 +6,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
 import {Button, Screen, Input} from '../../../common/SharedStyles';
 import {useInputState} from '../../../hooks/useInput';
-import {AuthStackParamList} from '../../../navigators/AuthStackNavigator';
+import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {SignUpForm} from './styles';
 import {SIGN_UP} from '../../../graphql/mutation/sharedMutation';
 import LoadingIndicator from '../../../components/LoadingIndicator';

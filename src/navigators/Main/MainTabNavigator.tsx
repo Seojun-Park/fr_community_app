@@ -1,14 +1,14 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeStackNavigator from './HomeStackNavigator';
+import HomeStackNavigator from '../Home/HomeStackNavigator';
 import {
   BottomNavigation,
   BottomNavigationTab,
   Icon,
 } from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
-import ChatStackNavigator from './ChatStackNavigator';
-import ProfileStackNavigator from './ProfileStackNavigator';
+import ChatStackNavigator from '../Chat/ChatStackNavigator';
+import ProfileStackNavigator from '../Profile/ProfileStackNavigator';
 
 export type MainTabParamList = {
   Home: {
@@ -92,7 +92,7 @@ const MainTabNavigator: React.FC<IProps> = ({route: {params}}) => {
       <MainTab.Screen
         name="Home"
         component={HomeStackNavigator}
-        initialParams={{id}}
+        initialParams={{id, token}}
       />
       <MainTab.Screen
         name="Chat"

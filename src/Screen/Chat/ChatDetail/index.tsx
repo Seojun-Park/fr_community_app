@@ -41,7 +41,7 @@ import {
   MEMBER_OUT,
 } from '../../../graphql/subscription/subscription';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ChatStackParamList} from '../../../navigators/ChatStackNavigator';
+import {ChatStackParamList} from '../../../navigators/Auth/ChatStackNavigator';
 import {
   InputBox,
   MessageBox,
