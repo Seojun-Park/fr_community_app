@@ -878,6 +878,7 @@ export interface getBoardsByCategory {
 
 export interface getBoardsByCategoryVariables {
   category: string;
+  loadQuantity: number;
 }
 
 /* tslint:disable */

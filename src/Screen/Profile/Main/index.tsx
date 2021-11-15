@@ -11,7 +11,7 @@ import {
   getMyProfile_getMyProfile_data_Recruits,
   getMyProfile_getMyProfile_data_Rent,
 } from '../../../types/graphql';
-import {Button, LoadingScreen, Screen} from '../../../common/SharedStyles';
+import {Button, Screen} from '../../../common/SharedStyles';
 import {
   AvatarBox,
   Bottom,
@@ -29,8 +29,8 @@ import {Transition, Transitioning} from 'react-native-reanimated';
 import {profileMenuList} from '../../../common/menuList';
 import {useNavigation} from '@react-navigation/core';
 import {getDate} from '../../../common/getDate';
-import LottieView from 'lottie-react-native';
 import {logUserOut} from '../../../graphql/client';
+import Loading from '../../../components/Loading';
 
 interface IProps {
   route: {
@@ -405,22 +405,7 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
   );
 
   if (loading) {
-    return (
-      <LoadingScreen>
-        <LottieView
-          source={require('../../../asset/lotties/loading.json')}
-          autoPlay
-          loop
-          style={{width: 150, height: 150}}
-        />
-        <LottieView
-          source={require('../../../asset/lotties/loading-text.json')}
-          autoPlay
-          loop
-          style={{width: 40, height: 40}}
-        />
-      </LoadingScreen>
-    );
+    return <Loading />;
   }
 
   return (

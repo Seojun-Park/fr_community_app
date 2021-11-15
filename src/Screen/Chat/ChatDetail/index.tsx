@@ -34,14 +34,13 @@ import {
   GET_CHAT_MESSAGE,
   CHECK_CHAT_MEMBER,
 } from '../../../graphql/query/sharedQuery';
-import {Container, Input} from '../../../common/SharedStyles';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import {Input} from '../../../common/SharedStyles';
+import LoadingIndicator from '../../../components/Loading';
 import {
   DM_SUBSCRIPTION,
   MEMBER_OUT,
 } from '../../../graphql/subscription/subscription';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ChatStackParamList} from '../../../navigators/Auth/ChatStackNavigator';
 import {
   InputBox,
   MessageBox,
@@ -57,6 +56,8 @@ import {getTime} from '../../../common/getDate';
 import Avatar from '../../../components/Avatar';
 import Toast from 'react-native-toast-message';
 import {SEND_DM} from '../../../graphql/mutation/sharedMutation';
+import {ChatStackParamList} from '../../../navigators/Chat/ChatStackNavigator';
+import Loading from '../../../components/Loading';
 
 type ChatDetailScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
@@ -285,11 +286,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   );
 
   if (subscriptionLoading && !chatId && memberOutLoading) {
-    return (
-      <Container>
-        <LoadingIndicator size="large" />
-      </Container>
-    );
+    return <Loading />;
   }
 
   return (

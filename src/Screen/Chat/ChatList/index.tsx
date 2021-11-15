@@ -17,12 +17,9 @@ import {
   View,
 } from 'react-native';
 import {getDateWithoutYear, getTime} from '../../../common/getDate';
-import {Container} from '../../../common/SharedStyles';
-import LoadingIndicator from '../../../components/LoadingIndicator';
-import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
+import LoadingIndicator from '../../../components/Loading';
 import {myIdVar} from '../../../graphql/client';
 import {GET_CHATS} from '../../../graphql/query/sharedQuery';
-import {ChatStackParamList} from '../../../navigators/Auth/ChatStackNavigator';
 import {
   getChats as getChatsTypes,
   getChatsVariables,
@@ -38,6 +35,8 @@ import {OUT_CHAT} from '../../../graphql/mutation/sharedMutation';
 import Toast from 'react-native-toast-message';
 import {GET_DM} from '../../../graphql/subscription/subscription';
 import Badge from '../../../components/Badge';
+import Loading from '../../../components/Loading';
+import {ChatStackParamList} from '../../../navigators/Chat/ChatStackNavigator';
 
 type ChatListScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
@@ -224,11 +223,7 @@ const ChatListScreen = () => {
   };
 
   if (loading && subscriptionLoading) {
-    return (
-      <Container>
-        <LoadingIndicator size="large" />
-      </Container>
-    );
+    return <Loading />;
   }
 
   return (

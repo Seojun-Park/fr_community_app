@@ -18,7 +18,7 @@ import {
   Input,
   TouchableTextBox,
 } from '../../../common/SharedStyles';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import LoadingIndicator from '../../../components/Loading';
 import Toast from 'react-native-toast-message';
 
 type LoginScreenProps = NativeStackNavigationProp<AuthStackParamList, 'Login'>;

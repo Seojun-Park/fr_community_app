@@ -1,14 +1,30 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../../Screen/Home/Main';
-import ListStackNavigator from './ListStackNavigation';
+import BoardStackNavigator from './Board/BoardStackNavigation';
 
 export type HomeStackParamList = {
   HomeScreen: {
     userId: number;
     token: string;
   };
-  ItemListScreen: {
+  BoardListScreen: {
+    userId: number;
+    category: string;
+  };
+  MarketListScreen: {
+    userId: number;
+    category: string;
+  };
+  RentListScreen: {
+    userId: number;
+    category: string;
+  };
+  RecruitListScreen: {
+    userId: number;
+    category: string;
+  };
+  CommunityListScreen: {
     userId: number;
     category: string;
   };
@@ -34,8 +50,8 @@ const HomeStackNavigator: React.FC<IProps> = ({route: {params}}) => {
         initialParams={{userId: id, token}}
       />
       <HomeStack.Screen
-        name="ItemListScreen"
-        component={ListStackNavigator}
+        name="BoardListScreen"
+        component={BoardStackNavigator}
         initialParams={{userId: id}}
       />
     </HomeStack.Navigator>

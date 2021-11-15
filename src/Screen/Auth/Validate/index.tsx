@@ -19,11 +19,12 @@ import {
   verifyEmail as verifyEmailType,
   verifyEmailVariables,
 } from '../../../types/graphql';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import LoadingIndicator from '../../../components/Loading';
 import {CodeInputForm} from './styles';
-import {StyleSheet, View, Text as NativeText} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {VERIFY_EMAIL} from '../../../graphql/mutation/sharedMutation';
 import Toast from 'react-native-toast-message';
+import Loading from '../../../components/Loading';
 
 type ValidateScreenProps = NativeStackNavigationProp<
   AuthStackParamList,
@@ -118,13 +119,7 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
   }, [codeInput.value, code, email, verifyEmailMutation]);
 
   if (loading) {
-    return (
-      <View style={styles.centerbox}>
-        <NativeText>
-          <LoadingIndicator size="large" />;
-        </NativeText>
-      </View>
-    );
+    return <Loading />;
   }
 
   return (

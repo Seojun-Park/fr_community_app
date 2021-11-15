@@ -9,7 +9,7 @@ import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {SignUpForm} from './styles';
 import {SIGN_UP} from '../../../graphql/mutation/sharedMutation';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import LoadingIndicator from '../../../components/Loading';
 import {renderCaption} from '../../../hooks/useCaption';
 import {TouchableText} from '../Login/styles';
 import Toast from 'react-native-toast-message';

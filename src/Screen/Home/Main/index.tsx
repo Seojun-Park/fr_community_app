@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Transitioning, Transition} from 'react-native-reanimated';
@@ -47,6 +47,31 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
     }
   }, [token]);
 
+  const handleNavigate = useCallback(
+    (category, subCategory) => {
+      switch (category) {
+        case 'Board':
+          navigate('BoardListScreen', {category: subCategory, userId});
+          break;
+        case 'Market':
+          navigate('MarketListScreen', {category: subCategory, userId});
+          break;
+        case 'Rent':
+          navigate('RentListScreen', {category: subCategory, userId});
+          break;
+        case 'Recruit':
+          navigate('RecruitListScreen', {category: subCategory, userId});
+          break;
+        case 'Community':
+          navigate('CommunityListScreen', {category: subCategory, userId});
+          break;
+        default:
+          break;
+      }
+    },
+    [navigate, userId]
+  );
+
   if (loading) {
     return (
       <LoadingScreen>
@@ -71,7 +96,7 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
       <SafeAreaView>
         <Transitioning.View ref={ref} transition={transition}>
           {homeData.map(
-            ({bg, color, category, subCategories, filter}, index) => {
+            ({bg, color, title, category, subCategories, filter}, index) => {
               return (
                 <TouchableOpacity
                   key={index}
@@ -82,18 +107,19 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
                   }}
                   activeOpacity={0.9}>
                   <View style={[styles.card, {backgroundColor: bg}]}>
-                    <Text style={[styles.heading, {color}]}>{category}</Text>
+                    <Text style={[styles.heading, {color}]}>{title}</Text>
                     {index === currentIndex && (
                       <View style={styles.subCategoriesList}>
                         {subCategories.map((subCategory, idx) => (
                           <TouchableOpacity
                             key={subCategory}
-                            onPress={() =>
-                              navigate('ItemListScreen', {
-                                category: filter[idx],
-                                userId,
-                              })
-                            }>
+                            onPress={() => {
+                              handleNavigate(category, filter[idx]);
+                              // navigate(`${category}ListScreen`, {
+                              //   category: filter[idx],
+                              //   userId,
+                              // })
+                            }}>
                             <Text style={[styles.body, {color}]}>
                               {subCategory}
                             </Text>

@@ -2,8 +2,8 @@ import {useMutation} from '@apollo/client';
 import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
-import {StyleSheet, Text} from 'react-native';
-import {Button, Container, Input} from '../../../common/SharedStyles';
+import {StyleSheet} from 'react-native';
+import {Button, Input, Screen} from '../../../common/SharedStyles';
 import {SEND_NEW_PASSWORD} from '../../../graphql/mutation/sharedMutation';
 import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
@@ -13,7 +13,7 @@ import {
   sendNewPasswordVariables,
 } from '../../../types/graphql';
 import Toast from 'react-native-toast-message';
-import LoadingIndicator from '../../../components/LoadingIndicator';
+import {Spinner} from '@ui-kitten/components';
 
 type FindPasswordScreenProps = NativeStackNavigationProp<
   AuthStackParamList,
@@ -84,7 +84,7 @@ const FindPasswordScreen: React.VFC = () => {
   ]);
 
   return (
-    <Container>
+    <Screen>
       <FindPasswordBox>
         <Input status="primary" {...emailInput} label="이메일" />
         <Input status="primary" {...lastNameInput} label="성" />
@@ -93,14 +93,12 @@ const FindPasswordScreen: React.VFC = () => {
           style={styles.buttonbox}
           status="primary"
           onPress={() => handleSubmit()}
-          accessoryLeft={
-            loading ? <LoadingIndicator size="small" /> : undefined
-          }
+          accessoryLeft={loading ? <Spinner /> : undefined}
           appearance={loading ? 'outline' : 'filled'}>
           찾기
         </Button>
       </FindPasswordBox>
-    </Container>
+    </Screen>
   );
 };
 
