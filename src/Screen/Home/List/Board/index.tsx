@@ -45,6 +45,8 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
     getBoardsByCategoryVariables
   >(GET_BOARDS_BY_CATEGORY, {variables: {category, loadQuantity: quantity}});
 
+  // goback with refreshing trigger
+
   const backAction = () => (
     <TopNavigationAction
       icon={<Icon {...{width: 24, height: 24}} name="arrow-back" />}
