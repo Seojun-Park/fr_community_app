@@ -2,27 +2,23 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BoardListScreen from '../../../Screen/Home/List/Board';
 import BoardDetailView from '../../../components/Details/board';
-import {
-  getBoardsByCategory,
-  getBoardsByCategoryVariables,
-} from '../../../types/graphql';
-import {ApolloQueryResult} from '@apollo/client';
 
 export type BoardStackParamList = {
   BoardList: {
-    userId: number;
+    userId: string;
     category: string;
+    refreshing?: boolean;
   };
   BoardDetail: {
-    userId: number;
-    postId: number;
+    userId: string;
+    postId: string;
   };
 };
 
 interface IProps {
   route: {
     params: {
-      userId: number;
+      userId: string;
       category: string;
     };
   };

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {RefreshControl, StyleSheet, Text, View} from 'react-native';
 import {
   Divider,
@@ -24,8 +24,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 interface IProps {
   route: {
     params: {
-      userId: number;
+      userId: string;
       category: string;
+      refreshing?: boolean;
     };
   };
 }
@@ -37,15 +38,18 @@ type BoardListScreenProps = NativeStackNavigationProp<
 
 const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
   const {navigate, goBack} = useNavigation<BoardListScreenProps>();
-  const {userId, category} = params;
+  const {userId, category, refreshing} = params;
   const [quantity, setQuantity] = useState<number>(12);
-
   const {data, loading, fetchMore, refetch} = useQuery<
     getBoardsByCategory,
     getBoardsByCategoryVariables
   >(GET_BOARDS_BY_CATEGORY, {variables: {category, loadQuantity: quantity}});
 
-  // goback with refreshing trigger
+  useEffect(() => {
+    if (refreshing) {
+      refetch();
+    }
+  }, [refreshing, refetch]);
 
   const backAction = () => (
     <TopNavigationAction

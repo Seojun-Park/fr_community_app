@@ -708,6 +708,7 @@ export interface getBoard_getBoard_data {
   id: number;
   title: string;
   content: string;
+  category: string;
   Writer: getBoard_getBoard_data_Writer;
   Replies: getBoard_getBoard_data_Replies[] | null;
   Likes: getBoard_getBoard_data_Likes[] | null;

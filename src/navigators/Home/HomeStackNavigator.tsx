@@ -5,34 +5,34 @@ import BoardStackNavigator from './Board/BoardStackNavigation';
 
 export type HomeStackParamList = {
   HomeScreen: {
-    userId: number;
+    userId: string;
     token: string;
   };
   BoardListScreen: {
-    userId: number;
+    userId: string;
     category: string;
   };
   MarketListScreen: {
-    userId: number;
+    userId: string;
     category: string;
   };
   RentListScreen: {
-    userId: number;
+    userId: string;
     category: string;
   };
   RecruitListScreen: {
-    userId: number;
+    userId: string;
     category: string;
   };
   CommunityListScreen: {
-    userId: number;
+    userId: string;
     category: string;
   };
 };
 interface IProps {
   route: {
     params: {
-      id: number;
+      id: string;
       token: string;
     };
   };

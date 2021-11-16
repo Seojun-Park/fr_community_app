@@ -12,15 +12,15 @@ import ProfileStackNavigator from '../Profile/ProfileStackNavigator';
 
 export type MainTabParamList = {
   Home: {
-    id: number;
+    id: string;
     token: string;
   };
   Chat: {
-    id: number;
+    id: string;
     token: string;
   };
   Profile: {
-    id: number;
+    id: string;
     token: string;
   };
 };
@@ -28,7 +28,7 @@ export type MainTabParamList = {
 interface IProps {
   route: {
     params: {
-      id: number;
+      id: string;
       token: string;
     };
   };
