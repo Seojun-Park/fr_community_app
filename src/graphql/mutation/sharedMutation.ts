@@ -116,3 +116,21 @@ export const TOGGLE_LIKE = gql`
     }
   }
 `;
+
+export const DELETE_BOARD = gql`
+  mutation deleteBoard($id: Int!) {
+    deleteBoard(id: $id) {
+      success
+      error
+    }
+  }
+`;
+
+export const CREATE_BOARD = gql`
+  mutation createBoard($args: CreateBoardInput!) {
+    createBoard(args: $args) {
+      success
+      error
+    }
+  }
+`;

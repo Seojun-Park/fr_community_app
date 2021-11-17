@@ -23,6 +23,7 @@ export const LoadingScreen = styled(SafeAreaView)`
 `;
 
 export const Screen = styled(SafeAreaView)`
+  padding-top: 20px;
   background-color: white;
   justify-content: center;
   align-items: center;

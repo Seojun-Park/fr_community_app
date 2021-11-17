@@ -9,12 +9,13 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
+import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import {getDate} from '../../../common/getDate';
 import {
   CREATE_REPLY,
+  DELETE_BOARD,
   DELETE_REPLY,
   TOGGLE_LIKE,
 } from '../../../graphql/mutation/sharedMutation';
@@ -22,6 +23,8 @@ import {GET_BOARD} from '../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../hooks/useInput';
 import {BoardStackParamList} from '../../../navigators/Home/Board/BoardStackNavigation';
 import {
+  deleteBoard as deleteBoardType,
+  deleteBoardVariables,
   createReply as createReplyType,
   createReplyVariables,
   deleteReply as deleteReplyType,
@@ -33,6 +36,8 @@ import {
 } from '../../../types/graphql';
 import Loading from '../../Loading';
 import {
+  BoardAction,
+  BoardActionButton,
   BoardInfo,
   Container,
   Content,
@@ -45,8 +50,8 @@ import {
   SendButton,
 } from './styles';
 import LottieView from 'lottie-react-native';
+import {Input, LoadingScreen, Screen} from '../../../common/SharedStyles';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Input, LoadingScreen} from '../../../common/SharedStyles';
 
 interface IProps {
   route: {
@@ -93,7 +98,31 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
   const [showLottie, setShowLotti] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
 
-  console.log(data?.getBoard.data?.Likes);
+  const [deleteBoardMutation] = useMutation<
+    deleteBoardType,
+    deleteBoardVariables
+  >(DELETE_BOARD, {
+    variables: {
+      id: parseInt(postId, 10),
+    },
+    onCompleted: ({deleteBoard}) => {
+      const {success, error} = deleteBoard;
+      if (success) {
+        navigate('BoardList', {userId, category: 'notice', refreshing: true});
+        return (
+          <>
+            {Toast.show({
+              type: 'success',
+              position: 'bottom',
+              text1: '게시물이 삭제 되었습니다',
+            })}
+          </>
+        );
+      } else {
+        console.log(error);
+      }
+    },
+  });
 
   const [createReplyMutation, {loading: mutationLoading}] = useMutation<
     createReplyType,
@@ -126,6 +155,11 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
     onCompleted: ({deleteReply}) => {
       if (deleteReply) {
         refetch();
+        navigate('BoardList', {
+          userId,
+          category: data!.getBoard!.data!.category,
+          refreshing: true,
+        });
         return (
           <>
             {Toast.show({
@@ -228,9 +262,9 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
     return <Loading />;
   }
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.screen}>
       <TopNavigation accessoryLeft={backAction} />
-      <Container>
+      <Container style={styles.container}>
         <KeyboardAvoidingView
           behavior="position"
           keyboardVerticalOffset={keyboardVerticalOffset}>
@@ -247,6 +281,33 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
                 {getDate(data?.getBoard.data?.createdAt || '')}
               </Text>
             </BoardInfo>
+            {data?.getBoard.data?.WriterId === parseInt(userId, 10) && (
+              <BoardAction>
+                <BoardActionButton
+                  onPress={() =>
+                    navigate('BoardEdit', {
+                      userId,
+                      category: data.getBoard!.data!.category,
+                      postId,
+                    })
+                  }>
+                  <Text
+                    style={styles.editActionTextColor}
+                    category="s2"
+                    appearance="hint">
+                    수정하기
+                  </Text>
+                </BoardActionButton>
+                <BoardActionButton onPress={() => deleteBoardMutation()}>
+                  <Text
+                    style={styles.deleteActionTextColor}
+                    category="s2"
+                    appearance="hint">
+                    삭제하기
+                  </Text>
+                </BoardActionButton>
+              </BoardAction>
+            )}
           </Head>
           <Divider style={styles.divierMargin} />
           <Content>
@@ -328,9 +389,23 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  container: {
+    marginBottom: 30,
+  },
   divierMargin: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  deleteActionTextColor: {
+    color: '#ec1c42',
+  },
+  editActionTextColor: {
+    color: '#2b58f9',
   },
   icon: {
     position: 'absolute',

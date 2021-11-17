@@ -282,6 +282,52 @@ export interface toggleLikeVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: deleteBoard
+// ====================================================
+
+export interface deleteBoard_deleteBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface deleteBoard {
+  deleteBoard: deleteBoard_deleteBoard;
+}
+
+export interface deleteBoardVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: createBoard
+// ====================================================
+
+export interface createBoard_createBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface createBoard {
+  createBoard: createBoard_createBoard;
+}
+
+export interface createBoardVariables {
+  args: CreateBoardInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -709,6 +755,7 @@ export interface getBoard_getBoard_data {
   title: string;
   content: string;
   category: string;
+  WriterId: number;
   Writer: getBoard_getBoard_data_Writer;
   Replies: getBoard_getBoard_data_Replies[] | null;
   Likes: getBoard_getBoard_data_Likes[] | null;
@@ -965,6 +1012,14 @@ export interface getDmVariables {
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export interface CreateBoardInput {
+  UserId: number;
+  title: string;
+  content: string;
+  category: string;
+  images?: string[] | null;
+}
 
 export interface CreateDmInput {
   content: string;

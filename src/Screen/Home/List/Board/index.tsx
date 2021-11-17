@@ -20,6 +20,7 @@ import {ListView, SearchView} from '../styles';
 import {getDateWithoutYear} from '../../../../common/getDate';
 import {BoardStackParamList} from '../../../../navigators/Home/Board/BoardStackNavigation';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface IProps {
   route: {
@@ -43,7 +44,10 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
   const {data, loading, fetchMore, refetch} = useQuery<
     getBoardsByCategory,
     getBoardsByCategoryVariables
-  >(GET_BOARDS_BY_CATEGORY, {variables: {category, loadQuantity: quantity}});
+  >(GET_BOARDS_BY_CATEGORY, {
+    variables: {category, loadQuantity: quantity},
+    fetchPolicy: 'cache-and-network',
+  });
 
   useEffect(() => {
     if (refreshing) {
@@ -67,7 +71,7 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
   }, []);
 
   const renderItem = useCallback(
-    ({item, index}) => {
+    ({item}) => {
       return (
         <ListItem
           title={`${item.title}`}
@@ -85,13 +89,25 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
     [renderRight, navigate, userId]
   );
 
+  const topNavigationRenderRight = useCallback(() => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigate('BoardWrite', {userId, category})}>
+        <Icon {...{width: 24, height: 24}} name="plus-outline" fill="black" />
+      </TouchableOpacity>
+    );
+  }, [navigate, category, userId]);
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <Screen>
-      <TopNavigation accessoryLeft={backAction} style={styles.TopNavigation} />
+      <TopNavigation
+        accessoryLeft={backAction}
+        accessoryRight={topNavigationRenderRight}
+      />
       <SearchView>
         <Text>Search</Text>
       </SearchView>
@@ -126,9 +142,6 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
 };
 
 const styles = StyleSheet.create({
-  TopNavigation: {
-    marginTop: 15,
-  },
   container: {
     minHeight: 200,
   },

@@ -213,6 +213,7 @@ export const GET_BOARD = gql`
         title
         content
         category
+        WriterId
         Writer {
           id
           nickname

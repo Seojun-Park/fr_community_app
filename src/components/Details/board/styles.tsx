@@ -4,16 +4,27 @@ import {Button} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export const Container = styled(ScrollView)`
-  padding: 0 20px;
+  width: 95%;
+  padding-bottom: 30px;
 `;
 
 export const Head = styled(View)``;
 
 export const BoardInfo = styled(View)`
-  margin: 10px;
   width: 90%;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const BoardAction = styled(View)`
+  margin: 5px;
+  width: 95%;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+
+export const BoardActionButton = styled(TouchableOpacity)`
+  margin: 0 10px;
 `;
 
 export const Content = styled(View)`
