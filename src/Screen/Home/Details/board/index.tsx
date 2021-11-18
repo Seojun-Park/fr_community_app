@@ -9,19 +9,19 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
-import {getDate} from '../../../common/getDate';
+import {getDate} from '../../../../common/getDate';
 import {
   CREATE_REPLY,
   DELETE_BOARD,
   DELETE_REPLY,
   TOGGLE_LIKE,
-} from '../../../graphql/mutation/sharedMutation';
-import {GET_BOARD} from '../../../graphql/query/sharedQuery';
-import {useInputState} from '../../../hooks/useInput';
-import {BoardStackParamList} from '../../../navigators/Home/Board/BoardStackNavigation';
+} from '../../../../graphql/mutation/sharedMutation';
+import {GET_BOARD} from '../../../../graphql/query/sharedQuery';
+import {useInputState} from '../../../../hooks/useInput';
+import {BoardStackParamList} from '../../../../navigators/Home/Board/BoardStackNavigation';
 import {
   deleteBoard as deleteBoardType,
   deleteBoardVariables,
@@ -33,8 +33,8 @@ import {
   getBoardVariables,
   toggleLike as toggleLikeType,
   toggleLikeVariables,
-} from '../../../types/graphql';
-import Loading from '../../Loading';
+} from '../../../../types/graphql';
+import Loading from '../../../../components/Loading';
 import {
   BoardAction,
   BoardActionButton,
@@ -50,7 +50,7 @@ import {
   SendButton,
 } from './styles';
 import LottieView from 'lottie-react-native';
-import {Input, LoadingScreen, Screen} from '../../../common/SharedStyles';
+import {Input, LoadingScreen} from '../../../../common/SharedStyles';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface IProps {
@@ -58,6 +58,7 @@ interface IProps {
     params: {
       userId: string;
       postId: string;
+      refreshing?: boolean;
     };
   };
 }
@@ -68,8 +69,8 @@ type BoardDetailScreenProps = NativeStackNavigationProp<
 >;
 
 const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
-  const {postId, userId} = params;
-  const {navigate, goBack} = useNavigation<BoardDetailScreenProps>();
+  const {postId, userId, refreshing} = params;
+  const {navigate} = useNavigation<BoardDetailScreenProps>();
   const replyInput = useInputState();
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
   const animation = useRef(null);
@@ -202,6 +203,12 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
   );
 
   useEffect(() => {
+    if (refreshing) {
+      refetch();
+    }
+  }, [refreshing, refetch]);
+
+  useEffect(() => {
     if (
       data?.getBoard?.data?.Likes?.findIndex(
         v => v.OwnerId === parseInt(userId, 10)
@@ -289,6 +296,7 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
                       userId,
                       category: data.getBoard!.data!.category,
                       postId,
+                      data: data.getBoard!.data!,
                     })
                   }>
                   <Text
@@ -319,7 +327,7 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
                 <Icon {...styles.icon} name="heart-outline" fill="black" />
               )}
               <LottieView
-                source={require('../../../asset/lotties/heart.json')}
+                source={require('../../../../asset/lotties/heart.json')}
                 ref={animation}
                 loop={false}
                 style={{width: 80, height: 80}}
@@ -336,7 +344,7 @@ const BoardDetailView: React.FC<IProps> = ({route: {params}}) => {
                 return (
                   <ReplyRow key={idx}>
                     <TouchableOpacity activeOpacity={0.5}>
-                      <Text style={styles.replUserName}>
+                      <Text appearance={'hint'} style={styles.replUserName}>
                         {rep.User.nickname}
                         {data.getBoard.data?.Writer.id === rep.User.id && (
                           <Icon

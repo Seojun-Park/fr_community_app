@@ -35,7 +35,7 @@ import Loading from '../../../components/Loading';
 interface IProps {
   route: {
     params: {
-      id: number;
+      id: string;
       token: string;
     };
   };
@@ -177,7 +177,7 @@ const ProfileScreen: React.FC<IProps> = ({route: {params}}) => {
                         onPress={() =>
                           navigate('PostDetail', {
                             userId: id,
-                            id: val.id,
+                            id: val.id.toString(),
                             category: 'rent',
                           })
                         }>

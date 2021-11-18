@@ -5,7 +5,7 @@ import {
   getMarket,
   getMarketVariables,
   getMarket_getMarket_data,
-} from '../../../types/graphql';
+} from '../../../../types/graphql';
 
 interface IProps {
   market: getMarket_getMarket_data;

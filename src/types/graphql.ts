@@ -328,6 +328,29 @@ export interface createBoardVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: editBoard
+// ====================================================
+
+export interface editBoard_editBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface editBoard {
+  editBoard: editBoard_editBoard;
+}
+
+export interface editBoardVariables {
+  args: EditBoardInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -1040,6 +1063,12 @@ export interface CreateUserInput {
   nickname: string;
   email: string;
   password: string;
+}
+
+export interface EditBoardInput {
+  boardId: number;
+  title?: string | null;
+  content?: string | null;
 }
 
 //==============================================================

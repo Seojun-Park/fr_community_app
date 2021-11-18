@@ -5,7 +5,7 @@ import {
   getMeet,
   getMeetVariables,
   getMeet_getMeet_data,
-} from '../../../types/graphql';
+} from '../../../../types/graphql';
 
 interface IProps {
   meet: getMeet_getMeet_data;

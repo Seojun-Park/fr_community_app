@@ -91,10 +91,18 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
 
   const topNavigationRenderRight = useCallback(() => {
     return (
-      <TouchableOpacity
-        onPress={() => navigate('BoardWrite', {userId, category})}>
-        <Icon {...{width: 24, height: 24}} name="plus-outline" fill="black" />
-      </TouchableOpacity>
+      <>
+        {category !== 'notice' && (
+          <TouchableOpacity
+            onPress={() => navigate('BoardWrite', {userId, category})}>
+            <Icon
+              {...{width: 24, height: 24}}
+              name="plus-outline"
+              fill="black"
+            />
+          </TouchableOpacity>
+        )}
+      </>
     );
   }, [navigate, category, userId]);
 

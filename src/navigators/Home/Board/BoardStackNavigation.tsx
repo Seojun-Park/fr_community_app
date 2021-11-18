@@ -1,9 +1,10 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BoardListScreen from '../../../Screen/Home/List/Board';
-import BoardDetailView from '../../../components/Details/board';
+import BoardDetailView from '../../../Screen/Home/Details/board';
 import BoardWriteScreen from '../../../Screen/Home/Write/Board';
 import EditBoardScreen from '../../../Screen/Home/Edit/Board';
+import {getBoard_getBoard_data} from '../../../types/graphql';
 
 export type BoardStackParamList = {
   BoardList: {
@@ -14,6 +15,7 @@ export type BoardStackParamList = {
   BoardDetail: {
     userId: string;
     postId: string;
+    refreshing?: boolean;
   };
   BoardWrite: {
     userId: string;
@@ -23,6 +25,7 @@ export type BoardStackParamList = {
     userId: string;
     category: string;
     postId: string;
+    data: getBoard_getBoard_data;
   };
 };
 

@@ -134,3 +134,12 @@ export const CREATE_BOARD = gql`
     }
   }
 `;
+
+export const EDIT_BOARD = gql`
+  mutation editBoard($args: EditBoardInput!) {
+    editBoard(args: $args) {
+      success
+      error
+    }
+  }
+`;

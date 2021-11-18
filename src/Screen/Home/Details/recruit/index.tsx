@@ -5,7 +5,7 @@ import {
   getRecruit,
   getRecruitVariables,
   getRent_getRent_data,
-} from '../../../types/graphql';
+} from '../../../../types/graphql';
 
 interface IProps {
   recruit: getRent_getRent_data;

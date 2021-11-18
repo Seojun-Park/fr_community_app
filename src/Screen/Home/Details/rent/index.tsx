@@ -5,7 +5,7 @@ import {
   getRent,
   getRentVariables,
   getRent_getRent_data,
-} from '../../../types/graphql';
+} from '../../../../types/graphql';
 
 interface IProps {
   rent: getRent_getRent_data | undefined | null;

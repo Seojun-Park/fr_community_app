@@ -1,15 +1,22 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ProfileScreen from '../../Screen/Profile/Main';
-import PostDetailScreen from '../../Screen/Profile/PostDetail';
+import PostDetailScreen from '../../Screen/Profile/Post';
 
 export type ProfileStackParamList = {
   ProfileScreen: {
-    id: number;
+    id: string;
     token: string;
   };
   PostDetail: {
-    id: number;
+    uesrId: string;
+    id: string;
+    category: string;
+    token: string;
+  };
+  EditPost: {
+    userId: number;
+    category: string;
     token: string;
   };
 };
@@ -17,7 +24,7 @@ export type ProfileStackParamList = {
 interface IProps {
   route: {
     params: {
-      id: number;
+      id: string;
       token: string;
     };
   };
@@ -34,7 +41,11 @@ const ProfileStackNavigator: React.FC<IProps> = ({route: {params}}) => {
         component={ProfileScreen}
         initialParams={{id, token}}
       />
-      <ProfileStack.Screen name="PostDetail" component={PostDetailScreen} />
+      <ProfileStack.Screen
+        name="PostDetail"
+        component={PostDetailScreen}
+        initialParams={{token}}
+      />
     </ProfileStack.Navigator>
   );
 };

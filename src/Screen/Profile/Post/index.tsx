@@ -1,11 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Icon,
-  Text,
-  TopNavigation,
-  TopNavigationAction,
-} from '@ui-kitten/components';
-import {LoadingScreen, Screen} from '../../../common/SharedStyles';
+import {Icon, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import {useNavigation} from '@react-navigation/core';
 import {useLazyQuery} from '@apollo/client';
 import {
@@ -33,26 +27,34 @@ import {
   getMeet_getMeet_data,
 } from '../../../types/graphql';
 import Toast from 'react-native-toast-message';
-import BoardDetailView from '../../../components/Details/board';
-import MarketDetailView from '../../../components/Details/market';
-import RentDetailView from '../../../components/Details/rent';
-import RecruitDetailView from '../../../components/Details/recruit';
-import MeetDetailView from '../../../components/Details/meet';
-import {StyleSheet, View} from 'react-native';
-
+import MarketDetailView from '../../Home/Details/market';
+import RentDetailView from '../../Home/Details/rent';
+import RecruitDetailView from '../../Home/Details/recruit';
+import MeetDetailView from '../../Home/Details/meet';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ProfileStackParamList} from '../../../navigators/Profile/ProfileStackNavigator';
+import ProfileBoardDetail from './Detail/Board';
+import Loading from '../../../components/Loading';
 interface IProps {
   route: {
     params: {
       userId: string;
-      id: number;
+      id: string;
       category: string;
+      token: string;
     };
   };
 }
 
+type PostDetailScreenProps = NativeStackNavigationProp<
+  ProfileStackParamList,
+  'PostDetail'
+>;
+
 const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
-  const {goBack} = useNavigation();
-  const {id, category, userId} = params;
+  const {navigate, goBack} = useNavigation<PostDetailScreenProps>();
+  const {id, category, userId, token} = params;
   const [data, setData] = useState<
     | getBoard_getBoard_data
     | getMarket_getMarket_data
@@ -167,19 +169,19 @@ const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
   useEffect(() => {
     switch (category) {
       case 'board':
-        getBoardQuery({variables: {id}});
+        getBoardQuery({variables: {id: parseInt(id, 10)}});
         break;
       case 'rent':
-        getRentQuery({variables: {id}});
+        getRentQuery({variables: {id: parseInt(id, 10)}});
         break;
       case 'market':
-        getMarketQuery({variables: {id}});
+        getMarketQuery({variables: {id: parseInt(id, 10)}});
         break;
       case 'recruit':
-        getRecruitQuery({variables: {id}});
+        getRecruitQuery({variables: {id: parseInt(id, 10)}});
         break;
       case 'meet':
-        getMeetQuery({variables: {id}});
+        getMeetQuery({variables: {id: parseInt(id, 10)}});
         break;
     }
   }, [
@@ -198,25 +200,27 @@ const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
         case 'board':
           if (data?.__typename === 'Board' && boardRefetch) {
             return (
-              <BoardDetailView
-                board={data}
-                refetch={boardRefetch}
-                id={id}
-                userId={parseInt(userId, 10)}
+              <ProfileBoardDetail
+                data={data}
+                token={token}
                 loading={boardLoading}
+                userId={parseInt(userId, 10)}
+                navigate={navigate}
+                refetch={boardRefetch}
               />
             );
+          } else {
+            return (
+              <>
+                {Toast.show({
+                  position: 'bottom',
+                  type: 'error',
+                  text1: '게시물을 찾을 수 없습니다',
+                })}
+                {goBack()}
+              </>
+            );
           }
-          return (
-            <>
-              {Toast.show({
-                position: 'bottom',
-                type: 'error',
-                text1: '게시물을 찾을 수 없습니다',
-              })}
-              {goBack()}
-            </>
-          );
         case 'market':
           if (data?.__typename === 'Market' && marketRefetch) {
             return (
@@ -311,8 +315,8 @@ const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
       userId,
       category,
       goBack,
-      boardLoading,
       boardRefetch,
+      boardLoading,
       marketLoading,
       marketRefetch,
       rentLoading,
@@ -333,22 +337,22 @@ const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
   );
 
   if (!data) {
-    return (
-      <LoadingScreen>
-        <Text>loading...</Text>
-      </LoadingScreen>
-    );
+    return <Loading />;
   }
 
   return (
-    <Screen>
+    <SafeAreaView>
       <TopNavigation accessoryLeft={backAction} style={styles.TopNavigation} />
-      <View>{renderDetail(data)}</View>
-    </Screen>
+      <View style={styles.screen}>{renderDetail(data)}</View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    width: '100%',
+    alignItems: 'center',
+  },
   TopNavigation: {
     marginTop: 15,
   },
