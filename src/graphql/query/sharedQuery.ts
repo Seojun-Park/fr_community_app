@@ -203,52 +203,6 @@ export const CHECK_CHAT_MEMBER = gql`
   }
 `;
 
-export const GET_BOARD = gql`
-  query getBoard($id: Int!) {
-    getBoard(id: $id) {
-      success
-      error
-      data {
-        id
-        title
-        content
-        category
-        WriterId
-        Writer {
-          id
-          nickname
-        }
-        Replies {
-          id
-          content
-          User {
-            id
-            nickname
-          }
-        }
-        Likes {
-          id
-          OwnerId
-        }
-        createdAt
-      }
-    }
-  }
-`;
-
-export const GET_MARKET = gql`
-  query getMarket($id: Int!) {
-    getMarket(id: $id) {
-      success
-      error
-      data {
-        id
-        title
-      }
-    }
-  }
-`;
-
 export const GET_RENT = gql`
   query getRent($id: Int!) {
     getRent(id: $id) {
@@ -283,20 +237,6 @@ export const GET_MEET = gql`
       data {
         id
         title
-      }
-    }
-  }
-`;
-
-export const GET_BOARDS_BY_CATEGORY = gql`
-  query getBoardsByCategory($category: String!, $loadQuantity: Int!) {
-    getBoardsByCategory(category: $category, loadQuantity: $loadQuantity) {
-      success
-      error
-      data {
-        id
-        title
-        createdAt
       }
     }
   }

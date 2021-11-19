@@ -1,26 +1,28 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {useQuery} from '@apollo/client';
+import {useNavigation} from '@react-navigation/core';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   Divider,
   Icon,
+  List,
+  ListItem,
+  Text,
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import {useNavigation} from '@react-navigation/core';
-import {Screen} from '../../../../common/SharedStyles';
-import {useQuery} from '@apollo/client';
-import {
-  getBoardsByCategory,
-  getBoardsByCategoryVariables,
-} from '../../../../types/graphql';
-import Loading from '../../../../components/Loading';
-import {List, ListItem} from '@ui-kitten/components';
-import {EmptyView, ListView, SearchView} from '../styles';
-import {getDateWithoutYear} from '../../../../common/getDate';
-import {BoardStackParamList} from '../../../../navigators/Home/Board/BoardStackNavigation';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React, {useCallback, useEffect, useState} from 'react';
+import {RefreshControl, StyleSheet, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {GET_BOARDS_BY_CATEGORY} from '../../../../graphql/query/Board/boardQueries';
+import {getDateWithoutYear} from '../../../../common/getDate';
+import {Screen} from '../../../../common/SharedStyles';
+import {GET_MARKETS_BY_CATEGORY} from '../../../../graphql/query/Market/marketQueries';
+import {
+  getMarketsByCategory as getMarketsByCategoryType,
+  getMarketsByCategoryVariables,
+} from '../../../../types/graphql';
+import {MarketStackParamList} from '../../../../navigators/Home/Market/MarketStackNavigator';
+import Loading from '../../../../components/Loading';
+import {EmptyView, SearchView} from '../styles';
 
 interface IProps {
   route: {
@@ -32,20 +34,21 @@ interface IProps {
   };
 }
 
-type BoardListScreenProps = NativeStackNavigationProp<
-  BoardStackParamList,
-  'BoardList'
+type MarketListScreenProps = NativeStackNavigationProp<
+  MarketStackParamList,
+  'MarketList'
 >;
 
-const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
-  const {navigate, goBack} = useNavigation<BoardListScreenProps>();
+const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {navigate, goBack} = useNavigation<MarketListScreenProps>();
   const {userId, category, refreshing} = params;
   const [quantity, setQuantity] = useState<number>(12);
-  const {data, loading, fetchMore, refetch} = useQuery<
-    getBoardsByCategory,
-    getBoardsByCategoryVariables
-  >(GET_BOARDS_BY_CATEGORY, {
-    variables: {category, loadQuantity: quantity},
+
+  const {data, loading, refetch, fetchMore} = useQuery<
+    getMarketsByCategoryType,
+    getMarketsByCategoryVariables
+  >(GET_MARKETS_BY_CATEGORY, {
+    variables: {category, load: quantity},
     fetchPolicy: 'cache-and-network',
   });
 
@@ -62,6 +65,17 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
     />
   );
 
+  const topNavigationRenderRight = useCallback(() => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigate('MarketWrite', {userId, category});
+        }}>
+        <Icon {...{width: 24, height: 24}} name="plus-outline" fill="black" />
+      </TouchableOpacity>
+    );
+  }, [navigate, userId, category]);
+
   const renderRight = useCallback(time => {
     return (
       <View>
@@ -76,35 +90,18 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
         <ListItem
           title={`${item.title}`}
           style={styles.listItem}
-          onPress={() => {
-            navigate('BoardDetail', {
-              postId: item.id,
-              userId,
-            });
-          }}
+          // onPress={() => {
+          //   navigate('BoardDetail', {
+          //     postId: item.id,
+          //     userId,
+          //   });
+          // }}
           accessoryRight={() => renderRight(item.createdAt)}
         />
       );
     },
     [renderRight, navigate, userId]
   );
-
-  const topNavigationRenderRight = useCallback(() => {
-    return (
-      <>
-        {category !== 'notice' && (
-          <TouchableOpacity
-            onPress={() => navigate('BoardWrite', {userId, category})}>
-            <Icon
-              {...{width: 24, height: 24}}
-              name="plus-outline"
-              fill="black"
-            />
-          </TouchableOpacity>
-        )}
-      </>
-    );
-  }, [navigate, category, userId]);
 
   if (loading) {
     return <Loading />;
@@ -117,15 +114,12 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
         accessoryRight={topNavigationRenderRight}
       />
       <SearchView>
-        <Text>Search</Text>
-      </SearchView>
-      <ListView>
-        {data ? (
+        {data?.getMarketsByCategory?.data &&
+        data.getMarketsByCategory.data.length !== 0 ? (
           <List
-            data={data?.getBoardsByCategory.data}
+            data={data.getMarketsByCategory.data}
             renderItem={renderItem}
             ItemSeparatorComponent={Divider}
-            style={styles.container}
             refreshControl={
               <RefreshControl
                 refreshing={false}
@@ -134,7 +128,7 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
                   fetchMore({
                     variables: {
                       category,
-                      loadQuantity: quantity,
+                      load: quantity,
                     },
                   });
                 }}
@@ -143,10 +137,10 @@ const BoardListScreen: React.FC<IProps> = ({route: {params}}) => {
           />
         ) : (
           <EmptyView>
-            <Text>게시 글이 없습니다</Text>
+            <Text>게시글이 없습니다</Text>
           </EmptyView>
         )}
-      </ListView>
+      </SearchView>
     </Screen>
   );
 };
@@ -160,4 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BoardListScreen;
+export default MarketListScreen;

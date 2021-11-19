@@ -2,6 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../../Screen/Home/Main';
 import BoardStackNavigator from './Board/BoardStackNavigation';
+import MarketStackNavigator from './Market/MarketStackNavigator';
 
 export type HomeStackParamList = {
   HomeScreen: {
@@ -52,6 +53,11 @@ const HomeStackNavigator: React.FC<IProps> = ({route: {params}}) => {
       <HomeStack.Screen
         name="BoardListScreen"
         component={BoardStackNavigator}
+        initialParams={{userId: id}}
+      />
+      <HomeStack.Screen
+        name="MarketListScreen"
+        component={MarketStackNavigator}
         initialParams={{userId: id}}
       />
     </HomeStack.Navigator>

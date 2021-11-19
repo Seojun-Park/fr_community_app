@@ -312,6 +312,8 @@ const PostDetailScreen: React.FC<IProps> = ({route: {params}}) => {
       }
     },
     [
+      navigate,
+      token,
       userId,
       category,
       goBack,

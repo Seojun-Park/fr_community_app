@@ -51,19 +51,34 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
     (category, subCategory) => {
       switch (category) {
         case 'Board':
-          navigate('BoardListScreen', {category: subCategory, userId});
+          navigate('BoardListScreen', {
+            userId: userId.toString(),
+            category: subCategory,
+          });
           break;
         case 'Market':
-          navigate('MarketListScreen', {category: subCategory, userId});
+          navigate('MarketListScreen', {
+            userId: userId.toString(),
+            category: subCategory,
+          });
           break;
         case 'Rent':
-          navigate('RentListScreen', {category: subCategory, userId});
+          navigate('RentListScreen', {
+            userId: userId.toString(),
+            category: subCategory,
+          });
           break;
         case 'Recruit':
-          navigate('RecruitListScreen', {category: subCategory, userId});
+          navigate('RecruitListScreen', {
+            userId: userId.toString(),
+            category: subCategory,
+          });
           break;
         case 'Community':
-          navigate('CommunityListScreen', {category: subCategory, userId});
+          navigate('CommunityListScreen', {
+            userId: userId.toString(),
+            category: subCategory,
+          });
           break;
         default:
           break;

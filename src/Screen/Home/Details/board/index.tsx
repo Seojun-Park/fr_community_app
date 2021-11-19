@@ -19,7 +19,6 @@ import {
   DELETE_REPLY,
   TOGGLE_LIKE,
 } from '../../../../graphql/mutation/sharedMutation';
-import {GET_BOARD} from '../../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../../hooks/useInput';
 import {BoardStackParamList} from '../../../../navigators/Home/Board/BoardStackNavigation';
 import {
@@ -52,6 +51,7 @@ import {
 import LottieView from 'lottie-react-native';
 import {Input, LoadingScreen} from '../../../../common/SharedStyles';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {GET_BOARD} from '../../../../graphql/query/Board/boardQueries';
 
 interface IProps {
   route: {

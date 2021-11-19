@@ -21,7 +21,7 @@ export const homeData: MenuType[] = [
     title: '중고장터',
     category: 'Market',
     subCategories: ['삽니다', '팝니다'],
-    filter: ['sell', 'buy'],
+    filter: ['buy', 'sell'],
   },
   {
     bg: '#FECBCA',

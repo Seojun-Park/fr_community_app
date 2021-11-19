@@ -351,6 +351,226 @@ export interface editBoardVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: getBoard
+// ====================================================
+
+export interface getBoard_getBoard_data_Writer {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getBoard_getBoard_data_Replies_User {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getBoard_getBoard_data_Replies {
+  __typename: 'Reply';
+  id: number;
+  content: string;
+  User: getBoard_getBoard_data_Replies_User;
+}
+
+export interface getBoard_getBoard_data_Likes {
+  __typename: 'Like';
+  id: number;
+  OwnerId: number;
+}
+
+export interface getBoard_getBoard_data {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  WriterId: number;
+  Writer: getBoard_getBoard_data_Writer;
+  Replies: getBoard_getBoard_data_Replies[] | null;
+  Likes: getBoard_getBoard_data_Likes[] | null;
+  createdAt: string;
+}
+
+export interface getBoard_getBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+  data: getBoard_getBoard_data | null;
+}
+
+export interface getBoard {
+  getBoard: getBoard_getBoard;
+}
+
+export interface getBoardVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getBoardsByCategory
+// ====================================================
+
+export interface getBoardsByCategory_getBoardsByCategory_data {
+  __typename: 'Board';
+  id: number;
+  title: string;
+  createdAt: string;
+}
+
+export interface getBoardsByCategory_getBoardsByCategory {
+  __typename: 'BoardsReturn';
+  success: boolean;
+  error: string | null;
+  data: getBoardsByCategory_getBoardsByCategory_data[] | null;
+}
+
+export interface getBoardsByCategory {
+  getBoardsByCategory: getBoardsByCategory_getBoardsByCategory;
+}
+
+export interface getBoardsByCategoryVariables {
+  category: string;
+  loadQuantity: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getMarket
+// ====================================================
+
+export interface getMarket_getMarket_data_User {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getMarket_getMarket_data_Images {
+  __typename: 'Image';
+  id: number;
+  url: string;
+}
+
+export interface getMarket_getMarket_data_Likes {
+  __typename: 'Like';
+  id: number;
+}
+
+export interface getMarket_getMarket_data {
+  __typename: 'Market';
+  id: number;
+  title: string;
+  content: string;
+  UserId: number;
+  /**
+   * euro currency
+   */
+  price: string;
+  location: string;
+  /**
+   * deal type buy / sell
+   */
+  type: string;
+  /**
+   * deal status sold / onSale
+   */
+  status: string;
+  thumbnail: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  User: getMarket_getMarket_data_User;
+  Images: getMarket_getMarket_data_Images[] | null;
+  Likes: getMarket_getMarket_data_Likes[] | null;
+}
+
+export interface getMarket_getMarket {
+  __typename: 'MarketReturn';
+  success: boolean;
+  error: string | null;
+  data: getMarket_getMarket_data | null;
+}
+
+export interface getMarket {
+  getMarket: getMarket_getMarket;
+}
+
+export interface getMarketVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getMarketsByCategory
+// ====================================================
+
+export interface getMarketsByCategory_getMarketsByCategory_data_User {
+  __typename: 'User';
+  id: number;
+  nickname: string;
+}
+
+export interface getMarketsByCategory_getMarketsByCategory_data {
+  __typename: 'Market';
+  id: number;
+  title: string;
+  content: string;
+  UserId: number;
+  /**
+   * euro currency
+   */
+  price: string;
+  location: string;
+  /**
+   * deal type buy / sell
+   */
+  type: string;
+  /**
+   * deal status sold / onSale
+   */
+  status: string;
+  thumbnail: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  User: getMarketsByCategory_getMarketsByCategory_data_User;
+}
+
+export interface getMarketsByCategory_getMarketsByCategory {
+  __typename: 'MarketsReturn';
+  success: boolean;
+  error: string | null;
+  data: getMarketsByCategory_getMarketsByCategory_data[] | null;
+}
+
+export interface getMarketsByCategory {
+  getMarketsByCategory: getMarketsByCategory_getMarketsByCategory;
+}
+
+export interface getMarketsByCategoryVariables {
+  category: string;
+  load: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: getUsers
 // ====================================================
 
@@ -744,98 +964,6 @@ export interface checkChatMemberVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: getBoard
-// ====================================================
-
-export interface getBoard_getBoard_data_Writer {
-  __typename: 'User';
-  id: number;
-  nickname: string;
-}
-
-export interface getBoard_getBoard_data_Replies_User {
-  __typename: 'User';
-  id: number;
-  nickname: string;
-}
-
-export interface getBoard_getBoard_data_Replies {
-  __typename: 'Reply';
-  id: number;
-  content: string;
-  User: getBoard_getBoard_data_Replies_User;
-}
-
-export interface getBoard_getBoard_data_Likes {
-  __typename: 'Like';
-  id: number;
-  OwnerId: number;
-}
-
-export interface getBoard_getBoard_data {
-  __typename: 'Board';
-  id: number;
-  title: string;
-  content: string;
-  category: string;
-  WriterId: number;
-  Writer: getBoard_getBoard_data_Writer;
-  Replies: getBoard_getBoard_data_Replies[] | null;
-  Likes: getBoard_getBoard_data_Likes[] | null;
-  createdAt: string;
-}
-
-export interface getBoard_getBoard {
-  __typename: 'BoardReturn';
-  success: boolean;
-  error: string | null;
-  data: getBoard_getBoard_data | null;
-}
-
-export interface getBoard {
-  getBoard: getBoard_getBoard;
-}
-
-export interface getBoardVariables {
-  id: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: getMarket
-// ====================================================
-
-export interface getMarket_getMarket_data {
-  __typename: 'Market';
-  id: number;
-  title: string;
-}
-
-export interface getMarket_getMarket {
-  __typename: 'MarketReturn';
-  success: boolean;
-  error: string | null;
-  data: getMarket_getMarket_data | null;
-}
-
-export interface getMarket {
-  getMarket: getMarket_getMarket;
-}
-
-export interface getMarketVariables {
-  id: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: getRent
 // ====================================================
 
@@ -918,38 +1046,6 @@ export interface getMeet {
 
 export interface getMeetVariables {
   id: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: getBoardsByCategory
-// ====================================================
-
-export interface getBoardsByCategory_getBoardsByCategory_data {
-  __typename: 'Board';
-  id: number;
-  title: string;
-  createdAt: string;
-}
-
-export interface getBoardsByCategory_getBoardsByCategory {
-  __typename: 'BoardsReturn';
-  success: boolean;
-  error: string | null;
-  data: getBoardsByCategory_getBoardsByCategory_data[] | null;
-}
-
-export interface getBoardsByCategory {
-  getBoardsByCategory: getBoardsByCategory_getBoardsByCategory;
-}
-
-export interface getBoardsByCategoryVariables {
-  category: string;
-  loadQuantity: number;
 }
 
 /* tslint:disable */

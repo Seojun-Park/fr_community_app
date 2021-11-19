@@ -1,3 +1,4 @@
+import {RadioGroup} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import styled from 'styled-components';
@@ -17,4 +18,8 @@ export const InputGroup = styled(View)`
 
 export const InputRow = styled(View)`
   padding: 5px 0;
+`;
+
+export const OptionGroup = styled(RadioGroup)`
+  flex-direction: row;
 `;
