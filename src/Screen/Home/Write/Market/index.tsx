@@ -8,15 +8,26 @@ import {
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import React, {useCallback, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Input} from '../../../../common/SharedStyles';
 import {useInputState} from '../../../../hooks/useInput';
 import {MarketStackParamList} from '../../../../navigators/Home/Market/MarketStackNavigator';
-import {Content, InputGroup, InputRow, OptionGroup, TitleBox} from '../styles';
+import {
+  Content,
+  ImageBox,
+  ImageDeleteButton,
+  ImageRow,
+  ImageUploadButton,
+  InputGroup,
+  InputRow,
+  OptionGroup,
+  TitleBox,
+} from '../styles';
 import * as ImagePicker from 'react-native-image-picker';
-import ImagePickerModal from '../../../../components/ImagePicker';
+import ImagePickerModal from '../../../../components/ImagePicker/ImagePickerModal';
+import ImagePickerView from '../../../../components/ImagePicker/ImagePickerView';
 
 interface IProps {
   route: {
@@ -25,6 +36,15 @@ interface IProps {
       category: string;
     };
   };
+}
+
+interface ImageProps {
+  filename: string;
+  fileSize: number;
+  type: string;
+  uri: string;
+  height: number;
+  width: number;
 }
 
 type MarketWriteScreenProps = NativeStackNavigationProp<
@@ -46,6 +66,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   const [pickerResponse, setPickerResponse] =
     useState<ImagePicker.ImagePickerResponse>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [images, setImages] = useState<Array<ImageProps> | undefined>([]);
 
   const onImageLibraryPress = useCallback(() => {
     const options: ImagePicker.ImageLibraryOptions = {
@@ -71,6 +92,14 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       onPress={() => goBack()}
     />
   );
+
+  useEffect(() => {
+    if (pickerResponse && pickerResponse.assets) {
+      for (let i = 0; i < pickerResponse.assets.length; i++) {
+        setImages(prev => [...prev, pickerResponse.assets[i]]);
+      }
+    }
+  }, [pickerResponse]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -112,14 +141,46 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 <Radio>팝니다</Radio>
               </OptionGroup>
             </InputRow>
-            <InputRow>
+            <ImageRow
+              horizontal={true}
+              contentContainerStyle={{alignItems: 'center'}}>
+              {images?.map((item, idx) => {
+                return (
+                  <>
+                    <ImageBox key={idx}>
+                      <ImagePickerView uri={item} />
+                    </ImageBox>
+                    <ImageDeleteButton activeOpacity={0.5}>
+                      <Icon
+                        {...{width: 30, height: 30}}
+                        name="trash-2-outline"
+                        fill="gray"
+                      />
+                    </ImageDeleteButton>
+                  </>
+                );
+              })}
+              {images && images?.length < 5 && (
+                <ImageUploadButton
+                  height={'150px'}
+                  width={'150px'}
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Icon
+                    {...{height: 30, width: 30}}
+                    name="image-outline"
+                    fill="gray"
+                  />
+                </ImageUploadButton>
+              )}
+            </ImageRow>
+            <View>
               <ImagePickerModal
                 isVisible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 onImageLibraryPress={onImageLibraryPress}
                 onCameraPress={onCameraPress}
               />
-            </InputRow>
+            </View>
           </InputGroup>
         </KeyboardAvoidingView>
       </Content>

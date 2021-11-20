@@ -1,7 +1,12 @@
 import {RadioGroup} from '@ui-kitten/components';
 import {View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import styled from 'styled-components';
+
+interface ImageButton {
+  height: string;
+  width: string;
+}
 
 export const Content = styled(ScrollView)`
   width: 90%;
@@ -22,4 +27,30 @@ export const InputRow = styled(View)`
 
 export const OptionGroup = styled(RadioGroup)`
   flex-direction: row;
+`;
+
+export const ImageRow = styled(ScrollView)`
+  padding: 10px;
+  flex-direction: row;
+`;
+
+export const ImageBox = styled(View)`
+  position: relative;
+`;
+
+export const ImageUploadButton = styled(TouchableOpacity)<ImageButton>`
+  height: ${props => props.height};
+  width: ${props => props.width};
+  align-items: center;
+  justify-content: center;
+  border-width: 1px;
+  border-color: #bdc3c7;
+  background-color: #ecf0f1;
+  border-style: dashed;
+`;
+
+export const ImageDeleteButton = styled(TouchableOpacity)`
+  height: 40px;
+  width: 40px;
+  z-index: 5;
 `;

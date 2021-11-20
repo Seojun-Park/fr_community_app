@@ -1,7 +1,7 @@
+import {Icon} from '@ui-kitten/components';
 import React from 'react';
-import {SafeAreaView, Text, Image, Pressable, StyleSheet} from 'react-native';
+import {SafeAreaView, Text, Pressable, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
-import {images} from '../../asset/images';
 
 interface IProps {
   isVisible: boolean;
@@ -24,11 +24,15 @@ const ImagePickerModal: React.FC<IProps> = ({
       style={styles.modal}>
       <SafeAreaView style={styles.buttons}>
         <Pressable style={styles.button} onPress={onImageLibraryPress}>
-          <Image style={styles.buttonIcon} source={images.image} />
+          <Icon {...{height: 30, width: 30}} name="image-outline" fill="gray" />
           <Text style={styles.buttonText}>Library</Text>
         </Pressable>
         <Pressable style={styles.button} onPress={onCameraPress}>
-          <Image style={styles.buttonIcon} source={images.camera} />
+          <Icon
+            {...{height: 30, width: 30}}
+            name="camera-outline"
+            fill="gray"
+          />
           <Text style={styles.buttonText}>Camera</Text>
         </Pressable>
       </SafeAreaView>
