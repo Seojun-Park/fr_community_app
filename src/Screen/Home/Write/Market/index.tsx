@@ -11,7 +11,7 @@ import {
 import React, {useCallback, useEffect, useState} from 'react';
 import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Input} from '../../../../common/SharedStyles';
+import {Button, Input} from '../../../../common/SharedStyles';
 import {useInputState} from '../../../../hooks/useInput';
 import {MarketStackParamList} from '../../../../navigators/Home/Market/MarketStackNavigator';
 import {
@@ -28,6 +28,13 @@ import {
 import * as ImagePicker from 'react-native-image-picker';
 import ImagePickerModal from '../../../../components/ImagePicker/ImagePickerModal';
 import ImagePickerView from '../../../../components/ImagePicker/ImagePickerView';
+import {useMutation} from '@apollo/client';
+import {CREATE_MARKET} from '../../../../graphql/mutation/Market/MarketMutation';
+import {
+  createMarket as createMarketType,
+  createMarketVariables,
+} from '../../../../types/graphql';
+import Toast from 'react-native-toast-message';
 
 interface IProps {
   route: {
@@ -59,6 +66,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   const titleInput = useInputState('');
   const contentInput = useInputState('');
   const priceInput = useInputState();
+  const locationInput = useInputState('');
   const [type, setType] = useState(category);
   const [selectedIndex, setSelectedIndex] = useState(
     category === 'buy' ? 0 : 1
@@ -92,6 +100,53 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       onPress={() => goBack()}
     />
   );
+
+  const [createMarketmutation] = useMutation<
+    createMarketType,
+    createMarketVariables
+  >(CREATE_MARKET, {
+    onCompleted: ({createMarket}) => {
+      const {success, error} = createMarket;
+      if (success) {
+        navigate('MarketList', {userId, category, refreshing: true});
+        return (
+          <>
+            {Toast.show({
+              type: 'success',
+              position: 'bottom',
+              text1: '게시물이 등록 되었습니다',
+            })}
+          </>
+        );
+      } else {
+        console.log(error);
+      }
+    },
+  });
+
+  const handleSubmit = useCallback(async () => {
+    await createMarketmutation({
+      variables: {
+        args: {
+          UserId: parseInt(userId, 10),
+          title: titleInput.value,
+          content: contentInput.value,
+          price: priceInput.value,
+          location: locationInput.value,
+          type: category,
+          status: 'onSale',
+        },
+      },
+    });
+  }, [
+    titleInput,
+    userId,
+    contentInput,
+    priceInput,
+    category,
+    locationInput,
+    createMarketmutation,
+  ]);
 
   useEffect(() => {
     if (pickerResponse && pickerResponse.assets) {
@@ -141,23 +196,29 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 <Radio>팝니다</Radio>
               </OptionGroup>
             </InputRow>
+            <InputRow>
+              <Input {...locationInput} status="primary" label="장소" />
+            </InputRow>
+            <Text category="label" appearance="hint">
+              이미지 (최대 5장)
+            </Text>
             <ImageRow
               horizontal={true}
               contentContainerStyle={{alignItems: 'center'}}>
               {images?.map((item, idx) => {
                 return (
-                  <>
-                    <ImageBox key={idx}>
+                  <React.Fragment key={idx}>
+                    <ImageBox>
                       <ImagePickerView uri={item} />
                     </ImageBox>
                     <ImageDeleteButton activeOpacity={0.5}>
                       <Icon
-                        {...{width: 30, height: 30}}
+                        {...{width: 25, height: 25}}
                         name="trash-2-outline"
-                        fill="gray"
+                        fill="white"
                       />
                     </ImageDeleteButton>
-                  </>
+                  </React.Fragment>
                 );
               })}
               {images && images?.length < 5 && (
@@ -173,6 +234,9 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 </ImageUploadButton>
               )}
             </ImageRow>
+            <Button style={styles.submitButton} onPress={handleSubmit}>
+              올리기
+            </Button>
             <View>
               <ImagePickerModal
                 isVisible={modalVisible}
@@ -196,6 +260,9 @@ const styles = StyleSheet.create({
   dividerMargin: {
     marginTop: 5,
     marginBottom: 15,
+  },
+  submitButton: {
+    marginTop: 20,
   },
 });
 

@@ -27,7 +27,7 @@ import {
 import {useInputState} from '../../../../hooks/useInput';
 import {Button, Input} from '../../../../common/SharedStyles';
 import {useMutation} from '@apollo/client';
-import {EDIT_BOARD} from '../../../../graphql/mutation/sharedMutation';
+import {EDIT_BOARD} from '../../../../graphql/mutation/board/BoardMutation';
 import Toast from 'react-native-toast-message';
 
 interface IProps {

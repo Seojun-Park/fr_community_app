@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
+    height: 90,
   },
   button: {
     flex: 1,
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
+    color: 'gray',
   },
 });
 

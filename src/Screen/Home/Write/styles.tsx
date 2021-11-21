@@ -50,7 +50,12 @@ export const ImageUploadButton = styled(TouchableOpacity)<ImageButton>`
 `;
 
 export const ImageDeleteButton = styled(TouchableOpacity)`
-  height: 40px;
-  width: 40px;
-  z-index: 5;
+  height: 35px;
+  width: 35px;
+  right: 45px;
+  bottom: 75px;
+  border-radius: 20px;
+  background-color: #ff3d71;
+  align-items: center;
+  justify-content: center;
 `;

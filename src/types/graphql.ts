@@ -4,6 +4,169 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: createReply
+// ====================================================
+
+export interface createReply_createReply_data {
+  __typename: 'Reply';
+  id: number;
+}
+
+export interface createReply_createReply {
+  __typename: 'ReplyReturn';
+  success: boolean;
+  error: string | null;
+  data: createReply_createReply_data | null;
+}
+
+export interface createReply {
+  createReply: createReply_createReply;
+}
+
+export interface createReplyVariables {
+  args: CreateReplyInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: deleteReply
+// ====================================================
+
+export interface deleteReply {
+  deleteReply: boolean;
+}
+
+export interface deleteReplyVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: toggleLike
+// ====================================================
+
+export interface toggleLike_toggleLike {
+  __typename: 'LikeReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface toggleLike {
+  toggleLike: toggleLike_toggleLike;
+}
+
+export interface toggleLikeVariables {
+  Id: number;
+  type: string;
+  UserId: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: deleteBoard
+// ====================================================
+
+export interface deleteBoard_deleteBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface deleteBoard {
+  deleteBoard: deleteBoard_deleteBoard;
+}
+
+export interface deleteBoardVariables {
+  id: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: createBoard
+// ====================================================
+
+export interface createBoard_createBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface createBoard {
+  createBoard: createBoard_createBoard;
+}
+
+export interface createBoardVariables {
+  args: CreateBoardInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: editBoard
+// ====================================================
+
+export interface editBoard_editBoard {
+  __typename: 'BoardReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface editBoard {
+  editBoard: editBoard_editBoard;
+}
+
+export interface editBoardVariables {
+  args: EditBoardInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: createMarket
+// ====================================================
+
+export interface createMarket_createMarket {
+  __typename: 'MarketReturn';
+  success: boolean;
+  error: string | null;
+}
+
+export interface createMarket {
+  createMarket: createMarket_createMarket;
+}
+
+export interface createMarketVariables {
+  args: CreateMarketInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: login
 // ====================================================
 
@@ -203,146 +366,6 @@ export interface outChat {
 export interface outChatVariables {
   userId: number;
   chatId: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: createReply
-// ====================================================
-
-export interface createReply_createReply_data {
-  __typename: 'Reply';
-  id: number;
-}
-
-export interface createReply_createReply {
-  __typename: 'ReplyReturn';
-  success: boolean;
-  error: string | null;
-  data: createReply_createReply_data | null;
-}
-
-export interface createReply {
-  createReply: createReply_createReply;
-}
-
-export interface createReplyVariables {
-  args: CreateReplyInput;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: deleteReply
-// ====================================================
-
-export interface deleteReply {
-  deleteReply: boolean;
-}
-
-export interface deleteReplyVariables {
-  id: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: toggleLike
-// ====================================================
-
-export interface toggleLike_toggleLike {
-  __typename: 'LikeReturn';
-  success: boolean;
-  error: string | null;
-}
-
-export interface toggleLike {
-  toggleLike: toggleLike_toggleLike;
-}
-
-export interface toggleLikeVariables {
-  Id: number;
-  type: string;
-  UserId: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: deleteBoard
-// ====================================================
-
-export interface deleteBoard_deleteBoard {
-  __typename: 'BoardReturn';
-  success: boolean;
-  error: string | null;
-}
-
-export interface deleteBoard {
-  deleteBoard: deleteBoard_deleteBoard;
-}
-
-export interface deleteBoardVariables {
-  id: number;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: createBoard
-// ====================================================
-
-export interface createBoard_createBoard {
-  __typename: 'BoardReturn';
-  success: boolean;
-  error: string | null;
-}
-
-export interface createBoard {
-  createBoard: createBoard_createBoard;
-}
-
-export interface createBoardVariables {
-  args: CreateBoardInput;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: editBoard
-// ====================================================
-
-export interface editBoard_editBoard {
-  __typename: 'BoardReturn';
-  success: boolean;
-  error: string | null;
-}
-
-export interface editBoard {
-  editBoard: editBoard_editBoard;
-}
-
-export interface editBoardVariables {
-  args: EditBoardInput;
 }
 
 /* tslint:disable */
@@ -1145,6 +1168,17 @@ export interface CreateDmInput {
   ChatId?: number | null;
   SenderId: number;
   ReceiverId: number;
+}
+
+export interface CreateMarketInput {
+  UserId: number;
+  title: string;
+  content: string;
+  price: string;
+  type: string;
+  status: string;
+  location: string;
+  images?: string[] | null;
 }
 
 export interface CreateReplyInput {

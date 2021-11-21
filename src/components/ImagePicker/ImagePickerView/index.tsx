@@ -19,7 +19,6 @@ export default ImagePickerView;
 const styles = StyleSheet.create({
   imageBackground: {
     flex: 1,
-    marginRight: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

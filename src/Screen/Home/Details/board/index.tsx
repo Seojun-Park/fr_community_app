@@ -18,7 +18,7 @@ import {
   DELETE_BOARD,
   DELETE_REPLY,
   TOGGLE_LIKE,
-} from '../../../../graphql/mutation/sharedMutation';
+} from '../../../../graphql/mutation/board/BoardMutation';
 import {useInputState} from '../../../../hooks/useInput';
 import {BoardStackParamList} from '../../../../navigators/Home/Board/BoardStackNavigation';
 import {

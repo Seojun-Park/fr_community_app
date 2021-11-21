@@ -19,7 +19,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {useMutation} from '@apollo/client';
-import {CREATE_BOARD} from '../../../../graphql/mutation/sharedMutation';
+import {CREATE_BOARD} from '../../../../graphql/mutation/board/BoardMutation';
 import {
   createBoard as createBoardType,
   createBoardVariables,
