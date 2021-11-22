@@ -257,6 +257,7 @@ export interface verifyEmailVariables {
 export interface sendNewCode_sendNewCode_data {
   __typename: 'User';
   id: number;
+  verifiedCode: string | null;
 }
 
 export interface sendNewCode_sendNewCode {

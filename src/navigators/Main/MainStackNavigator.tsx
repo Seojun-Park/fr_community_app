@@ -8,14 +8,14 @@ import AuthStackNavigator from '../Auth/AuthStackNavigator';
 
 export type MainStackParamList = {
   AppMain: {
-    id: number | null | undefined;
+    id: string | null | undefined;
     token: string | null;
   };
   Auth: undefined;
 };
 
 interface IProps {
-  id: number | null;
+  id: string | null;
   token: string | null;
 }
 
@@ -31,7 +31,14 @@ const MainStackNavigator: React.FC<IProps> = ({id, token}) => {
 
   return (
     <MainStack.Navigator screenOptions={{headerShown: false}}>
-      {isLoggedIn ? (
+      <MainStack.Screen name={'Auth'} component={AuthStackNavigator} />
+      <MainStack.Screen
+        name={'AppMain'}
+        component={MainTabNavigator}
+        initialParams={{id, token}}
+      />
+
+      {/* {isLoggedIn ? (
         <MainStack.Screen
           name={'AppMain'}
           component={MainTabNavigator}
@@ -39,7 +46,7 @@ const MainStackNavigator: React.FC<IProps> = ({id, token}) => {
         />
       ) : (
         <MainStack.Screen name={'Auth'} component={AuthStackNavigator} />
-      )}
+      )} */}
     </MainStack.Navigator>
   );
 };

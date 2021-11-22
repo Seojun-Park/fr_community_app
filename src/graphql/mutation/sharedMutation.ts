@@ -41,6 +41,7 @@ export const SEND_NEW_CODE = gql`
       error
       data {
         id
+        verifiedCode
       }
     }
   }

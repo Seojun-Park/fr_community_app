@@ -18,8 +18,8 @@ import {
   Input,
   TouchableTextBox,
 } from '../../../common/SharedStyles';
-import LoadingIndicator from '../../../components/Loading';
 import Toast from 'react-native-toast-message';
+import Loading from '../../../components/Loading';
 
 type LoginScreenProps = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
@@ -83,7 +83,7 @@ const LoginScreen: React.VFC = () => {
     }
   );
 
-  const handleLogin = useCallback(() => {
+  const handleLogin = useCallback(async () => {
     const regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
     if (emailInput.value.trim() === '') {
       return (
@@ -118,13 +118,17 @@ const LoginScreen: React.VFC = () => {
         </>
       );
     }
-    loginMutation({
+    await loginMutation({
       variables: {
         email: emailInput.value,
         password: pwd,
       },
     });
   }, [emailInput.value, loginMutation, pwd]);
+
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <Screen style={styles.container}>
       <Text>login</Text>
@@ -146,9 +150,6 @@ const LoginScreen: React.VFC = () => {
         />
         <Button
           status="primary"
-          accessoryLeft={
-            loading ? <LoadingIndicator size="small" /> : undefined
-          }
           appearance={loading ? 'outline' : 'filled'}
           onPress={() => {
             handleLogin();

@@ -12,24 +12,26 @@ import {Text} from '@ui-kitten/components';
 import {logUserIn} from '../../../graphql/client';
 import {GET_ME} from '../../../graphql/query/sharedQuery';
 import {useInputState} from '../../../hooks/useInput';
-import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {
   getMeVariables,
   getMe as getMeType,
   verifyEmail as verifyEmailType,
   verifyEmailVariables,
+  sendNewCode as sendNewCodeType,
+  sendNewCodeVariables,
 } from '../../../types/graphql';
-import LoadingIndicator from '../../../components/Loading';
 import {CodeInputForm} from './styles';
 import {StyleSheet} from 'react-native';
-import {VERIFY_EMAIL} from '../../../graphql/mutation/sharedMutation';
+import {
+  SEND_NEW_CODE,
+  VERIFY_EMAIL,
+} from '../../../graphql/mutation/sharedMutation';
 import Toast from 'react-native-toast-message';
 import Loading from '../../../components/Loading';
+import {useNavigation} from '@react-navigation/core';
+import {MainStackParamList} from '../../../navigators/Main/MainStackNavigator';
 
-type ValidateScreenProps = NativeStackNavigationProp<
-  AuthStackParamList,
-  'Validate'
->;
+type AuthScreenProps = NativeStackNavigationProp<MainStackParamList, 'Auth'>;
 
 interface IProps {
   route: {
@@ -40,6 +42,7 @@ interface IProps {
 }
 
 const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {navigate} = useNavigation<AuthScreenProps>();
   const {token} = params;
   const {loading, data, refetch} = useQuery<getMeType, getMeVariables>(GET_ME, {
     variables: {token},
@@ -60,6 +63,7 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
         }
         AsyncStorage.removeItem('validation');
         logUserIn(token, verifiedData.id);
+        navigate('AppMain', {id: data!.getMe.data!.id.toString(), token});
         return (
           <>
             {Toast.show({
@@ -83,6 +87,34 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
     },
   });
 
+  console.log(data?.getMe.data, token);
+
+  const [sendNewCodeMutation] = useMutation<
+    sendNewCodeType,
+    sendNewCodeVariables
+  >(SEND_NEW_CODE, {
+    onCompleted: ({sendNewCode}) => {
+      const {success, error, data: completeData} = sendNewCode;
+      if (success && completeData) {
+        if (completeData.verifiedCode) {
+          setCode(completeData.verifiedCode);
+        }
+        return (
+          <>
+            {Toast.show({
+              type: 'success',
+              position: 'bottom',
+              text1: '새로운 코드가 전송 되었습니다',
+              text2: '이메일을 확인 해 주세요',
+            })}
+          </>
+        );
+      } else {
+        console.log(error);
+      }
+    },
+  });
+
   useEffect(() => {
     if (data && data.getMe.data?.verifiedCode) {
       setCode(data.getMe.data.verifiedCode);
@@ -93,9 +125,10 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
     if (data && data.getMe.data?.verified) {
       if (token) {
         logUserIn(token, data.getMe.data.id);
+        navigate('AppMain', {id: data.getMe.data.id.toString(), token});
       }
     }
-  }, [data, token]);
+  }, [data, token, navigate]);
 
   const handleVerifying = useCallback(async () => {
     if (code !== codeInput.value) {
@@ -118,7 +151,7 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
     }
   }, [codeInput.value, code, email, verifyEmailMutation]);
 
-  if (loading) {
+  if (loading || mutationLoading) {
     return <Loading />;
   }
 
@@ -133,13 +166,15 @@ const ValidateScreen: React.FC<IProps> = ({route: {params}}) => {
         />
         <Button
           onPress={() => handleVerifying()}
-          accessoryLeft={
-            mutationLoading ? <LoadingIndicator size="small" /> : undefined
-          }
           appearance={mutationLoading ? 'outline' : 'filled'}>
           인증
         </Button>
-        <TouchableTextBox position="flex-end" style={styles.touchablebox}>
+        <TouchableTextBox
+          position="flex-end"
+          style={styles.touchablebox}
+          onPress={() => {
+            sendNewCodeMutation({variables: {email: email!}});
+          }}>
           <Text status="primary">인증번호 재전송</Text>
         </TouchableTextBox>
       </CodeInputForm>
