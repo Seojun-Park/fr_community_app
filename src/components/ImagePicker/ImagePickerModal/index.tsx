@@ -14,7 +14,6 @@ const ImagePickerModal: React.FC<IProps> = ({
   isVisible,
   onClose,
   onImageLibraryPress,
-  onCameraPress,
 }) => {
   return (
     <Modal
@@ -26,14 +25,6 @@ const ImagePickerModal: React.FC<IProps> = ({
         <Pressable style={styles.button} onPress={onImageLibraryPress}>
           <Icon {...{height: 30, width: 30}} name="image-outline" fill="gray" />
           <Text style={styles.buttonText}>Library</Text>
-        </Pressable>
-        <Pressable style={styles.button} onPress={onCameraPress}>
-          <Icon
-            {...{height: 30, width: 30}}
-            name="camera-outline"
-            fill="gray"
-          />
-          <Text style={styles.buttonText}>Camera</Text>
         </Pressable>
       </SafeAreaView>
     </Modal>

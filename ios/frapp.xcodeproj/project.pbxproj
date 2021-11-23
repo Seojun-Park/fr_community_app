@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		6004E89BC90606C7A10F4F5F /* libPods-frapp-frappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4CCC296549360BB87FCB53 /* libPods-frapp-frappTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		D53DEAD7274D40FA00E49BF9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D53DEAD6274D40FA00E49BF9 /* GoogleService-Info.plist */; };
 		E0B4949EBA1AF920ECC59786 /* libPods-frapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CE40CC7D6EACC9ED1BAE73B /* libPods-frapp.a */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		4F1BE610CC0611A8AF5AF77E /* Pods-frapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-frapp.release.xcconfig"; path = "Target Support Files/Pods-frapp/Pods-frapp.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = frapp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9304822AB1E2B3F1D1DBBA13 /* Pods-frapp-frappTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-frapp-frappTests.release.xcconfig"; path = "Target Support Files/Pods-frapp-frappTests/Pods-frapp-frappTests.release.xcconfig"; sourceTree = "<group>"; };
+		D53DEAD6274D40FA00E49BF9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../ref/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D5457D972C556AC21726AF1E /* Pods-frapp-frappTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-frapp-frappTests.debug.xcconfig"; path = "Target Support Files/Pods-frapp-frappTests/Pods-frapp-frappTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E2E4958AE1FD6168BD6B4062 /* Pods-frapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-frapp.debug.xcconfig"; path = "Target Support Files/Pods-frapp/Pods-frapp.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -116,6 +118,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				D53DEAD6274D40FA00E49BF9 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* frapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* frappTests */,
@@ -145,7 +148,6 @@
 				D5457D972C556AC21726AF1E /* Pods-frapp-frappTests.debug.xcconfig */,
 				9304822AB1E2B3F1D1DBBA13 /* Pods-frapp-frappTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -246,6 +248,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				D53DEAD7274D40FA00E49BF9 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

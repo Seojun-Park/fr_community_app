@@ -9,7 +9,12 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Button, Input} from '../../../../common/SharedStyles';
 import {useInputState} from '../../../../hooks/useInput';
@@ -25,8 +30,10 @@ import {
   OptionGroup,
   TitleBox,
 } from '../styles';
-import * as ImagePicker from 'react-native-image-picker';
-import ImagePickerModal from '../../../../components/ImagePicker/ImagePickerModal';
+import {
+  launchImageLibrary,
+  ImageLibraryOptions,
+} from 'react-native-image-picker';
 import ImagePickerView from '../../../../components/ImagePicker/ImagePickerView';
 import {useMutation} from '@apollo/client';
 import {CREATE_MARKET} from '../../../../graphql/mutation/Market/MarketMutation';
@@ -35,6 +42,9 @@ import {
   createMarketVariables,
 } from '../../../../types/graphql';
 import Toast from 'react-native-toast-message';
+import storage from '@react-native-firebase/storage';
+import {Asset} from 'react-native-image-picker';
+import {utils} from '@react-native-firebase/app';
 
 interface IProps {
   route: {
@@ -71,28 +81,103 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   const [selectedIndex, setSelectedIndex] = useState(
     category === 'buy' ? 0 : 1
   );
-  const [pickerResponse, setPickerResponse] =
-    useState<ImagePicker.ImagePickerResponse>();
+  const [pickerResponse, setPickerResponse] = useState<Asset[]>();
   const [modalVisible, setModalVisible] = useState(false);
   const [images, setImages] = useState<Array<ImageProps> | undefined>([]);
 
-  const onImageLibraryPress = useCallback(() => {
-    const options: ImagePicker.ImageLibraryOptions = {
+  const getPlatformPath = useCallback(({path, uri}) => {
+    return Platform.select({
+      android: {value: path},
+      ios: {value: uri},
+    });
+  }, []);
+
+  const getFileName = useCallback((name, path) => {
+    if (name != null) {
+      return name;
+    }
+
+    if (Platform.OS === 'ios') {
+      path = '~' + path.substring(path.indexOf('/Documents'));
+    }
+    return path.split('/').pop();
+  }, []);
+
+  const uploadImageToStorage = useCallback((path, name) => {
+    // let fileUri = decodeURI(path);
+    console.log(path);
+    let reference = storage().ref(name);
+    let task = reference.putFile(path);
+    task
+      .then(() => {
+        console.log('Image uploaded to the bucket');
+      })
+      .catch(e => console.log('uploading image error => ', e, e.message));
+  }, []);
+
+  const onImageLibraryPress = useCallback(async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAM_STORAGE,
+        {
+          title: '접근',
+          message: '사진첩에 접근 권한이 필요합니다',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+    }
+    const options: ImageLibraryOptions = {
       selectionLimit: 5,
       mediaType: 'photo',
       includeBase64: false,
     };
-    ImagePicker.launchImageLibrary(options, setPickerResponse);
+    // ImagePicker.launchImageLibrary(options, setPickerResponse);
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker', storage());
+      } else if (response.errorMessage) {
+        console.log('Image picker error: ', response.errorMessage);
+      } else if (response.assets) {
+        for (let i = 0; i < response.assets.length; i++) {
+          let path = getPlatformPath(response.assets[i])!.value;
+          let fileName = getFileName(response.assets[i].fileName, path);
+          uploadImageToStorage(path, fileName);
+        }
+        setPickerResponse(response.assets);
+      }
+    });
+  }, [getFileName, uploadImageToStorage, getPlatformPath]);
+
+  const selectImages = useCallback(() => {
+    const options: ImageLibraryOptions = {
+      selectionLimit: 5,
+      mediaType: 'photo',
+    };
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker', storage());
+      } else if (response.errorMessage) {
+        console.log('Image picker error: ', response.errorMessage);
+      } else if (response.assets) {
+        setPickerResponse(response.assets);
+      }
+    });
   }, []);
 
-  const onCameraPress = useCallback(() => {
-    const options: ImagePicker.CameraOptions = {
-      saveToPhotos: true,
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-    ImagePicker.launchCamera(options, setPickerResponse);
-  }, []);
+  const uploadImages = useCallback(async () => {
+    if (pickerResponse) {
+      pickerResponse.map(async item => {
+        const reference = storage().ref(`Market/${userId}/${item.fileName}`);
+        await reference.putString(item.uri!);
+        await reference.putFile(item.uri!);
+        // const task = storage()
+        //   .ref(`Market/${userId}/${item.fileName}`)
+        //   .putFile(pathTofile);
+        // task.on('state_changed', snapshot => {});
+      });
+    }
+  }, [pickerResponse, userId]);
 
   const backAction = () => (
     <TopNavigationAction
@@ -125,33 +210,37 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   });
 
   const handleSubmit = useCallback(async () => {
-    await createMarketmutation({
-      variables: {
-        args: {
-          UserId: parseInt(userId, 10),
-          title: titleInput.value,
-          content: contentInput.value,
-          price: priceInput.value,
-          location: locationInput.value,
-          type: category,
-          status: 'onSale',
-        },
-      },
-    });
-  }, [
-    titleInput,
-    userId,
-    contentInput,
-    priceInput,
-    category,
-    locationInput,
-    createMarketmutation,
-  ]);
+    uploadImages();
+  }, [uploadImages]);
+
+  // const handleSubmit = useCallback(async () => {
+  //   await createMarketmutation({
+  //     variables: {
+  //       args: {
+  //         UserId: parseInt(userId, 10),
+  //         title: titleInput.value,
+  //         content: contentInput.value,
+  //         price: priceInput.value,
+  //         location: locationInput.value,
+  //         type: category,
+  //         status: 'onSale',
+  //       },
+  //     },
+  //   });
+  // }, [
+  //   titleInput,
+  //   userId,
+  //   contentInput,
+  //   priceInput,
+  //   category,
+  //   locationInput,
+  //   createMarketmutation,
+  // ]);
 
   useEffect(() => {
-    if (pickerResponse && pickerResponse.assets) {
-      for (let i = 0; i < pickerResponse.assets.length; i++) {
-        setImages(prev => [...prev, pickerResponse.assets[i]]);
+    if (pickerResponse) {
+      for (let i = 0; i < pickerResponse.length; i++) {
+        setImages(prev => [...prev, pickerResponse[i]]);
       }
     }
   }, [pickerResponse]);
@@ -225,7 +314,8 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 <ImageUploadButton
                   height={'150px'}
                   width={'150px'}
-                  onPress={() => setModalVisible(!modalVisible)}>
+                  // onPress={() => setModalVisible(!modalVisible)}
+                  onPress={selectImages}>
                   <Icon
                     {...{height: 30, width: 30}}
                     name="image-outline"
@@ -237,14 +327,6 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
             <Button style={styles.submitButton} onPress={handleSubmit}>
               올리기
             </Button>
-            <View>
-              <ImagePickerModal
-                isVisible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onImageLibraryPress={onImageLibraryPress}
-                onCameraPress={onCameraPress}
-              />
-            </View>
           </InputGroup>
         </KeyboardAvoidingView>
       </Content>
