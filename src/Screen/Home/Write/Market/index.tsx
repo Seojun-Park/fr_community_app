@@ -45,6 +45,7 @@ import Toast from 'react-native-toast-message';
 import {Asset} from 'react-native-image-picker';
 import {utils} from '@react-native-firebase/app';
 import {storage} from '../../../../firebase/firebase';
+import RNFS from 'react-native-fs';
 
 interface IProps {
   route: {
@@ -156,7 +157,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     };
     launchImageLibrary(options, response => {
       if (response.didCancel) {
-        console.log('User cancelled image picker', storage());
+        console.log('User cancelled image picker');
       } else if (response.errorMessage) {
         console.log('Image picker error: ', response.errorMessage);
       } else if (response.assets) {
@@ -171,21 +172,24 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       // console.log(pickerResponse);
       if (pickerResponse) {
         for (let i = 0; i < pickerResponse.length; i++) {
-          let path = getPlatformPath(pickerResponse[i])!.value;
           const pathToFile =
             `${utils.FilePath.PICTURES_DIRECTORY}/${pickerResponse[i].fileName}`.replace(
               'Pictures',
               'tmp'
             );
-          storage()
+          const base64 = await RNFS.readFile(pathToFile, 'base64');
+          const task = storage()
             .ref(`Market/${userId}/${pickerResponse[i].fileName}`)
-            .putFile(pathToFile);
+            .putString(base64);
+          task.on('state_changed', snapshot => {
+            console.log(snapshot);
+          });
         }
       }
     } catch (err) {
       console.log(err);
     }
-  }, [pickerResponse, userId, getPlatformPath]);
+  }, [pickerResponse, userId]);
 
   const backAction = () => (
     <TopNavigationAction
