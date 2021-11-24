@@ -42,9 +42,9 @@ import {
   createMarketVariables,
 } from '../../../../types/graphql';
 import Toast from 'react-native-toast-message';
-import storage from '@react-native-firebase/storage';
 import {Asset} from 'react-native-image-picker';
 import {utils} from '@react-native-firebase/app';
+import {storage} from '../../../../firebase/firebase';
 
 interface IProps {
   route: {
@@ -160,24 +160,32 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       } else if (response.errorMessage) {
         console.log('Image picker error: ', response.errorMessage);
       } else if (response.assets) {
+        console.log('from lib', response.assets[0].uri);
         setPickerResponse(response.assets);
       }
     });
   }, []);
 
   const uploadImages = useCallback(async () => {
-    if (pickerResponse) {
-      pickerResponse.map(async item => {
-        const reference = storage().ref(`Market/${userId}/${item.fileName}`);
-        await reference.putString(item.uri!);
-        await reference.putFile(item.uri!);
-        // const task = storage()
-        //   .ref(`Market/${userId}/${item.fileName}`)
-        //   .putFile(pathTofile);
-        // task.on('state_changed', snapshot => {});
-      });
+    try {
+      // console.log(pickerResponse);
+      if (pickerResponse) {
+        for (let i = 0; i < pickerResponse.length; i++) {
+          let path = getPlatformPath(pickerResponse[i])!.value;
+          const pathToFile =
+            `${utils.FilePath.PICTURES_DIRECTORY}/${pickerResponse[i].fileName}`.replace(
+              'Pictures',
+              'tmp'
+            );
+          storage()
+            .ref(`Market/${userId}/${pickerResponse[i].fileName}`)
+            .putFile(pathToFile);
+        }
+      }
+    } catch (err) {
+      console.log(err);
     }
-  }, [pickerResponse, userId]);
+  }, [pickerResponse, userId, getPlatformPath]);
 
   const backAction = () => (
     <TopNavigationAction
@@ -210,7 +218,11 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   });
 
   const handleSubmit = useCallback(async () => {
-    uploadImages();
+    try {
+      uploadImages();
+    } catch (err) {
+      console.log(err);
+    }
   }, [uploadImages]);
 
   // const handleSubmit = useCallback(async () => {
