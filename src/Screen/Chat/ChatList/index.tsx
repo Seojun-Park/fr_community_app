@@ -1,12 +1,14 @@
-import {
-  useMutation,
-  useQuery,
-  useReactiveVar,
-  useSubscription,
-} from '@apollo/client';
+import {useMutation, useQuery, useSubscription} from '@apollo/client';
 import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ListItem, Icon, Text, Divider} from '@ui-kitten/components';
+import {
+  ListItem,
+  Icon,
+  Text,
+  Divider,
+  TopNavigation,
+  TopNavigationAction,
+} from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Animated,
@@ -18,7 +20,6 @@ import {
 } from 'react-native';
 import {getDateWithoutYear, getTime} from '../../../common/getDate';
 import LoadingIndicator from '../../../components/Loading';
-import {myIdVar} from '../../../graphql/client';
 import {GET_CHATS} from '../../../graphql/query/sharedQuery';
 import {
   getChats as getChatsTypes,
@@ -37,21 +38,31 @@ import {GET_DM} from '../../../graphql/subscription/subscription';
 import Badge from '../../../components/Badge';
 import Loading from '../../../components/Loading';
 import {ChatStackParamList} from '../../../navigators/Chat/ChatStackNavigator';
+import {Screen} from '../../../common/SharedStyles';
+import Avatar from '../../../components/Avatar';
+
+interface IProps {
+  route: {
+    params: {
+      userId: string;
+    };
+  };
+}
 
 type ChatListScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
   'ChatList'
 >;
 
-const ChatListScreen = () => {
-  const {navigate} = useNavigation<ChatListScreenProps>();
+const ChatListScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {userId} = params;
+  const {navigate, goBack} = useNavigation<ChatListScreenProps>();
   const [newMsg, setNewMsg] = useState<Array<number>>([]);
-  const myId = useReactiveVar(myIdVar);
   const {data, loading, refetch, fetchMore} = useQuery<
     getChatsTypes,
     getChatsVariables
   >(GET_CHATS, {
-    variables: {userId: myId},
+    variables: {userId: parseInt(userId, 10)},
     notifyOnNetworkStatusChange: true,
   });
 
@@ -91,9 +102,9 @@ const ChatListScreen = () => {
 
   const {data: subscriptionData, loading: subscriptionLoading} =
     useSubscription<getDmTypes, getDmVariables>(GET_DM, {
-      skip: !myId,
+      skip: !userId,
       variables: {
-        userId: myId,
+        userId: parseInt(userId, 10),
       },
       onSubscriptionData: ({subscriptionData: {data: completeData}}) => {
         if (completeData?.getDm.ChatId) {
@@ -108,11 +119,11 @@ const ChatListScreen = () => {
     if (subscriptionData) {
       fetchMore({
         variables: {
-          userId: myId,
+          userId: parseInt(userId, 10),
         },
       });
     }
-  }, [subscriptionData, fetchMore, myId]);
+  }, [subscriptionData, fetchMore, userId]);
 
   const renderDate = useCallback(
     (date, id) => {
@@ -132,7 +143,9 @@ const ChatListScreen = () => {
   );
 
   const renderItemIcon = () => (
-    <Icon {...{width: 25, height: 25}} name="person" />
+    <View>
+      <Avatar size={40} />
+    </View>
   );
 
   const renderRightActions = useCallback(
@@ -154,7 +167,7 @@ const ChatListScreen = () => {
                 outChat({
                   variables: {
                     chatId: id,
-                    userId: myId,
+                    userId: parseInt(userId, 10),
                   },
                 })
               }>
@@ -166,7 +179,7 @@ const ChatListScreen = () => {
         </View>
       );
     },
-    [myId, outChat]
+    [userId, outChat]
   );
 
   const renderItem = ({item}) => {
@@ -174,7 +187,8 @@ const ChatListScreen = () => {
     let partner = '알수 없음';
     if (Members) {
       partner = Members.filter(
-        (member: getChats_getChats_data_Members) => member.id !== myId
+        (member: getChats_getChats_data_Members) =>
+          member.id !== parseInt(userId, 10)
       );
     }
     return (
@@ -193,6 +207,7 @@ const ChatListScreen = () => {
                 if (partner[0]) {
                   setNewMsg([]);
                   navigate('ChatDetail', {
+                    userId: parseInt(userId, 10),
                     chatId: item.id,
                     partnerId: partner[0].id,
                   });
@@ -227,13 +242,10 @@ const ChatListScreen = () => {
   }
 
   return (
-    <SafeAreaView>
-      {/* <TopMenuWithGoback id={myId} /> */}
+    <SafeAreaView style={styles.screen}>
+      <TopNavigation title="Chat" />
       <ChatListBox>
-        {/* <View style={styles.inputBox}>
-          <Input placeholder="사용자 검색" />
-        </View> */}
-        {/* <Divider /> */}
+        <Divider />
         {data?.getChats.data && data.getChats.data.length !== 0 ? (
           <ListScrollView
             data={data.getChats.data}
@@ -253,6 +265,9 @@ const ChatListScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    height: '100%',
+  },
   inputBox: {
     width: '90%',
     marginLeft: 20,

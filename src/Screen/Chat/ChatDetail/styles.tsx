@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import {View} from 'react-native';
 import {Layout, Button, List, ListItem, Text} from '@ui-kitten/components';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface MessageProps {
   me: boolean;
@@ -54,4 +55,15 @@ export const Section = styled(View)`
   margin-top: 20px;
   border-top-width: 1px;
   border-top-color: '#eee';
+`;
+
+export const AvatarIcon = styled(TouchableOpacity)`
+  height: 45px;
+  width: 45px;
+  border-radius: 100px;
+  border-width: 1px;
+  border-color: #eee;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
 `;

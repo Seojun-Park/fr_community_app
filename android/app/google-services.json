@@ -1,48 +1,40 @@
 {
   "project_info": {
-    "project_number": "153013820480",
-    "project_id": "fr-community",
-    "storage_bucket": "fr-community.appspot.com"
+    "project_number": "1079953007552",
+    "project_id": "frcom-72542",
+    "storage_bucket": "frcom-72542.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:153013820480:android:5e4d7008f08267cd9893a5",
+        "mobilesdk_app_id": "1:1079953007552:android:c072431fe3ab6566c65e25",
         "android_client_info": {
-          "package_name": "com.frcommunitystorage"
+          "package_name": "com.frapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "153013820480-mc6bcjvri6p0e4jof8km03ssciqi2lq6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.frcommunitystorage",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "153013820480-06i5stqoekdbeu8d339a58gl6f63m89b.apps.googleusercontent.com",
+          "client_id": "1079953007552-jm7uq8iv97lefqourvoiuboph4rqqhjg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBm4pQeOdEIob2PkfAGkfZQzZSVh4o3PQ0"
+          "current_key": "AIzaSyBRVjX9myFMtO-y8r0SuD39n9SlmQi0sno"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "153013820480-06i5stqoekdbeu8d339a58gl6f63m89b.apps.googleusercontent.com",
+              "client_id": "1079953007552-jm7uq8iv97lefqourvoiuboph4rqqhjg.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "153013820480-329rj051e6j32igu24g6eu4ap5hs40d4.apps.googleusercontent.com",
+              "client_id": "1079953007552-334lknsqe63qhjr22u0pb2053tfhiedk.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.frapp"
+                "bundle_id": "com.frCom"
               }
             }
           ]

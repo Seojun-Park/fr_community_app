@@ -43,9 +43,7 @@ import {
 } from '../../../../types/graphql';
 import Toast from 'react-native-toast-message';
 import {Asset} from 'react-native-image-picker';
-import {utils} from '@react-native-firebase/app';
-import {storage} from '../../../../firebase/firebase';
-import RNFS from 'react-native-fs';
+import storage from '@react-native-firebase/storage';
 
 interface IProps {
   route: {
@@ -82,41 +80,70 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   const [selectedIndex, setSelectedIndex] = useState(
     category === 'buy' ? 0 : 1
   );
-  const [pickerResponse, setPickerResponse] = useState<Asset[]>();
+  const [pickerResponse, setPickerResponse] = useState<Asset[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [images, setImages] = useState<Array<ImageProps> | undefined>([]);
+  const [transferred, setTransferred] = useState<number>(0);
 
-  const getPlatformPath = useCallback(({path, uri}) => {
-    return Platform.select({
-      android: {value: path},
-      ios: {value: uri},
-    });
-  }, []);
+  // const onImageLibraryPress = useCallback(async () => {
+  //   if (Platform.OS === 'android') {
+  //     await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.READ_EXTERNAM_STORAGE,
+  //       {
+  //         title: '접근',
+  //         message: '사진첩에 접근 권한이 필요합니다',
+  //         buttonNegative: 'Cancel',
+  //         buttonPositive: 'OK',
+  //       }
+  //     );
+  //   }
+  //   const options: ImageLibraryOptions = {
+  //     selectionLimit: 5,
+  //     mediaType: 'photo',
+  //     includeBase64: true,
+  //     maxHeight: 1000,
+  //     maxWidth: 1000,
+  //   };
+  //   launchImageLibrary(options, response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.errorMessage) {
+  //       console.log('Image picker error: ', response.errorMessage);
+  //     } else if (response.assets) {
+  //       setPickerResponse(response.assets);
+  //     }
+  //   });
+  // }, []);
 
-  const getFileName = useCallback((name, path) => {
-    if (name != null) {
-      return name;
+  const uploadImages = useCallback(async () => {
+    for (let i = 0; i < pickerResponse.length; i++) {
+      const {uri} = pickerResponse[i];
+      const filename = uri?.substring(uri.lastIndexOf('/') + 1);
+      const uploadUri =
+        Platform.OS === 'ios' ? uri?.replace('file://', '') : uri;
+      setTransferred(0);
+      const task = storage().ref(filename).putFile(uploadUri);
+      task.on('state_changed', snapshot => {
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+        );
+      });
+      try {
+        await task;
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }, [pickerResponse]);
 
-    if (Platform.OS === 'ios') {
-      path = '~' + path.substring(path.indexOf('/Documents'));
-    }
-    return path.split('/').pop();
-  }, []);
-
-  const uploadImageToStorage = useCallback((path, name) => {
-    // let fileUri = decodeURI(path);
-    console.log(path);
-    let reference = storage().ref(name);
-    let task = reference.putFile(path);
-    task
-      .then(() => {
-        console.log('Image uploaded to the bucket');
-      })
-      .catch(e => console.log('uploading image error => ', e, e.message));
-  }, []);
-
-  const onImageLibraryPress = useCallback(async () => {
+  const selectImages = useCallback(async () => {
+    const options: ImageLibraryOptions = {
+      selectionLimit: 5,
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 1000,
+      maxWidth: 1000,
+    };
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAM_STORAGE,
@@ -128,68 +155,20 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
         }
       );
     }
-    const options: ImageLibraryOptions = {
-      selectionLimit: 5,
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-    // ImagePicker.launchImageLibrary(options, setPickerResponse);
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker', storage());
-      } else if (response.errorMessage) {
-        console.log('Image picker error: ', response.errorMessage);
-      } else if (response.assets) {
-        for (let i = 0; i < response.assets.length; i++) {
-          let path = getPlatformPath(response.assets[i])!.value;
-          let fileName = getFileName(response.assets[i].fileName, path);
-          uploadImageToStorage(path, fileName);
-        }
-        setPickerResponse(response.assets);
-      }
-    });
-  }, [getFileName, uploadImageToStorage, getPlatformPath]);
-
-  const selectImages = useCallback(() => {
-    const options: ImageLibraryOptions = {
-      selectionLimit: 5,
-      mediaType: 'photo',
-    };
     launchImageLibrary(options, response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorMessage) {
         console.log('Image picker error: ', response.errorMessage);
+      } else if (response.errorCode) {
+        console.log('Image picker error: ', response.errorCode);
       } else if (response.assets) {
-        console.log('from lib', response.assets[0].uri);
         setPickerResponse(response.assets);
       }
     });
   }, []);
 
-  const uploadImages = useCallback(async () => {
-    try {
-      // console.log(pickerResponse);
-      if (pickerResponse) {
-        for (let i = 0; i < pickerResponse.length; i++) {
-          const pathToFile =
-            `${utils.FilePath.PICTURES_DIRECTORY}/${pickerResponse[i].fileName}`.replace(
-              'Pictures',
-              'tmp'
-            );
-          const base64 = await RNFS.readFile(pathToFile, 'base64');
-          const task = storage()
-            .ref(`Market/${userId}/${pickerResponse[i].fileName}`)
-            .putString(base64);
-          task.on('state_changed', snapshot => {
-            console.log(snapshot);
-          });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, [pickerResponse, userId]);
+  console.log(pickerResponse);
 
   const backAction = () => (
     <TopNavigationAction
@@ -227,7 +206,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     } catch (err) {
       console.log(err);
     }
-  }, [uploadImages]);
+  }, []);
 
   // const handleSubmit = useCallback(async () => {
   //   await createMarketmutation({
@@ -264,7 +243,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
   return (
     <SafeAreaView style={styles.screen}>
       <TopNavigation accessoryLeft={backAction} />
-      <Content>
+      <Content showsVerticalScrollIndicator={false}>
         <KeyboardAvoidingView
           behavior="position"
           keyboardVerticalOffset={keyboardVerticalOffset}>
@@ -330,7 +309,6 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 <ImageUploadButton
                   height={'150px'}
                   width={'150px'}
-                  // onPress={() => setModalVisible(!modalVisible)}
                   onPress={selectImages}>
                   <Icon
                     {...{height: 30, width: 30}}

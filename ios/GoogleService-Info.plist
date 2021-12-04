@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>153013820480-329rj051e6j32igu24g6eu4ap5hs40d4.apps.googleusercontent.com</string>
+	<string>1079953007552-334lknsqe63qhjr22u0pb2053tfhiedk.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.153013820480-329rj051e6j32igu24g6eu4ap5hs40d4</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>153013820480-mc6bcjvri6p0e4jof8km03ssciqi2lq6.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.1079953007552-334lknsqe63qhjr22u0pb2053tfhiedk</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBAxIUSN-cjUT69XuhB8ejLSYCatnNmeUs</string>
+	<string>AIzaSyA6ekE0ioACLtr5mWA3SGEChOZSFi5X8wc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>153013820480</string>
+	<string>1079953007552</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.frapp</string>
+	<string>com.frCom</string>
 	<key>PROJECT_ID</key>
-	<string>fr-community</string>
+	<string>frcom-72542</string>
 	<key>STORAGE_BUCKET</key>
-	<string>fr-community.appspot.com</string>
+	<string>frcom-72542.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:153013820480:ios:9974a6b31f7bebe59893a5</string>
+	<string>1:1079953007552:ios:e2c1d6a7b999d636c65e25</string>
 </dict>
 </plist>

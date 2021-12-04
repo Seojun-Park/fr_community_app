@@ -1,10 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  useMutation,
-  useQuery,
-  useReactiveVar,
-  useSubscription,
-} from '@apollo/client';
+import {useMutation, useQuery, useSubscription} from '@apollo/client';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -12,12 +7,10 @@ import {
   RefreshControl,
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
   View,
   Keyboard,
 } from 'react-native';
 import TopMenuWithGoback from '../../../components/TopMenuWithGoBack';
-import {myIdVar} from '../../../graphql/client';
 import {
   dmSubscription as dmSubscriptionType,
   getChatMessages as getChatMessagesType,
@@ -29,6 +22,8 @@ import {
   memberOutVariables,
   checkChatMember as checkChatMemberType,
   checkChatMemberVariables,
+  getChatMessages_getChatMessages_data_Receiver,
+  getChatMessages_getChatMessages_data_Sender,
 } from '../../../types/graphql';
 import {
   GET_CHAT_MESSAGE,
@@ -42,6 +37,7 @@ import {
 } from '../../../graphql/subscription/subscription';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
+  AvatarIcon,
   InputBox,
   MessageBox,
   MessageItem,
@@ -50,7 +46,7 @@ import {
   MessageText,
   SendButton,
 } from './styles';
-import {Divider, Icon, Text} from '@ui-kitten/components';
+import {Icon, Text} from '@ui-kitten/components';
 import {useInputState} from '../../../hooks/useInput';
 import {getTime} from '../../../common/getDate';
 import Avatar from '../../../components/Avatar';
@@ -58,6 +54,7 @@ import Toast from 'react-native-toast-message';
 import {SEND_DM} from '../../../graphql/mutation/sharedMutation';
 import {ChatStackParamList} from '../../../navigators/Chat/ChatStackNavigator';
 import Loading from '../../../components/Loading';
+import UserProfileModal from '../../../components/UserProfileModal';
 
 type ChatDetailScreenProps = NativeStackNavigationProp<
   ChatStackParamList,
@@ -66,6 +63,7 @@ type ChatDetailScreenProps = NativeStackNavigationProp<
 interface IProps {
   route: {
     params: {
+      userId: number;
       chatId: number;
       partnerId: number;
     };
@@ -74,19 +72,21 @@ interface IProps {
 
 const SendIcon = (props: any) => <Icon {...props} name="paper-plane-outline" />;
 
-const ChatDetailScreen: React.FC<IProps> = ({route}) => {
-  const {
-    params: {chatId, partnerId},
-  } = route;
+const ChatDetailScreen: React.FC<IProps> = ({route: {params}}) => {
+  const {chatId, partnerId, userId} = params;
   const scrollRef = useRef<FlatList<any>>(null);
   // const {navigate} = useNavigation<ChatDetailScreenProps>();
-  const myId = useReactiveVar(myIdVar);
   const msgInput = useInputState('');
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
   const [load, setLoad] = useState<number>(1);
   const [executing, setExecuting] = useState<boolean>(false);
   const [memberStatus, setMemberStatus] = useState<boolean>(false);
-  // memberstatus = true(one of chat member out the chat) : false(chat members in the chat room)
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [other, setOther] = useState<
+    | getChatMessages_getChatMessages_data_Receiver
+    | getChatMessages_getChatMessages_data_Sender
+    | null
+  >(null);
 
   const {data, loading, refetch, fetchMore} = useQuery<
     getChatMessagesType,
@@ -120,9 +120,12 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
       chatId,
     },
     onCompleted: ({checkChatMember}) => {
-      const {success, error, data} = checkChatMember;
-      if (success && data) {
-        if (data.Member1 === null || data.Member2 === null) {
+      const {success, error, data: checkChatMemberData} = checkChatMember;
+      if (success && checkChatMemberData) {
+        if (
+          checkChatMemberData.Member1 === null ||
+          checkChatMemberData.Member2 === null
+        ) {
           setMemberStatus(true);
         }
       } else {
@@ -183,7 +186,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
     await sendDm({
       variables: {
         args: {
-          SenderId: myId,
+          SenderId: userId,
           ReceiverId: partnerId,
           content: msgInput.value,
           ChatId: chatId,
@@ -191,7 +194,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
       },
     });
     Keyboard.dismiss();
-  }, [chatId, myId, partnerId, sendDm, msgInput.value]);
+  }, [chatId, userId, partnerId, sendDm, msgInput.value]);
 
   const onFetch = useCallback(
     loadProp => {
@@ -244,20 +247,21 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
 
   const renderItem = useCallback(
     ({item}) => {
-      const {Receiver, content, SenderId, createdAt} = item;
+      const {Receiver, Sender, content, SenderId, createdAt} = item;
       let me;
-      if (SenderId === myId) {
+      if (SenderId === userId) {
         me = 'sender';
+        setOther(Receiver);
       } else {
         me = 'receiver';
+        setOther(Sender);
       }
       return (
         <>
           {me === 'sender' ? (
-            <MessageRow me={true} style={styles.noneBorder}>
+            <MessageRow me={true}>
               <View style={styles.dateLeft}>{renderDate(createdAt)}</View>
               <MessageItem
-                style={styles.noneBorder}
                 title={() => {
                   return <MessageText>{content}</MessageText>;
                 }}
@@ -267,14 +271,10 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
           ) : (
             <MessageRow me={false}>
               <React.Fragment>
-                <TouchableOpacity>
-                  <Avatar nickname={Receiver.nickname} />
-                </TouchableOpacity>
-                <MessageItem
-                  title={content}
-                  me={false}
-                  style={styles.noneBorder}
-                />
+                <AvatarIcon onPress={() => setModalVisible(true)}>
+                  <Avatar size={40} />
+                </AvatarIcon>
+                <MessageItem title={content} me={false} />
                 <View style={styles.dateRight}>{renderDate(createdAt)}</View>
               </React.Fragment>
             </MessageRow>
@@ -282,7 +282,7 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
         </>
       );
     },
-    [myId, renderDate]
+    [userId, renderDate]
   );
 
   if (subscriptionLoading && !chatId && memberOutLoading) {
@@ -290,14 +290,18 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.screen}>
       <KeyboardAvoidingView
         behavior="position"
         keyboardVerticalOffset={keyboardVerticalOffset}>
         <TopMenuWithGoback id={0} />
-        <Divider />
         {loading && <LoadingIndicator size="large" />}
-        <MessageBox style={styles.noneBorder}>
+        <UserProfileModal
+          isVisible={modalVisible}
+          user={other}
+          onClose={() => setModalVisible(false)}
+        />
+        <MessageBox>
           {memberStatus && (
             <View style={styles.memberOutNotice}>
               <Text>상대방이 채팅방을 나갔습니다.</Text>
@@ -305,7 +309,6 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
           )}
           {data?.getChatMessages.data && (
             <MessageList
-              style={styles.noneBorder}
               bounces={true}
               refreshControl={
                 <RefreshControl
@@ -318,11 +321,9 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
               }
               ref={scrollRef}
               data={data.getChatMessages.data}
-              ItemSeparatorComponent={Divider}
               renderItem={renderItem}
             />
           )}
-          <Divider style={styles.divider} />
           <InputBox>
             <Input
               style={styles.inputStyle}
@@ -341,6 +342,9 @@ const ChatDetailScreen: React.FC<IProps> = ({route}) => {
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    height: '96%',
+  },
   inputStyle: {
     width: '95%',
   },
@@ -362,9 +366,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
-  },
-  noneBorder: {
-    borderWidth: 0,
   },
 });
 
