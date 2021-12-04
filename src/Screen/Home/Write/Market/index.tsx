@@ -81,39 +81,9 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     category === 'buy' ? 0 : 1
   );
   const [pickerResponse, setPickerResponse] = useState<Asset[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [images, setImages] = useState<Array<ImageProps> | undefined>([]);
   const [transferred, setTransferred] = useState<number>(0);
-
-  // const onImageLibraryPress = useCallback(async () => {
-  //   if (Platform.OS === 'android') {
-  //     await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.READ_EXTERNAM_STORAGE,
-  //       {
-  //         title: '접근',
-  //         message: '사진첩에 접근 권한이 필요합니다',
-  //         buttonNegative: 'Cancel',
-  //         buttonPositive: 'OK',
-  //       }
-  //     );
-  //   }
-  //   const options: ImageLibraryOptions = {
-  //     selectionLimit: 5,
-  //     mediaType: 'photo',
-  //     includeBase64: true,
-  //     maxHeight: 1000,
-  //     maxWidth: 1000,
-  //   };
-  //   launchImageLibrary(options, response => {
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.errorMessage) {
-  //       console.log('Image picker error: ', response.errorMessage);
-  //     } else if (response.assets) {
-  //       setPickerResponse(response.assets);
-  //     }
-  //   });
-  // }, []);
+  const [imgUrl, setImgUrl] = useState<Array<string>>([]);
 
   const uploadImages = useCallback(async () => {
     for (let i = 0; i < pickerResponse.length; i++) {
@@ -122,19 +92,37 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       const uploadUri =
         Platform.OS === 'ios' ? uri?.replace('file://', '') : uri;
       setTransferred(0);
-      const task = storage().ref(filename).putFile(uploadUri);
-      task.on('state_changed', snapshot => {
-        setTransferred(
-          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-        );
-      });
+      const task = storage()
+        .ref(`/market/${userId}/${filename}`)
+        .putFile(uploadUri);
+      task.on(
+        'state_changed',
+        snapshot => {
+          setTransferred(
+            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+          );
+        },
+        err => console.log(err),
+        () => {
+          try {
+            storage()
+              .ref(`/market/${userId}/${filename}`)
+              .getDownloadURL()
+              .then(url => {
+                setImgUrl(prev => [...prev, url]);
+              });
+          } catch (err) {
+            console.log('uploading error', err.message);
+          }
+        }
+      );
       try {
         await task;
       } catch (e) {
         console.log(e);
       }
     }
-  }, [pickerResponse]);
+  }, [pickerResponse, userId]);
 
   const selectImages = useCallback(async () => {
     const options: ImageLibraryOptions = {
@@ -168,8 +156,6 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     });
   }, []);
 
-  console.log(pickerResponse);
-
   const backAction = () => (
     <TopNavigationAction
       icon={<Icon {...{width: 24, height: 24}} name="arrow-back" />}
@@ -202,35 +188,35 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
 
   const handleSubmit = useCallback(async () => {
     try {
-      uploadImages();
+      // await uploadImages()
+      await createMarketmutation({
+        variables: {
+          args: {
+            UserId: parseInt(userId, 10),
+            title: titleInput.value,
+            content: contentInput.value,
+            price: priceInput.value,
+            status: 'onSale',
+            location: locationInput.value,
+            type,
+          },
+        },
+      });
     } catch (err) {
       console.log(err);
     }
-  }, []);
-
-  // const handleSubmit = useCallback(async () => {
-  //   await createMarketmutation({
-  //     variables: {
-  //       args: {
-  //         UserId: parseInt(userId, 10),
-  //         title: titleInput.value,
-  //         content: contentInput.value,
-  //         price: priceInput.value,
-  //         location: locationInput.value,
-  //         type: category,
-  //         status: 'onSale',
-  //       },
-  //     },
-  //   });
-  // }, [
-  //   titleInput,
-  //   userId,
-  //   contentInput,
-  //   priceInput,
-  //   category,
-  //   locationInput,
-  //   createMarketmutation,
-  // ]);
+  }, [
+    pickerResponse.length,
+    uploadImages,
+    titleInput.value,
+    userId,
+    contentInput.value,
+    priceInput.value,
+    locationInput.value,
+    createMarketmutation,
+    imgUrl,
+    type,
+  ]);
 
   useEffect(() => {
     if (pickerResponse) {
