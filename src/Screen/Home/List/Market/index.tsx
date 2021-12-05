@@ -23,6 +23,7 @@ import {
 import {MarketStackParamList} from '../../../../navigators/Home/Market/MarketStackNavigator';
 import Loading from '../../../../components/Loading';
 import {EmptyView, SearchView} from '../styles';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface IProps {
   route: {
@@ -90,17 +91,18 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
         <ListItem
           title={`${item.title}`}
           style={styles.listItem}
-          // onPress={() => {
-          //   navigate('BoardDetail', {
-          //     postId: item.id,
-          //     userId,
-          //   });
-          // }}
+          onPress={() => {
+            navigate('MarketDetail', {
+              postId: item.id,
+              userId,
+              category,
+            });
+          }}
           accessoryRight={() => renderRight(item.createdAt)}
         />
       );
     },
-    [renderRight, navigate, userId]
+    [renderRight, navigate, userId, category]
   );
 
   if (loading) {
@@ -108,12 +110,13 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
   }
 
   return (
-    <Screen>
+    <SafeAreaView style={styles.screen}>
       <TopNavigation
         accessoryLeft={backAction}
         accessoryRight={topNavigationRenderRight}
       />
       <SearchView>
+        <Divider />
         {data?.getMarketsByCategory?.data &&
         data.getMarketsByCategory.data.length !== 0 ? (
           <List
@@ -141,11 +144,15 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
           </EmptyView>
         )}
       </SearchView>
-    </Screen>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    height: '100%',
+    backgroundColor: 'white',
+  },
   container: {
     minHeight: 200,
   },

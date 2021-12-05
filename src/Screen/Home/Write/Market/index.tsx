@@ -8,7 +8,7 @@ import {
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   KeyboardAvoidingView,
   PermissionsAndroid,
@@ -81,48 +81,32 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     category === 'buy' ? 0 : 1
   );
   const [pickerResponse, setPickerResponse] = useState<Asset[]>([]);
-  const [images, setImages] = useState<Array<ImageProps> | undefined>([]);
   const [transferred, setTransferred] = useState<number>(0);
   const [imgUrl, setImgUrl] = useState<Array<string>>([]);
+  const [imageUploading, setImageUploading] = useState<boolean>(false);
 
-  const uploadImages = useCallback(async () => {
-    for (let i = 0; i < pickerResponse.length; i++) {
-      const {uri} = pickerResponse[i];
-      const filename = uri?.substring(uri.lastIndexOf('/') + 1);
-      const uploadUri =
-        Platform.OS === 'ios' ? uri?.replace('file://', '') : uri;
-      setTransferred(0);
-      const task = storage()
-        .ref(`/market/${userId}/${filename}`)
-        .putFile(uploadUri);
-      task.on(
-        'state_changed',
-        snapshot => {
-          setTransferred(
-            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-          );
-        },
-        err => console.log(err),
-        () => {
-          try {
-            storage()
-              .ref(`/market/${userId}/${filename}`)
-              .getDownloadURL()
-              .then(url => {
-                setImgUrl(prev => [...prev, url]);
-              });
-          } catch (err) {
-            console.log('uploading error', err.message);
-          }
-        }
-      );
-      try {
-        await task;
-      } catch (e) {
-        console.log(e);
+  const [createMarketmutation, {loading}] = useMutation<
+    createMarketType,
+    createMarketVariables
+  >(CREATE_MARKET, {
+    onCompleted: ({createMarket}) => {
+      const {success, error} = createMarket;
+      if (success) {
+        navigate('MarketList', {userId, category, refreshing: true});
+        return (
+          <>
+            {Toast.show({
+              type: 'success',
+              position: 'bottom',
+              text1: '게시물이 등록 되었습니다',
+            })}
+          </>
+        );
+      } else {
+        console.log(error);
       }
-    }
-  }, [pickerResponse, userId]);
+    },
+  });
 
   const selectImages = useCallback(async () => {
     const options: ImageLibraryOptions = {
@@ -152,9 +136,42 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
         console.log('Image picker error: ', response.errorCode);
       } else if (response.assets) {
         setPickerResponse(response.assets);
+        setImageUploading(true);
+        for (let i = 0; i < response.assets.length; i++) {
+          const {uri} = response.assets[i];
+          const filename = uri?.substring(uri.lastIndexOf('/') + 1);
+          const uploadUri =
+            Platform.OS === 'ios' ? uri?.replace('file://', '') : uri;
+          const task = storage()
+            .ref(`/market/${userId}/${filename}`)
+            .putFile(uploadUri as string);
+          task.on(
+            'state_changed',
+            snapshot => {
+              setTransferred(
+                Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *
+                  100
+              );
+            },
+            err => console.log(err),
+            () => {
+              try {
+                storage()
+                  .ref(`/market/${userId}/${filename}`)
+                  .getDownloadURL()
+                  .then(url => {
+                    setImgUrl(prev => [...prev, url]);
+                  });
+                setImageUploading(false);
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          );
+        }
       }
     });
-  }, []);
+  }, [userId]);
 
   const backAction = () => (
     <TopNavigationAction
@@ -163,32 +180,9 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     />
   );
 
-  const [createMarketmutation] = useMutation<
-    createMarketType,
-    createMarketVariables
-  >(CREATE_MARKET, {
-    onCompleted: ({createMarket}) => {
-      const {success, error} = createMarket;
-      if (success) {
-        navigate('MarketList', {userId, category, refreshing: true});
-        return (
-          <>
-            {Toast.show({
-              type: 'success',
-              position: 'bottom',
-              text1: '게시물이 등록 되었습니다',
-            })}
-          </>
-        );
-      } else {
-        console.log(error);
-      }
-    },
-  });
-
   const handleSubmit = useCallback(async () => {
     try {
-      // await uploadImages()
+      setImageUploading(false);
       await createMarketmutation({
         variables: {
           args: {
@@ -198,6 +192,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
             price: priceInput.value,
             status: 'onSale',
             location: locationInput.value,
+            images: imgUrl,
             type,
           },
         },
@@ -206,8 +201,6 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
       console.log(err);
     }
   }, [
-    pickerResponse.length,
-    uploadImages,
     titleInput.value,
     userId,
     contentInput.value,
@@ -217,14 +210,6 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
     imgUrl,
     type,
   ]);
-
-  useEffect(() => {
-    if (pickerResponse) {
-      for (let i = 0; i < pickerResponse.length; i++) {
-        setImages(prev => [...prev, pickerResponse[i]]);
-      }
-    }
-  }, [pickerResponse]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -275,7 +260,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
             <ImageRow
               horizontal={true}
               contentContainerStyle={{alignItems: 'center'}}>
-              {images?.map((item, idx) => {
+              {pickerResponse?.map((item, idx) => {
                 return (
                   <React.Fragment key={idx}>
                     <ImageBox>
@@ -291,7 +276,7 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                   </React.Fragment>
                 );
               })}
-              {images && images?.length < 5 && (
+              {pickerResponse && pickerResponse?.length < 5 && (
                 <ImageUploadButton
                   height={'150px'}
                   width={'150px'}
@@ -304,8 +289,11 @@ const MarketWriteScreen: React.FC<IProps> = ({route: {params}}) => {
                 </ImageUploadButton>
               )}
             </ImageRow>
-            <Button style={styles.submitButton} onPress={handleSubmit}>
-              올리기
+            <Button
+              style={styles.submitButton}
+              onPress={handleSubmit}
+              disabled={imageUploading || loading}>
+              {imageUploading || loading ? '업로드 중입니다...' : '업로드'}
             </Button>
           </InputGroup>
         </KeyboardAvoidingView>

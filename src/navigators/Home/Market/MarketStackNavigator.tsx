@@ -17,7 +17,7 @@ export type MarketStackParamList = {
   MarketDetail: {
     userId: string;
     category: string;
-    refreshing?: boolean;
+    postId: string;
   };
 };
 
