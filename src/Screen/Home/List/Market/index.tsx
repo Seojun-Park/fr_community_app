@@ -11,10 +11,9 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
-import {RefreshControl, StyleSheet, View} from 'react-native';
+import {Image, RefreshControl, StyleSheet, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getDateWithoutYear} from '../../../../common/getDate';
-import {Screen} from '../../../../common/SharedStyles';
 import {GET_MARKETS_BY_CATEGORY} from '../../../../graphql/query/Market/marketQueries';
 import {
   getMarketsByCategory as getMarketsByCategoryType,
@@ -87,9 +86,20 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
 
   const renderItem = useCallback(
     ({item}) => {
+      console.log(item);
       return (
         <ListItem
-          title={`${item.title}`}
+          title={() => <Text category="h4">{item.title}</Text>}
+          description={() => (
+            <>
+              <Text category="c1" style={styles.location} appearance="hint">
+                {item.location}
+              </Text>
+              <Text category="c1" style={styles.description}>
+                {item.price}&#8364;
+              </Text>
+            </>
+          )}
           style={styles.listItem}
           onPress={() => {
             navigate('MarketDetail', {
@@ -97,6 +107,11 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
               userId,
               category,
             });
+          }}
+          accessoryLeft={() => {
+            return (
+              <Image source={{uri: item.thumbnail}} style={styles.thumbnail} />
+            );
           }}
           accessoryRight={() => renderRight(item.createdAt)}
         />
@@ -112,6 +127,10 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
   return (
     <SafeAreaView style={styles.screen}>
       <TopNavigation
+        title={() => (
+          <Text category="h5">{category === 'buy' ? '삽니다' : '팝니다'}</Text>
+        )}
+        alignment={'center'}
         accessoryLeft={backAction}
         accessoryRight={topNavigationRenderRight}
       />
@@ -120,6 +139,7 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
         {data?.getMarketsByCategory?.data &&
         data.getMarketsByCategory.data.length !== 0 ? (
           <List
+            style={styles.list}
             data={data.getMarketsByCategory.data}
             renderItem={renderItem}
             ItemSeparatorComponent={Divider}
@@ -153,11 +173,29 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'white',
   },
+  list: {
+    height: '100%',
+  },
   container: {
     minHeight: 200,
   },
   listItem: {
     minHeight: 50,
+  },
+  thumbnail: {
+    width: 90,
+    height: 90,
+    marginRight: 15,
+  },
+  location: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    fontSize: 14,
+  },
+  description: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    fontSize: 18,
   },
 });
 
