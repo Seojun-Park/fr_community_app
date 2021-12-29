@@ -1,7 +1,7 @@
 import {useMutation} from '@apollo/client';
 import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Icon, Text as ImportedText} from '@ui-kitten/components';
+import {Icon, Text as ImportedText, Spinner} from '@ui-kitten/components';
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
 import {Button, Screen, Input} from '../../../common/SharedStyles';
@@ -9,7 +9,6 @@ import {useInputState} from '../../../hooks/useInput';
 import {AuthStackParamList} from '../../../navigators/Auth/AuthStackNavigator';
 import {SignUpForm} from './styles';
 import {SIGN_UP} from '../../../graphql/mutation/sharedMutation';
-import LoadingIndicator from '../../../components/Loading';
 import {renderCaption} from '../../../hooks/useCaption';
 import {TouchableText} from '../Login/styles';
 import Toast from 'react-native-toast-message';
@@ -193,9 +192,7 @@ const SignUpScreen: React.VFC = () => {
         <Button
           style={styles.button}
           status="primary"
-          accessoryLeft={
-            loading ? <LoadingIndicator size="small" /> : undefined
-          }
+          accessoryLeft={loading ? <Spinner /> : undefined}
           appearance={loading ? 'outline' : 'filled'}
           onPress={() => handleSignUp()}>
           회원가입

@@ -109,6 +109,7 @@ const HomeScreen: React.FC<IProps> = ({route: {params}}) => {
   return (
     <ScrollView>
       <SafeAreaView>
+        {/* <Text>let's change here </Text> */}
         <Transitioning.View ref={ref} transition={transition}>
           {homeData.map(
             ({bg, color, title, category, subCategories, filter}, index) => {

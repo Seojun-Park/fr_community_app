@@ -12,7 +12,7 @@ export const renderCaption: React.FC<CaptionProps> = ({
   caption,
   size,
   color,
-}) => {
+}): React.ReactElement<any, any> => {
   return (
     <Caption>
       <Icon

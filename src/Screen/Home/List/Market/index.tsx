@@ -86,7 +86,6 @@ const MarketListScreen: React.FC<IProps> = ({route: {params}}) => {
 
   const renderItem = useCallback(
     ({item}) => {
-      console.log(item);
       return (
         <ListItem
           title={() => <Text category="h4">{item.title}</Text>}

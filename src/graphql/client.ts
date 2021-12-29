@@ -60,7 +60,8 @@ export const logUserOut = async () => {
 };
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:4000/graphql',
+  // uri: 'ws://localhost:4000/graphql',
+  uri: 'ws://127.0.0.1:4000/graphql',
   options: {
     connectionParams: () => ({
       id: myIdVar,
@@ -88,7 +89,8 @@ const onErrorLink = onError(({graphQLErrors, networkError}) => {
 
 const httpLink = new HttpLink({
   // uri: 'http://localhost:4000/graphql',
-  uri: 'http://127.0.0.1:4000/graphql',
+  // uri: 'http://127.0.0.1:4000/graphql',
+  uri: 'http://192.168.0.10:4000/graphql',
 });
 
 const httpLinks = authLink.concat(onErrorLink).concat(httpLink);

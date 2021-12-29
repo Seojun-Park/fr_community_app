@@ -131,7 +131,7 @@ const LoginScreen: React.VFC = () => {
   }
   return (
     <Screen style={styles.container}>
-      <Text>login</Text>
+      <Text>rencontrer</Text>
       <LoginForm>
         <Input
           keyboardType="email-address"
