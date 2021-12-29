@@ -122,7 +122,15 @@ const MarketDetailView: React.FC<IProps> = ({route: {params}}) => {
           </Description>
           <Divider />
           <BottomContent>
-            <Button>메시지보내기</Button>
+            <Button
+              onPress={() => {
+                navigate('MarketChatDetail', {
+                  userId,
+                  partnerId: data?.getMarket.data?.UserId.toString() || '',
+                });
+              }}>
+              메시지보내기
+            </Button>
           </BottomContent>
         </Content>
       </Container>
